@@ -76,4 +76,14 @@ public class ClientProxy
             e.printStackTrace();
         }
     }
+
+    public String getServerIP()
+    {
+        return serverIP;
+    }
+
+    public int getServerPort()
+    {
+        return serverPort;
+    }
 }

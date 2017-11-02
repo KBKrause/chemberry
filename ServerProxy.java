@@ -40,7 +40,7 @@ public class ServerProxy implements Runnable
                 System.out.println("SERVER: Client says: " + requestFromClient);
 
                 // Tell the client we have received their message. The ClientProxy is expecting this acknowledgment.
-                outToClient.writeBytes("This packet smelled nice, thans" + '\n');
+                outToClient.writeBytes("This packet smelled nice, thanks" + '\n');
                 serverSocket.close();
             }
 
