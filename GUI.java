@@ -20,6 +20,8 @@ public class GUI extends JFrame
 
     private AbstractSensor currentSensor;
 
+    private ProxyGUI proxy;
+
     public GUI()
     {
         super("Chemberry");
@@ -27,12 +29,13 @@ public class GUI extends JFrame
         // Initializers
         initializeTextAreas();
         initializeFrames();
+        initializeProxy();
 
+        // The rest of the constructor designs the main screen of the GUI.
         this.setSize(1000, 1000);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocation(100, 100);
 
-        // The rest of this function designs the main screen of the GUI.
         JButton saveData = new JButton();
         saveData.setText("Save");
         saveData.addActionListener(new ActionListener()
@@ -168,6 +171,7 @@ public class GUI extends JFrame
         this.add(bottomRow);
 
         setVisible(true);
+        appendDebugText("Initialization complete");
     }
 
     private void initializeTextAreas()
@@ -265,7 +269,15 @@ public class GUI extends JFrame
         GUIconfig.add(selectionPanel);
     }
 
-    private void appendDebugText(String s)
+    private void initializeProxy()
+    {
+        proxy = new ProxyGUI(this, 8314);
+        Thread proxyThread = new Thread(proxy);
+        proxyThread.start();
+        appendDebugText("Accepting requests on port 8314");
+    }
+
+    public void appendDebugText(String s)
     {
         debugTextArea.append(">> " + s + '\n');
     }
