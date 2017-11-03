@@ -7,6 +7,15 @@ public class Main
     {
         System.out.println("I'm wide awake");
 
+        GUI gui = new GUI();
+        
+        /* Take an instantaneous measurement with the current sensor
+        and add it to the GUI. Ensure it is of the correct type being
+        used by the GUI!
+        */
+
+
+
         //listen();
 
         //ArrayList <Integer> myVec = new ArrayList <Integer>();
@@ -17,8 +26,6 @@ public class Main
         //ClientProxy connection = new ClientProxy("127.0.0.1", 5001);
         //connection.sendVector(myVec);
         //System.out.println("Sent the vector");
-
-        GUI gui = new GUI();
     }
 
     static void listen()

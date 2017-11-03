@@ -4,15 +4,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.*;
+import java.io.PrintWriter;
+import java.io.IOException;
 
+// TODO
+// Use the observer pattern to update the instructor when more data has been added
+// Just test this with console before adding instructor GUI
 public class GUI extends JFrame
 {
     // Config screen and settings screen
     private JDialog GUIconfig;
     private JDialog GUIsettings;
-
     private JTextArea dataTextArea;
     private JTextArea debugTextArea;
+
+    private AbstractSensor currentSensor;
 
     public GUI()
     {
@@ -26,19 +32,88 @@ public class GUI extends JFrame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocation(100, 100);
 
+        // The rest of this function designs the main screen of the GUI.
         JButton saveData = new JButton();
         saveData.setText("Save");
+        saveData.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                JFileChooser jfc = new JFileChooser();
+                int retVal = jfc.showSaveDialog(null);
+
+                // the return value of jfc depends on how/what the user clicks in the box.
+                // if they click "Save," the return value is "APPROVE_OPTION"
+                if (retVal == JFileChooser.APPROVE_OPTION)
+                {
+                    try
+                    {
+                        PrintWriter writer = new PrintWriter(jfc.getSelectedFile());
+
+                        char[] arr = dataTextArea.getText().toCharArray();
+
+                        for (char ch : arr)
+                        {
+                            if (ch != '\n')
+                            {
+                                writer.print(ch);
+                            }
+                            else
+                            {
+                                writer.println();
+                            }
+                        }
+
+                        writer.close();
+
+                        appendDebugText("Your data has been saved at " + jfc.getSelectedFile().toString());
+                    }
+                    catch(IOException ex)
+                    {
+                        // TODO
+                        // Perhaps do something else here
+                        ex.printStackTrace();
+                        appendDebugText("ERROR: Unable to save data");
+                    }
+                }
+            }
+        });
+
         JButton openData = new JButton();
         openData.setText("Open");
+
+        // TODO
+        // Add open button functionality
+
         JButton clearData = new JButton();
         clearData.setText("Clear");
+        clearData.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dataTextArea.setText("");
+                appendDebugText("Data cleared");
+                // TODO
+                // Add the "No input device has been selected" message, or if one has, display what is connected
+            }
+        });
+
+        // TODO
+        // Add popup "Are you sure you want to do this?"
 
         JPanel mainRow = new JPanel();
         mainRow.setLayout(new GridLayout(1, 3));
 
-        mainRow.add(dataTextArea);
+        // TODO
+        // Make the scroll panes responsive - have them move as more and more text is added
+        JScrollPane datascrl = new JScrollPane(dataTextArea);
+        JScrollPane debugscrl = new JScrollPane(debugTextArea);
+
+        mainRow.add(datascrl);
         mainRow.add(new JSeparator(SwingConstants.VERTICAL));
-        mainRow.add(debugTextArea);
+        mainRow.add(debugscrl);
 
         JPanel bottomRow = new JPanel();
         bottomRow.setLayout(new GridLayout(1, 3));
@@ -48,23 +123,7 @@ public class GUI extends JFrame
         bottomRow.add(clearData);
 
         JPanel topRow = new JPanel();
-        topRow.setLayout(new GridLayout(1, 3));
-
-        JButton dataBtn = new JButton();
-        dataBtn.setText("Data Collection");
-        dataBtn.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                // TODO
-                // What goes here?
-                //GUIconfig.setVisible(false);
-                //GUIsettings.setVisible(false);
-                //topRow.setVisible(true);
-                //menuBar.setVisible(true);
-            }
-        });
+        topRow.setLayout(new GridLayout(1, 2));
 
         JButton configBtn = new JButton();
         configBtn.setText("Configuration");
@@ -97,7 +156,7 @@ public class GUI extends JFrame
         });
 
         // Add all the buttons to the panel
-        topRow.add(dataBtn);
+        //topRow.add(dataBtn);
         topRow.add(configBtn);
         topRow.add(settingsBtn);
 
@@ -118,36 +177,96 @@ public class GUI extends JFrame
 
         dataTextArea.setEditable(false);
         debugTextArea.setEditable(false);
+
+        dataTextArea.append(">> No input device has been selected");
     }
 
     private void initializeFrames()
     {
-        GUIconfig = new JDialog();
-        GUIsettings = new JDialog();
-
-        GUIconfig.setSize(1000, 1000);
-        GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIconfig.setLocation(100, 100);
-
         // TODO
         // Add inet address to settings dialog
         // Add server port to settings dialog
         // Add my port to settings dialog
 
-        GUIsettings.setSize(1000, 1000);
-        GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIsettings.setLocation(100, 100);
-
+        // Main Frame init
         String addr = InetProxy.getMyAddress();
 
         if (addr != "null")
         {
-            debugTextArea.append(">> Internet (IPv4) address retrieved: " + addr);
+            appendDebugText("IPv4 address retrieved: " + addr);
         }
         else
         {
             System.out.println("ERROR: Unknown Host Exception");
-            debugTextArea.append(">> ERROR: Unable to resolve IPv4 address");
+            appendDebugText("ERROR: Unable to resolve IPv4 address");
         }
+
+        // Settings init
+        // TODO
+        // Set up layout manager for GUIsettings
+        GUIsettings = new JDialog();
+        GUIsettings.setSize(1000, 1000);
+        GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        GUIsettings.setLocation(100, 100);
+
+        JTextField IPaddr = new JTextField("Address: " + addr);
+        IPaddr.setEditable(false);
+
+        GUIsettings.add(IPaddr);
+
+        // Config init
+        GUIconfig = new JDialog();
+        GUIconfig.setSize(1000, 1000);
+        GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        GUIconfig.setLocation(100, 100);
+
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.setLayout(new GridLayout(1, 3));
+
+        // TODO
+        // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
+        JButton btnPH = new JButton("pH Probe");
+        btnPH.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                currentSensor = new pHSensor();
+                appendDebugText("Configured sensor: pH probe");
+            }
+        });
+
+        JButton btnTemp = new JButton("Temperature Sensor");
+        btnTemp.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                currentSensor = new TemperatureSensor();
+                appendDebugText("Configured sensor: Temperature sensor");
+            }
+        });
+
+        JButton btnConduct = new JButton("Conductivity Probe");
+        btnConduct.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                currentSensor = new ConductivitySensor();
+                appendDebugText("Configured sensor: Potentiometer");
+            }
+        });
+
+        selectionPanel.add(btnPH);
+        selectionPanel.add(btnTemp);
+        selectionPanel.add(btnConduct);
+
+        GUIconfig.add(selectionPanel);
+    }
+
+    private void appendDebugText(String s)
+    {
+        debugTextArea.append(">> " + s + '\n');
     }
 }
