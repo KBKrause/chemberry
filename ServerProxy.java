@@ -37,6 +37,20 @@ public class ServerProxy implements Runnable
                 System.out.println("SERVER: Waiting for something to arrive");
                 String requestFromClient = inFromClient.readLine();
 
+                // TODO
+                // This section is only used when the instructor is receiving an update from the GUI.
+                char[] fixedTextChar = requestFromClient.toCharArray();
+
+                for (int i = 0; i < fixedTextChar.length; i++)
+                {
+                    if (fixedTextChar[i] == '`')
+                    {
+                        fixedTextChar[i] = '\n';
+                    }
+                }
+
+                requestFromClient = String.valueOf(fixedTextChar);
+
                 System.out.println("SERVER: Client says: " + requestFromClient);
 
                 // Tell the client we have received their message. The ClientProxy is expecting this acknowledgment.

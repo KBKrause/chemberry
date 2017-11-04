@@ -1,15 +1,17 @@
 import java.net.*;
 import java.io.*;
 
-public class ProxyGUI implements Runnable
+public class ProxyGUI implements Runnable, InstructorSubject
 {
     private int myPort;
-    private GUI gui;
 
-    public ProxyGUI(GUI g, int p)
+    private ClientProxy connToIns;
+
+    public ProxyGUI(int p, String insIP, int insPort)
     {
-        gui = g;
         myPort = p;
+
+        connToIns = new ClientProxy(insIP, insPort);
     }
 
     @Override
@@ -35,7 +37,6 @@ public class ProxyGUI implements Runnable
                 String requestFromClient = inFromClient.readLine();
 
                 // Parse the request to determine what they want.
-                gui.appendDebugText(requestFromClient);
 
                 System.out.println("SERVER: Client says: " + requestFromClient);
 
@@ -49,5 +50,11 @@ public class ProxyGUI implements Runnable
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void receiveUpdate(String update)
+    {
+       connToIns.sendString(update);
     }
 }
