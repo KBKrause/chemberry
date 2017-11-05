@@ -1,6 +1,9 @@
 import java.util.Scanner; 
 
-public class InstructorMain
+// TODO
+// Add back in the InstructorSubject implementation.
+// Have it only set up a connection when receiveUpdate() is called.
+public class InstructorMain //implements InstructorSubject
 {
     public static void main(String[] args)
     {
@@ -9,7 +12,8 @@ public class InstructorMain
         String msg = scan.next();
         scan.close();
 
-        ClientProxy cp = new ClientProxy(msg, 8314);
-        cp.sendString("Here is some text");
+       InstructorProxy mySide = new InstructorProxy(6023);
+       Thread t = new Thread(mySide);
+       t.start();
     }
 }

@@ -2,6 +2,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
 
+// TODO
+// Rename to ClientConnection.
 public class ClientProxy
 {
     private String serverIP;

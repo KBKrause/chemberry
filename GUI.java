@@ -2,15 +2,23 @@ import java.awt.GridLayout;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
+import javax.swing.event.*;
 import javax.swing.*;
 import java.net.*;
 import java.io.PrintWriter;
 import java.io.IOException;
+import javax.swing.event.DocumentListener;
+import javax.swing.UIManager.*;
 
 // TODO
 // Use the observer pattern to update the instructor when more data has been added
 // Just test this with console before adding instructor GUI
-public class GUI extends JFrame
+
+// TODO
+// Account for which thread of execution (instructor or student) begins first.
+// TODO
+// Account for when one side closes the connection - do not hang up on a function!
+public class GUI extends JFrame implements GUISubject, DocumentListener
 {
     // Config screen and settings screen
     private JDialog GUIconfig;
@@ -20,12 +28,24 @@ public class GUI extends JFrame
 
     private AbstractSensor currentSensor;
 
-    private ProxyGUI proxy;
+    private InstructorSubject proxy;
+
+    // TODO
+    // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
 
     public GUI()
     {
         super("Chemberry");
-
+        
+        try 
+        { 
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        
         // Initializers
         initializeTextAreas();
         initializeFrames();
@@ -179,10 +199,15 @@ public class GUI extends JFrame
         dataTextArea = new JTextArea();
         debugTextArea = new JTextArea();
 
-        dataTextArea.setEditable(false);
+        // TODO
+        // Reset this to false.
+        // Find a way to detect the latest change.
+        //dataTextArea.setEditable(false);
         debugTextArea.setEditable(false);
 
         dataTextArea.append(">> No input device has been selected");
+
+        dataTextArea.getDocument().addDocumentListener(this);
     }
 
     private void initializeFrames()
@@ -193,7 +218,7 @@ public class GUI extends JFrame
         // Add my port to settings dialog
 
         // Main Frame init
-        String addr = InetProxy.getMyAddress();
+        String addr = Inet.getMyAddress();
 
         if (addr != "null")
         {
@@ -271,14 +296,46 @@ public class GUI extends JFrame
 
     private void initializeProxy()
     {
-        proxy = new ProxyGUI(this, 8314);
-        Thread proxyThread = new Thread(proxy);
-        proxyThread.start();
+        proxy = new ProxyGUI(8314, "127.0.0.1", 6023);
         appendDebugText("Accepting requests on port 8314");
     }
 
     public void appendDebugText(String s)
     {
         debugTextArea.append(">> " + s + '\n');
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e)
+    {
+        // TODO
+        // Send a message to the instructor that the data has changed.
+        update();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e)
+    {
+        // TODO
+        // I am not sure what would go here.
+        // If the GUI is doing a different reading, update the instructor.
+        // The instructor's screen will need to keep the old data and be prepared for a new data set.
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e)
+    {
+        // TODO
+        // Not sure what would go here either.
+        // See removeUpdate().
+        update();
+    }
+
+    @Override
+    public void update()
+    {
+        String textUpdate = Inet.encodeUpdate(dataTextArea.getText());
+
+        proxy.receiveUpdate(textUpdate);
     }
 }

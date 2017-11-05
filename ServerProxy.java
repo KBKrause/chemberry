@@ -1,9 +1,11 @@
 import java.net.*;
 import java.io.*;
 
-public class ServerProxy implements Runnable
+public abstract class ServerProxy implements Runnable
 {
     private int myPort;
+
+    public abstract void handleRequest(String request, String clientIP);
 
     public ServerProxy(int port)
     {
@@ -34,10 +36,11 @@ public class ServerProxy implements Runnable
                 DataOutputStream outToClient = new DataOutputStream(serverSocket.getOutputStream());
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 
-                System.out.println("SERVER: Waiting for something to arrive");
                 String requestFromClient = inFromClient.readLine();
 
-                System.out.println("SERVER: Client says: " + requestFromClient);
+                // TODO
+                // Is this the true address?
+                handleRequest(requestFromClient, serverSocket.getInetAddress().getHostAddress());
 
                 // Tell the client we have received their message. The ClientProxy is expecting this acknowledgment.
                 outToClient.writeBytes("This packet smelled nice, thanks" + '\n');
