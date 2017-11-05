@@ -12,7 +12,7 @@ public class InstructorMain //implements InstructorSubject
         String msg = scan.next();
         scan.close();
 
-       ServerProxy mySide = new ServerProxy(6023);
+       InstructorProxy mySide = new InstructorProxy(6023);
        Thread t = new Thread(mySide);
        t.start();
     }

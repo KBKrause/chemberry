@@ -8,6 +8,7 @@ import java.net.*;
 import java.io.PrintWriter;
 import java.io.IOException;
 import javax.swing.event.DocumentListener;
+import javax.swing.UIManager.*;
 
 // TODO
 // Use the observer pattern to update the instructor when more data has been added
@@ -29,10 +30,22 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
 
     private InstructorSubject proxy;
 
+    // TODO
+    // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
+
     public GUI()
     {
         super("Chemberry");
-
+        
+        try 
+        { 
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        
         // Initializers
         initializeTextAreas();
         initializeFrames();
@@ -205,7 +218,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         // Add my port to settings dialog
 
         // Main Frame init
-        String addr = InetProxy.getMyAddress();
+        String addr = Inet.getMyAddress();
 
         if (addr != "null")
         {
@@ -284,8 +297,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     private void initializeProxy()
     {
         proxy = new ProxyGUI(8314, "127.0.0.1", 6023);
-        Thread proxyThread = new Thread((ProxyGUI)proxy);
-        proxyThread.start();
         appendDebugText("Accepting requests on port 8314");
     }
 
@@ -305,6 +316,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void removeUpdate(DocumentEvent e)
     {
+        // TODO
         // I am not sure what would go here.
         // If the GUI is doing a different reading, update the instructor.
         // The instructor's screen will need to keep the old data and be prepared for a new data set.
@@ -313,6 +325,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void changedUpdate(DocumentEvent e)
     {
+        // TODO
         // Not sure what would go here either.
         // See removeUpdate().
         update();
@@ -321,19 +334,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void update()
     {
-        String textUpdate = dataTextArea.getText();
-
-        char[] fixedTextChar = textUpdate.toCharArray();
-
-        for (int i = 0; i < fixedTextChar.length; i++)
-        {
-            if (fixedTextChar[i] == '\n')
-            {
-                fixedTextChar[i] = '`';
-            }
-        }
-
-        textUpdate = String.valueOf(fixedTextChar);
+        String textUpdate = Inet.encodeUpdate(dataTextArea.getText());
 
         proxy.receiveUpdate(textUpdate);
     }
