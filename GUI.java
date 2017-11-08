@@ -29,6 +29,9 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     private JTextArea dataTextArea;
     private JTextArea debugTextArea;
 
+    private JPanel controlPanel;
+    private JButton measurementBtn;
+
     private AbstractSensor currentSensor;
 
     private InstructorSubject proxy;
@@ -52,8 +55,10 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         }
         
         initializeTextAreas();
-        initializeFrames();
+        initializeConfig();
+        initializeSettings();
         initializeProxy();
+        initializeOther();
 
         // The rest of the constructor designs the main screen of the GUI.
         this.setSize(1000, 1000);
@@ -166,7 +171,16 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         JScrollPane debugscrl = new JScrollPane(debugTextArea);
 
         mainRow.add(datascrl);
-        mainRow.add(new JSeparator(SwingConstants.VERTICAL));
+        
+        controlPanel = new JPanel();
+        measurementBtn = new JButton("Measure");
+        controlPanel.setLayout(new GridLayout(3, 1));
+
+        controlPanel.add(new JLabel("Measurement Interface"));
+        controlPanel.add(new JLabel("Current instrument: None"));
+        controlPanel.add(measurementBtn);
+
+        mainRow.add(controlPanel);
         mainRow.add(debugscrl);
 
         JPanel bottomRow = new JPanel();
@@ -186,10 +200,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //GUIdata.setVisible(false);
-                //GUIdata.setVisible(false);
-                //topRow.setVisible(true);
-                //menuBar.setVisible(true);
                 GUIconfig.setVisible(true);
             }
         });
@@ -201,10 +211,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //GUIconfig.setVisible(false);
-                //GUIdata.setVisible(false);
-                //topRow.setVisible(true);
-                //menuBar.setVisible(true);
                 GUIsettings.setVisible(true);
             }
         });
@@ -241,7 +247,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         dataTextArea.getDocument().addDocumentListener(this);
     }
 
-    private void initializeFrames()
+    private void initializeOther()
     {
         clearDataPopup = new JPopupMenu("Clear Data?");
 
@@ -295,28 +301,17 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             System.out.println("ERROR: Unknown Host Exception");
             appendDebugText("ERROR: Unable to resolve IPv4 address");
         }
+    }
 
-        // Settings init
-        // TODO
-        // Set up layout manager for GUIsettings
-        GUIsettings = new JDialog();
-        GUIsettings.setSize(1000, 1000);
-        GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIsettings.setLocation(100, 100);
-
-        JTextField IPaddr = new JTextField("Address: " + addr);
-        IPaddr.setEditable(false);
-
-        GUIsettings.add(IPaddr);
-
-        // Config init
+    private void initializeConfig()
+    {
         GUIconfig = new JDialog();
         GUIconfig.setSize(1000, 1000);
         GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         GUIconfig.setLocation(100, 100);
 
         JPanel selectionPanel = new JPanel();
-        selectionPanel.setLayout(new GridLayout(1, 3));
+        selectionPanel.setLayout(new GridLayout(2, 3));
 
         // TODO
         // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
@@ -328,6 +323,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             {
                 currentSensor = new pHSensor();
                 appendDebugText("Configured sensor: pH probe");
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: pH probe");
             }
         });
 
@@ -339,6 +336,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             {
                 currentSensor = new TemperatureSensor();
                 appendDebugText("Configured sensor: Temperature sensor");
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: Temperature");
             }
         });
 
@@ -350,6 +349,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             {
                 currentSensor = new ConductivitySensor();
                 appendDebugText("Configured sensor: Potentiometer");
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: Conductivity");
             }
         });
 
@@ -360,9 +361,25 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         GUIconfig.add(selectionPanel);
     }
 
+    private void initializeSettings()
+    {
+        // Settings init
+        // TODO
+        // Set up layout manager for GUIsettings
+        GUIsettings = new JDialog();
+        GUIsettings.setSize(1000, 1000);
+        GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        GUIsettings.setLocation(100, 100);
+
+        JTextField IPaddr = new JTextField("Address: " + Inet.getMyAddress());
+        IPaddr.setEditable(false);
+
+        GUIsettings.add(IPaddr);
+    }
+
     private void initializeProxy()
     {
-        proxy = new ProxyGUI(8314, "10.202.168.150", 6023);
+        proxy = new ProxyGUI(8314, "10.200.170.157", 6023);
         appendDebugText("Set instructor IP");
     }
 
