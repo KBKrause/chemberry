@@ -33,7 +33,7 @@ public class ClientProxy
             // readLine() is a blocking call that is waiting for an ack from the server.
             String responseFromServer = inFromServer.readLine();
 
-            System.out.println("Received response: " + responseFromServer);
+            //System.out.println("Received response: " + responseFromServer);
 
             clientSocket.close();
         }

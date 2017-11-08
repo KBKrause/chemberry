@@ -3,9 +3,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
 import javax.swing.event.*;
-import javax.swing.*;
 import java.net.*;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.event.DocumentListener;
 import javax.swing.UIManager.*;
@@ -18,6 +19,8 @@ import javax.swing.UIManager.*;
 // Account for which thread of execution (instructor or student) begins first.
 // TODO
 // Account for when one side closes the connection - do not hang up on a function!
+// TODO
+// Have only 1 popup menu, but change its contents depending on the matching popup.
 public class GUI extends JFrame implements GUISubject, DocumentListener
 {
     // Config screen and settings screen
@@ -29,6 +32,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     private AbstractSensor currentSensor;
 
     private InstructorSubject proxy;
+
+    private JPopupMenu clearDataPopup;
 
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
@@ -46,7 +51,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             e.printStackTrace();
         }
         
-        // Initializers
         initializeTextAreas();
         initializeFrames();
         initializeProxy();
@@ -66,8 +70,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
                 JFileChooser jfc = new JFileChooser();
                 int retVal = jfc.showSaveDialog(null);
 
-                // the return value of jfc depends on how/what the user clicks in the box.
-                // if they click "Save," the return value is "APPROVE_OPTION"
                 if (retVal == JFileChooser.APPROVE_OPTION)
                 {
                     try
@@ -105,26 +107,55 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
 
         JButton openData = new JButton();
         openData.setText("Open");
-
-        // TODO
-        // Add open button functionality
-
-        JButton clearData = new JButton();
-        clearData.setText("Clear");
-        clearData.addActionListener(new ActionListener()
+        openData.addActionListener(new ActionListener()
         {   
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                dataTextArea.setText("");
-                appendDebugText("Data cleared");
+                JFileChooser jfc = new JFileChooser();
+                int retVal = jfc.showOpenDialog(null);
+
+                if (retVal == JFileChooser.APPROVE_OPTION)
+                {
+                    try
+                    {         
+                        BufferedReader bfr = new BufferedReader(new FileReader(jfc.getSelectedFile()));
+                        // TODO
+                        // Prompt to make sure user wants to clear text area.
+                        dataTextArea.setText("");
+
+                        String content;
+                        
+                        while ((content = bfr.readLine()) != null)
+                        {
+                            dataTextArea.append(content);
+                            dataTextArea.append("\n");
+                        }
+
+                        appendDebugText("Data file successfully opened");
+                        bfr.close();
+                    }
+                    catch(IOException ioe)
+                    {
+                        appendDebugText("Error opening the file");
+                        ioe.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        JButton clearData = new JButton();
+        clearData.setText("Clear");
+        clearData.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                clearDataPopup.setVisible(true);
                 // TODO
                 // Add the "No input device has been selected" message, or if one has, display what is connected
             }
         });
-
-        // TODO
-        // Add popup "Are you sure you want to do this?"
 
         JPanel mainRow = new JPanel();
         mainRow.setLayout(new GridLayout(1, 3));
@@ -212,6 +243,41 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
 
     private void initializeFrames()
     {
+        clearDataPopup = new JPopupMenu("Clear Data?");
+
+        clearDataPopup.setLayout(new GridLayout(2,2));
+        clearDataPopup.setPopupSize(500, 500);
+        clearDataPopup.setLocation(500, 500);
+
+        JButton yes = new JButton("Yes");
+        yes.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dataTextArea.setText("");
+                appendDebugText("Data cleared");
+                clearDataPopup.setVisible(false);
+            }
+        });
+
+        JButton no = new JButton("No");
+        no.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                clearDataPopup.setVisible(false);
+            }
+        });
+
+        // TODO
+        // Clean up this popup.
+        clearDataPopup.add(new JLabel("Clear all data?"));
+        clearDataPopup.add("");
+        clearDataPopup.add(yes);
+        clearDataPopup.add(no);
+
         // TODO
         // Add inet address to settings dialog
         // Add server port to settings dialog
@@ -296,8 +362,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
 
     private void initializeProxy()
     {
-        proxy = new ProxyGUI(8314, "127.0.0.1", 6023);
-        appendDebugText("Accepting requests on port 8314");
+        proxy = new ProxyGUI(8314, "10.202.168.150", 6023);
+        appendDebugText("Set instructor IP");
     }
 
     public void appendDebugText(String s)
@@ -308,8 +374,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        // TODO
-        // Send a message to the instructor that the data has changed.
         update();
     }
 
@@ -334,7 +398,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void update()
     {
-        String textUpdate = Inet.encodeUpdate(dataTextArea.getText());
+        String textUpdate = "u:" + Inet.encodeUpdate(dataTextArea.getText());
 
         proxy.receiveUpdate(textUpdate);
     }

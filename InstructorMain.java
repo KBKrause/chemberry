@@ -7,13 +7,12 @@ public class InstructorMain //implements InstructorSubject
 {
     public static void main(String[] args)
     {
-        System.out.println("Enter the IP address of the GUI");
-        Scanner scan = new Scanner(System.in);
-        String msg = scan.next();
-        scan.close();
+       InstructorGUI gui = new InstructorGUI();
 
-       InstructorProxy mySide = new InstructorProxy(6023);
-       Thread t = new Thread(mySide);
-       t.start();
+        // TODO
+        // Have InstructorProxy implement the GUI subject.
+        InstructorProxy server = new InstructorProxy(6023, gui);
+        Thread t = new Thread(server);
+        t.start();
     }
 }
