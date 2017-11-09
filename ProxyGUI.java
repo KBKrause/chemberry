@@ -16,6 +16,7 @@ public class ProxyGUI implements InstructorSubject
         // TODO
         // Perhaps instantiate AFTER we know the instructor is set up.
         connToIns = new ClientProxy(insIP, insPort);
+        connToIns.sendString("h:ello");
     }
 
     @Override

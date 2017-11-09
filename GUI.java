@@ -3,11 +3,13 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
 import javax.swing.event.*;
-import javax.swing.*;
 import java.net.*;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
 
 // TODO
@@ -19,8 +21,9 @@ import javax.swing.UIManager.*;
 // TODO
 // Account for when one side closes the connection - do not hang up on a function!
 // TODO
+// Have only 1 popup menu, but change its contents depending on the matching popup.
 // Add sounds for measurement button
-public class GUI extends JFrame implements GUISubject, DocumentListener
+public class GUI extends JFrame implements DocumentListener
 {
     // Config screen and settings screen
     private JDialog GUIconfig;
@@ -28,9 +31,14 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     private JTextArea dataTextArea;
     private JTextArea debugTextArea;
 
+    private JPanel controlPanel;
+    private JButton measurementBtn;
+
     private AbstractSensor currentSensor;
 
     private InstructorSubject proxy;
+
+    private JPopupMenu clearDataPopup;
 
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
@@ -48,10 +56,11 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             e.printStackTrace();
         }
         
-        // Initializers
         initializeTextAreas();
-        initializeFrames();
+        initializeConfig();
+        initializeSettings();
         initializeProxy();
+        initializeOther();
 
         // The rest of the constructor designs the main screen of the GUI.
         this.setSize(1000, 1000);
@@ -68,8 +77,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
                 JFileChooser jfc = new JFileChooser();
                 int retVal = jfc.showSaveDialog(null);
 
-                // the return value of jfc depends on how/what the user clicks in the box.
-                // if they click "Save," the return value is "APPROVE_OPTION"
                 if (retVal == JFileChooser.APPROVE_OPTION)
                 {
                     try
@@ -107,26 +114,55 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
 
         JButton openData = new JButton();
         openData.setText("Open");
-
-        // TODO
-        // Add open button functionality
-
-        JButton clearData = new JButton();
-        clearData.setText("Clear");
-        clearData.addActionListener(new ActionListener()
+        openData.addActionListener(new ActionListener()
         {   
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                dataTextArea.setText("");
-                appendDebugText("Data cleared");
+                JFileChooser jfc = new JFileChooser();
+                int retVal = jfc.showOpenDialog(null);
+
+                if (retVal == JFileChooser.APPROVE_OPTION)
+                {
+                    try
+                    {         
+                        BufferedReader bfr = new BufferedReader(new FileReader(jfc.getSelectedFile()));
+                        // TODO
+                        // Prompt to make sure user wants to clear text area.
+                        dataTextArea.setText("");
+
+                        String content;
+                        
+                        while ((content = bfr.readLine()) != null)
+                        {
+                            dataTextArea.append(content);
+                            dataTextArea.append("\n");
+                        }
+
+                        appendDebugText("Data file successfully opened");
+                        bfr.close();
+                    }
+                    catch(IOException ioe)
+                    {
+                        appendDebugText("Error opening the file");
+                        ioe.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        JButton clearData = new JButton();
+        clearData.setText("Clear");
+        clearData.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                clearDataPopup.setVisible(true);
                 // TODO
                 // Add the "No input device has been selected" message, or if one has, display what is connected
             }
         });
-
-        // TODO
-        // Add popup "Are you sure you want to do this?"
 
         JPanel mainRow = new JPanel();
         mainRow.setLayout(new GridLayout(1, 3));
@@ -137,7 +173,26 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         JScrollPane debugscrl = new JScrollPane(debugTextArea);
 
         mainRow.add(datascrl);
-        mainRow.add(new JSeparator(SwingConstants.VERTICAL));
+        
+        controlPanel = new JPanel();
+        measurementBtn = new JButton("Measure");
+        measurementBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dataTextArea.append("test\n");
+                // TODO
+                // Add the "No input device has been selected" message, or if one has, display what is connected
+            }
+        });
+        controlPanel.setLayout(new GridLayout(3, 1));
+
+        controlPanel.add(new JLabel("Measurement Interface"));
+        controlPanel.add(new JLabel("Current instrument: None"));
+        controlPanel.add(measurementBtn);
+
+        mainRow.add(controlPanel);
         mainRow.add(debugscrl);
 
         JPanel bottomRow = new JPanel();
@@ -157,10 +212,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //GUIdata.setVisible(false);
-                //GUIdata.setVisible(false);
-                //topRow.setVisible(true);
-                //menuBar.setVisible(true);
                 GUIconfig.setVisible(true);
             }
         });
@@ -172,10 +223,6 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //GUIconfig.setVisible(false);
-                //GUIdata.setVisible(false);
-                //topRow.setVisible(true);
-                //menuBar.setVisible(true);
                 GUIsettings.setVisible(true);
             }
         });
@@ -206,14 +253,50 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         // Find a way to detect the latest change.
         //dataTextArea.setEditable(false);
         debugTextArea.setEditable(false);
+        dataTextArea.setEditable(false);
 
         dataTextArea.append(">> No input device has been selected");
 
         dataTextArea.getDocument().addDocumentListener(this);
     }
 
-    private void initializeFrames()
+    private void initializeOther()
     {
+        clearDataPopup = new JPopupMenu("Clear Data?");
+
+        clearDataPopup.setLayout(new GridLayout(2,2));
+        clearDataPopup.setPopupSize(500, 500);
+        clearDataPopup.setLocation(500, 500);
+
+        JButton yes = new JButton("Yes");
+        yes.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dataTextArea.setText("");
+                appendDebugText("Data cleared");
+                clearDataPopup.setVisible(false);
+            }
+        });
+
+        JButton no = new JButton("No");
+        no.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                clearDataPopup.setVisible(false);
+            }
+        });
+
+        // TODO
+        // Clean up this popup.
+        clearDataPopup.add(new JLabel("Clear all data?"));
+        clearDataPopup.add("");
+        clearDataPopup.add(yes);
+        clearDataPopup.add(no);
+
         // TODO
         // Add inet address to settings dialog
         // Add server port to settings dialog
@@ -231,28 +314,17 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             System.out.println("ERROR: Unknown Host Exception");
             appendDebugText("ERROR: Unable to resolve IPv4 address");
         }
+    }
 
-        // Settings init
-        // TODO
-        // Set up layout manager for GUIsettings
-        GUIsettings = new JDialog();
-        GUIsettings.setSize(1000, 1000);
-        GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIsettings.setLocation(100, 100);
-
-        JTextField IPaddr = new JTextField("Address: " + addr);
-        IPaddr.setEditable(false);
-
-        GUIsettings.add(IPaddr);
-
-        // Config init
+    private void initializeConfig()
+    {
         GUIconfig = new JDialog();
         GUIconfig.setSize(1000, 1000);
         GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         GUIconfig.setLocation(100, 100);
 
         JPanel selectionPanel = new JPanel();
-        selectionPanel.setLayout(new GridLayout(1, 3));
+        selectionPanel.setLayout(new GridLayout(2, 3));
 
         // TODO
         // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
@@ -264,6 +336,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             {
                 currentSensor = new pHSensor();
                 appendDebugText("Configured sensor: pH probe");
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: pH probe");
             }
         });
 
@@ -275,6 +349,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             {
                 currentSensor = new TemperatureSensor();
                 appendDebugText("Configured sensor: Temperature sensor");
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: Temperature");
             }
         });
 
@@ -286,6 +362,8 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
             {
                 currentSensor = new ConductivitySensor();
                 appendDebugText("Configured sensor: Potentiometer");
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: Conductivity");
             }
         });
 
@@ -296,10 +374,26 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         GUIconfig.add(selectionPanel);
     }
 
+    private void initializeSettings()
+    {
+        // Settings init
+        // TODO
+        // Set up layout manager for GUIsettings
+        GUIsettings = new JDialog();
+        GUIsettings.setSize(1000, 1000);
+        GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        GUIsettings.setLocation(100, 100);
+
+        JTextField IPaddr = new JTextField("Address: " + Inet.getMyAddress());
+        IPaddr.setEditable(false);
+
+        GUIsettings.add(IPaddr);
+    }
+
     private void initializeProxy()
     {
-        proxy = new ProxyGUI(8314, "127.0.0.1", 6023);
-        appendDebugText("Accepting requests on port 8314");
+        proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
+        appendDebugText("Set instructor IP");
     }
 
     public void appendDebugText(String s)
@@ -310,9 +404,15 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        // TODO
-        // Send a message to the instructor that the data has changed.
-        update();
+        try
+        {
+            String updateText = dataTextArea.getText(e.getOffset(), e.getLength());
+            update(updateText);
+        }
+        catch(BadLocationException ble)
+        {
+            ble.printStackTrace();
+        }
     }
 
     @Override
@@ -324,20 +424,25 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         // The instructor's screen will need to keep the old data and be prepared for a new data set.
     }
 
+    // TODO
+    // When is this function called?
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        // TODO
-        // Not sure what would go here either.
-        // See removeUpdate().
-        update();
+        try
+        {
+            String updateText = dataTextArea.getText(e.getOffset(), e.getLength());
+            update(updateText);
+        }
+        catch(BadLocationException ble)
+        {
+            ble.printStackTrace();
+        }
     }
 
-    @Override
-    public void update()
+    private void update(String update)
     {
-        String textUpdate = Inet.encodeUpdate(dataTextArea.getText());
-
-        proxy.receiveUpdate(textUpdate);
+        String updateWithHeader = "u:" + update;
+        proxy.receiveUpdate(updateWithHeader);
     }
 }
