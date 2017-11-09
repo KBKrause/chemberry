@@ -1,0 +1,37 @@
+public class Test
+{
+    public static void main(String[] args)
+    {
+        System.out.println("Starting tests");
+        testMeasurements();
+    }
+
+    public static void testMeasurements()
+    {
+        AbstractSensor sensor = new TemperatureSensor();
+        
+        for (int i = 0; i < 10; i++)
+        {
+            printMeasurement(sensor);
+        }
+
+        sensor = new pHSensor();
+
+        for (int i = 0; i < 10; i++)
+        {
+            printMeasurement(sensor);
+        }
+
+        sensor = new ConductivitySensor();
+
+        for (int i = 0; i < 10; i++)
+        {
+            printMeasurement(sensor);
+        }
+    }
+
+    public static void printMeasurement(AbstractSensor sensor)
+    {
+        System.out.println("Sensor reads: " + sensor.instantMeasure().getValue());
+    }
+}
