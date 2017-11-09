@@ -22,6 +22,7 @@ import javax.swing.UIManager.*;
 // Account for when one side closes the connection - do not hang up on a function!
 // TODO
 // Have only 1 popup menu, but change its contents depending on the matching popup.
+// Add sounds for measurement button
 public class GUI extends JFrame implements DocumentListener
 {
     // Config screen and settings screen
