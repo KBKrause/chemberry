@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 // This is the base class for all types of sensors.
 public abstract class AbstractSensor
 {
@@ -5,5 +7,26 @@ public abstract class AbstractSensor
     public abstract Measurement instantMeasure();
     /*  A measurement can be taken every n seconds for duration x with this method.
     */
-    //public abstract ArrayList <Measurement> intervalMeasure(int everyNSeconds, int duration);
+    public ArrayList <Measurement> intervalMeasure(int everyNSeconds, int duration)
+    {
+        ArrayList <Measurement> measurements = new ArrayList<Measurement>();
+
+        try
+        {
+            // Thread.sleep(long n) -- wait n milliseconds (1000 milliseconds = 1 second)
+
+            for (int i = 0; i < duration; i++)
+            {
+                measurements.add(instantMeasure());
+                System.out.println("Sensor measured: " + instantMeasure());
+                Thread.sleep(everyNSeconds * 1000);
+            }
+        }
+        catch(InterruptedException ie)
+        {
+            ie.printStackTrace();
+        }
+
+        return measurements;
+    }
 }

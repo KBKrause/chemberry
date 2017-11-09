@@ -18,6 +18,8 @@ import javax.swing.UIManager.*;
 // Account for which thread of execution (instructor or student) begins first.
 // TODO
 // Account for when one side closes the connection - do not hang up on a function!
+// TODO
+// Add sounds for measurement button
 public class GUI extends JFrame implements GUISubject, DocumentListener
 {
     // Config screen and settings screen

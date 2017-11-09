@@ -1,12 +1,14 @@
+import java.util.ArrayList;
+
 public class Test
 {
     public static void main(String[] args)
     {
         System.out.println("Starting tests");
-        testMeasurements();
+        testIntervalMeasurements();
     }
 
-    public static void testMeasurements()
+    public static void testInstantMeasurements()
     {
         AbstractSensor sensor = new TemperatureSensor();
         
@@ -30,7 +32,14 @@ public class Test
         }
     }
 
-    public static void printMeasurement(AbstractSensor sensor)
+    public static void testIntervalMeasurements()
+    {
+        AbstractSensor sensor = new ConductivitySensor();
+
+        ArrayList<Measurement> meas = sensor.intervalMeasure(2, 60);
+    }
+
+    private static void printMeasurement(AbstractSensor sensor)
     {
         System.out.println("Sensor reads: " + sensor.instantMeasure().getValue());
     }
