@@ -48,37 +48,6 @@ public class ClientProxy
         }
     }
 
-    public void sendVector(ArrayList <Integer> vec)
-    {
-        try
-        {
-
-            String request = vec.toString();
-
-            Socket clientSocket = new Socket(serverIP, serverPort);
-
-            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));         
-
-            System.out.println("CLIENT: Writing vector to the stream");
-            outToServer.writeBytes(request + "\n");
-
-            String responseFromServer = inFromServer.readLine();
-
-            System.out.println("CLIENT: Received response: " + responseFromServer);
-
-            clientSocket.close();
-        }
-        catch(ConnectException e)
-        {
-            e.printStackTrace();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
     public String getServerIP()
     {
         return serverIP;

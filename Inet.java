@@ -51,4 +51,14 @@ public abstract class Inet
         
         return String.valueOf(fixedTextChar);
     }
+
+    public static String hash(String text)
+    {
+        return "";
+    }
+
+    public static String retrieve(String text)
+    {
+        return "";
+    }
 }

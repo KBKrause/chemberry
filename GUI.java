@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
 
 // TODO
@@ -21,7 +22,7 @@ import javax.swing.UIManager.*;
 // Account for when one side closes the connection - do not hang up on a function!
 // TODO
 // Have only 1 popup menu, but change its contents depending on the matching popup.
-public class GUI extends JFrame implements GUISubject, DocumentListener
+public class GUI extends JFrame implements DocumentListener
 {
     // Config screen and settings screen
     private JDialog GUIconfig;
@@ -174,6 +175,16 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         
         controlPanel = new JPanel();
         measurementBtn = new JButton("Measure");
+        measurementBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dataTextArea.append("test\n");
+                // TODO
+                // Add the "No input device has been selected" message, or if one has, display what is connected
+            }
+        });
         controlPanel.setLayout(new GridLayout(3, 1));
 
         controlPanel.add(new JLabel("Measurement Interface"));
@@ -241,6 +252,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         // Find a way to detect the latest change.
         //dataTextArea.setEditable(false);
         debugTextArea.setEditable(false);
+        dataTextArea.setEditable(false);
 
         dataTextArea.append(">> No input device has been selected");
 
@@ -379,7 +391,7 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
 
     private void initializeProxy()
     {
-        proxy = new ProxyGUI(8314, "10.200.170.157", 6023);
+        proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
         appendDebugText("Set instructor IP");
     }
 
@@ -391,7 +403,15 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        update();
+        try
+        {
+            String updateText = dataTextArea.getText(e.getOffset(), e.getLength());
+            update(updateText);
+        }
+        catch(BadLocationException ble)
+        {
+            ble.printStackTrace();
+        }
     }
 
     @Override
@@ -403,20 +423,25 @@ public class GUI extends JFrame implements GUISubject, DocumentListener
         // The instructor's screen will need to keep the old data and be prepared for a new data set.
     }
 
+    // TODO
+    // When is this function called?
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        // TODO
-        // Not sure what would go here either.
-        // See removeUpdate().
-        update();
+        try
+        {
+            String updateText = dataTextArea.getText(e.getOffset(), e.getLength());
+            update(updateText);
+        }
+        catch(BadLocationException ble)
+        {
+            ble.printStackTrace();
+        }
     }
 
-    @Override
-    public void update()
+    private void update(String update)
     {
-        String textUpdate = "u:" + Inet.encodeUpdate(dataTextArea.getText());
-
-        proxy.receiveUpdate(textUpdate);
+        String updateWithHeader = "u:" + update;
+        proxy.receiveUpdate(updateWithHeader);
     }
 }

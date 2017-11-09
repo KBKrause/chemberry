@@ -51,24 +51,29 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         // Add a tab if it's the first time the student connects.
         if (tokens[0].equals("h"))
         {
-            System.out.println("Adding a new tab for the new connection");
-            /*
-            JPanel newClientTab = new JPanel();
-            JLabel addr = new JLabel(tokens[1]);
-            newClientTab.setLayout(new GridLayout(1, 1));
-
-            newClientTab.add(addr);
-
-            studentTabs.addTab(tokens[1], null, newClientTab, "Does nothing");
-            */
-
-            // TODO
-            // Why is this firing null pointer exceptions?
             studentTabs.addTab(tokens[1], new JTextArea());
         }
         else if (tokens[0].equals("u"))
         {
+            JTextArea text = null;
+            // tokens[1] contains the IP
+            // Only way I see how to do this is loop through the titles and see which one matches.
+            for (int i = 0; i < studentTabs.getTabCount(); i++)
+            {
+                if (studentTabs.getTitleAt(i).equals(tokens[1]));
+                {
+                    text = (JTextArea)studentTabs.getComponentAt(i);
+                }
+            }
 
+            if (text == null)
+            {
+                System.out.println("Couldn't find the tab with matching IP!!!");
+            }
+            else
+            {
+                text.append(tokens[2] + "\n");
+            }
         }
     }
 }

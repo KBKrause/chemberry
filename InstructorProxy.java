@@ -22,8 +22,9 @@ public class InstructorProxy extends ServerProxy
     @Override
     public void handleRequest(String request, String clientIP)
     {
+        System.out.println("Received this as a request: " + request);
         String[] tokens = request.split(":");
-        //System.out.println("Received " + tokens[0] + ":" + tokens[1]);
+        System.out.println("Received " + tokens[0] + ":" + tokens[1]);
 
         if ((tokens[0].equals("h")) && (tokens[1].equals("ello")))
         {
@@ -48,7 +49,7 @@ public class InstructorProxy extends ServerProxy
             // TODO
             // I think the instructor is not correctly decoding the updates.
             String updateRequest = Inet.decodeUpdate(tokens[1]);
-            updateGUI("u:" + updateRequest);
+            updateGUI("u:" + clientIP + ":" + updateRequest);
         
             System.out.println(clientIP + " says: " + updateRequest);
         }
