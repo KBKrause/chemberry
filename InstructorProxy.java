@@ -24,6 +24,7 @@ public class InstructorProxy extends ServerProxy
     {
         System.out.println("Received this as a request: " + request);
         String[] tokens = request.split(":");
+        //System.out.println("INSProxy tokenized string array: " + tokens.toString());
         System.out.println("Received " + tokens[0] + ":" + tokens[1]);
 
         if ((tokens[0].equals("h")) && (tokens[1].equals("ello")))

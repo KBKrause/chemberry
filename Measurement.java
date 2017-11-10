@@ -1,5 +1,7 @@
 import java.lang.Number;
 
+// TODO
+// PROBLEM: Colon is separating tokens. Yikes.
 public class Measurement
 {
     private TypeOfMeasurement type;
@@ -21,5 +23,29 @@ public class Measurement
         {
             return value.floatValue();
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        String theString = "";
+     
+        switch (type)
+        {
+            case PH :
+            theString = theString.concat("pH >> ");
+            break;
+
+            case CONDUCT :
+            theString = theString.concat("Conductivity >> ");
+            break;
+
+            case TEMP :
+            theString = theString.concat("Temperature >> ");
+        }
+
+        theString = theString.concat(getValue().toString());
+
+        return theString;
     }
 }

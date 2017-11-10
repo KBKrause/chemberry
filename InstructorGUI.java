@@ -42,10 +42,11 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         // Finish "detokenizing."
         // Updates received:
         // New connection:           h:addr
-        // Update to existing conn:  u:text
+        // Update to existing conn:  u:text:update
         // Desync:                   r:addr
         String[] tokens = update.split(":");
         System.out.println("Update msg received by GUI: " + update);
+        System.out.println("Tokenized string: " + tokens.toString());
         System.out.println("Tokenized update: " + tokens[0] + " " + tokens[1]);
 
         // Add a tab if it's the first time the student connects.

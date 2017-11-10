@@ -181,9 +181,17 @@ public class GUI extends JFrame implements DocumentListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                dataTextArea.append("test\n");
                 // TODO
-                // Add the "No input device has been selected" message, or if one has, display what is connected
+                // If they try to configure a new sensor while the current one has taken a measurement, do something about it
+
+                if (currentSensor == null)
+                {
+                    appendDebugText("ERROR: No sensor has been configured");
+                }
+                else
+                {
+                    dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                }
             }
         });
         controlPanel.setLayout(new GridLayout(3, 1));
@@ -255,7 +263,7 @@ public class GUI extends JFrame implements DocumentListener
         debugTextArea.setEditable(false);
         dataTextArea.setEditable(false);
 
-        dataTextArea.append(">> No input device has been selected");
+        dataTextArea.append(">> No input device has been selected\n");
 
         dataTextArea.getDocument().addDocumentListener(this);
     }
