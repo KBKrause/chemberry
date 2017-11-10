@@ -40,6 +40,8 @@ public class GUI extends JFrame implements DocumentListener
 
     private JPopupMenu clearDataPopup;
 
+    private JDialog globalpopup;
+
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
 
@@ -158,7 +160,7 @@ public class GUI extends JFrame implements DocumentListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                clearDataPopup.setVisible(true);
+                setDialogToClear();
                 // TODO
                 // Add the "No input device has been selected" message, or if one has, display what is connected
             }
@@ -270,41 +272,6 @@ public class GUI extends JFrame implements DocumentListener
 
     private void initializeOther()
     {
-        clearDataPopup = new JPopupMenu("Clear Data?");
-
-        clearDataPopup.setLayout(new GridLayout(2,2));
-        clearDataPopup.setPopupSize(500, 500);
-        clearDataPopup.setLocation(500, 500);
-
-        JButton yes = new JButton("Yes");
-        yes.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                dataTextArea.setText("");
-                appendDebugText("Data cleared");
-                clearDataPopup.setVisible(false);
-            }
-        });
-
-        JButton no = new JButton("No");
-        no.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                clearDataPopup.setVisible(false);
-            }
-        });
-
-        // TODO
-        // Clean up this popup.
-        clearDataPopup.add(new JLabel("Clear all data?"));
-        clearDataPopup.add("");
-        clearDataPopup.add(yes);
-        clearDataPopup.add(no);
-
         // TODO
         // Add inet address to settings dialog
         // Add server port to settings dialog
@@ -453,4 +420,47 @@ public class GUI extends JFrame implements DocumentListener
         String updateWithHeader = "u:" + update;
         proxy.receiveUpdate(updateWithHeader);
     }
+
+    private void setDialogToClear()
+    {
+        JDialog dialog = new JDialog();
+        
+        dialog.setLayout(new GridLayout(2,2));
+        dialog.setSize(500, 500);
+        dialog.setLocation(500, 500);
+        
+        JButton yes = new JButton("Yes");
+        yes.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dataTextArea.setText("");
+                appendDebugText("Data cleared");
+                dialog.setVisible(false);
+            }
+        });
+        
+        JButton no = new JButton("No");
+        no.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dialog.setVisible(false);
+            }
+        });
+        
+        // TODO
+        // Clean up this popup.
+        dialog.add(new JLabel("Clear all data?"));
+        dialog.add(new JLabel(""));
+        dialog.add(yes);
+        dialog.add(no);
+
+        globalpopup = dialog;
+        globalpopup.setVisible(true);
+    }
+
+    // Perlin noise
 }
