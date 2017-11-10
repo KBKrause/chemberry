@@ -52,27 +52,34 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         // Add a tab if it's the first time the student connects.
         if (tokens[0].equals("h"))
         {
-            studentTabs.addTab(tokens[1], new JTextArea());
+            JPanel panel = new JPanel();
+            panel.add(new JTextArea());
+    
+            JScrollPane scrl = new JScrollPane(panel);
+    
+            studentTabs.addTab(tokens[1], scrl);
         }
         else if (tokens[0].equals("u"))
         {
-            JTextArea text = null;
-            // tokens[1] contains the IP
-            // Only way I see how to do this is loop through the titles and see which one matches.
+            JScrollPane textHolder = null;
+            // TODO
+            // Perhaps make a hashtable of IP to JTextAreas and use that instead of all this garbage.
             for (int i = 0; i < studentTabs.getTabCount(); i++)
             {
                 if (studentTabs.getTitleAt(i).equals(tokens[1]));
                 {
-                    text = (JTextArea)studentTabs.getComponentAt(i);
+                    textHolder = (JScrollPane)studentTabs.getComponentAt(i);
                 }
             }
 
-            if (text == null)
+            if (textHolder == null)
             {
                 System.out.println("Couldn't find the tab with matching IP!!!");
             }
             else
             {
+                JPanel textArea = (JPanel)textHolder.getViewport().getComponent(0);
+                JTextArea text = (JTextArea)textArea.getComponent(0);
                 text.append(tokens[2] + "\n");
             }
         }
