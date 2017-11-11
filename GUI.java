@@ -23,7 +23,7 @@ import javax.swing.UIManager.*;
 // TODO
 // Have only 1 popup menu, but change its contents depending on the matching popup.
 // Add sounds for measurement button
-public class GUI extends JFrame implements DocumentListener
+public class GUI extends JFrame implements DocumentListener, ChangeListener
 {
     // Config screen and settings screen
     private JDialog GUIconfig;
@@ -39,6 +39,11 @@ public class GUI extends JFrame implements DocumentListener
     private InstructorSubject proxy;
 
     private JPopupMenu clearDataPopup;
+
+    private JSlider intervalSlider;
+    private JSlider durationSlider;
+    private JLabel intervalLabel;
+    private JLabel durationLabel;
 
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
@@ -183,7 +188,6 @@ public class GUI extends JFrame implements DocumentListener
             {
                 // TODO
                 // If they try to configure a new sensor while the current one has taken a measurement, do something about it
-
                 if (currentSensor == null)
                 {
                     appendDebugText("ERROR: No sensor has been configured");
@@ -332,7 +336,7 @@ public class GUI extends JFrame implements DocumentListener
         GUIconfig.setLocation(100, 100);
 
         JPanel selectionPanel = new JPanel();
-        selectionPanel.setLayout(new GridLayout(2, 3));
+        selectionPanel.setLayout(new GridLayout(3, 3));
 
         // TODO
         // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
@@ -369,7 +373,7 @@ public class GUI extends JFrame implements DocumentListener
             public void actionPerformed(ActionEvent e)
             {
                 currentSensor = new ConductivitySensor();
-                appendDebugText("Configured sensor: Potentiometer");
+                appendDebugText("Configured sensor: Conductivity sensor");
                 JLabel label = (JLabel)controlPanel.getComponent(1);
                 label.setText("Current Sensor: Conductivity");
             }
@@ -378,6 +382,73 @@ public class GUI extends JFrame implements DocumentListener
         selectionPanel.add(btnPH);
         selectionPanel.add(btnTemp);
         selectionPanel.add(btnConduct);
+
+        JPanel intervalPanel = new JPanel();
+        intervalPanel.setLayout(new GridLayout(3, 2));
+
+        intervalPanel.add(new JLabel("Continuous Measurement Duration"));
+        intervalPanel.add(new JLabel("Continuous Measurement Interval"));
+
+        durationSlider = new JSlider();
+        intervalSlider = new JSlider();
+
+        durationSlider.setMinimum(0);
+        durationSlider.setMaximum(60);
+        durationSlider.addChangeListener(this);
+
+        intervalSlider.setMinimum(0);
+        intervalSlider.setMaximum(60);
+        intervalSlider.addChangeListener(this);
+
+        intervalPanel.add(durationSlider);
+        intervalPanel.add(intervalSlider);
+
+        durationLabel = new JLabel("Duration : " + durationSlider.getValue());
+        intervalLabel = new JLabel("Interval: " + intervalSlider.getValue());
+
+        intervalPanel.add(durationLabel);
+        intervalPanel.add(intervalLabel);
+
+        // Initially hide the interval panel unless the user wants to do an interval measurement.
+        intervalPanel.setVisible(false);
+
+        ButtonGroup buttonsList = new ButtonGroup();
+
+        // TODO
+        // Make the intervalPanel visibility change gradual/more pretty.
+        JRadioButton instantButton = new JRadioButton("Instantaneous Measurements");
+        instantButton.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                intervalPanel.setVisible(false);
+            }
+        });
+
+        JRadioButton intervalButton = new JRadioButton("Interval Measurements");
+        intervalButton.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                intervalPanel.setVisible(true);
+            }
+        });
+
+        instantButton.setSelected(true);
+
+        buttonsList.add(instantButton);
+        buttonsList.add(intervalButton);
+        
+        JPanel buttonsContainer = new JPanel(new GridLayout(1, 2));
+        buttonsContainer.add(intervalButton);
+        buttonsContainer.add(instantButton);
+
+        intervalPanel.add(buttonsContainer);
+
+        selectionPanel.add(buttonsContainer);
+        selectionPanel.add(intervalPanel);
 
         GUIconfig.add(selectionPanel);
     }
@@ -452,5 +523,18 @@ public class GUI extends JFrame implements DocumentListener
     {
         String updateWithHeader = "u:" + update;
         proxy.receiveUpdate(updateWithHeader);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e)
+    {
+        if (e.getSource() == intervalSlider)
+        {
+            intervalLabel.setText("Interval: " + intervalSlider.getValue());
+        }
+        else if (e.getSource() == durationSlider)
+        {
+            durationLabel.setText("Duration: " + durationSlider.getValue());   
+        }
     }
 }
