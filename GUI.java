@@ -45,6 +45,9 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private JLabel intervalLabel;
     private JLabel durationLabel;
 
+    private JLabel instrumentLabel;
+    private JLabel logtypeLabel;
+
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
 
@@ -194,7 +197,32 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                 }
                 else
                 {
-                    dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                    // TODO
+                    // dataTextArea append function can be simplified
+                    if (currentSensor.isMeasuringInstantly())
+                    {
+                        dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                    }
+                    else
+                    {
+                        appendDebugText(currentSensor.toString() + " measuring for " + durationSlider.getValue() + "s with " + intervalSlider.getValue() + "s intervals");
+
+                        // TODO
+                        // Need to parallelize this for loop
+                        for (int i = 0; i < durationSlider.getValue(); i++)
+                        {
+                            dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+
+                            try
+                            {
+                                Thread.sleep(intervalSlider.getValue() * 1000);
+                            }
+                            catch(InterruptedException ie)
+                            {
+                                ie.printStackTrace();
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -338,6 +366,18 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         JPanel selectionPanel = new JPanel();
         selectionPanel.setLayout(new GridLayout(3, 3));
 
+        JPanel confirmPanel = new JPanel();
+        confirmPanel.setLayout(new GridLayout(3, 1));
+
+        JLabel instrumentLabel = new JLabel("Chosen Instrument: Not selected");
+        logtypeLabel = new JLabel("Measurement type: Instantaneous");
+
+        JButton confirmButton = new JButton("Confirm");
+
+        confirmPanel.add(instrumentLabel);
+        confirmPanel.add(logtypeLabel);
+        confirmPanel.add(confirmButton);
+
         // TODO
         // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
         JButton btnPH = new JButton("pH Probe");
@@ -346,10 +386,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                currentSensor = new pHSensor();
-                appendDebugText("Configured sensor: pH probe");
-                JLabel label = (JLabel)controlPanel.getComponent(1);
-                label.setText("Current Sensor: pH probe");
+                instrumentLabel.setText("Chosen Instrument: pH probe");
             }
         });
 
@@ -359,10 +396,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                currentSensor = new TemperatureSensor();
-                appendDebugText("Configured sensor: Temperature sensor");
-                JLabel label = (JLabel)controlPanel.getComponent(1);
-                label.setText("Current Sensor: Temperature");
+                instrumentLabel.setText("Chosen Instrument: Temperature sensor");
             }
         });
 
@@ -372,10 +406,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                currentSensor = new ConductivitySensor();
-                appendDebugText("Configured sensor: Conductivity sensor");
-                JLabel label = (JLabel)controlPanel.getComponent(1);
-                label.setText("Current Sensor: Conductivity");
+                instrumentLabel.setText("Chosen Instrument: Conductivity probe");
             }
         });
 
@@ -422,6 +453,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                logtypeLabel.setText("Measurement type: Instantaneous");
                 intervalPanel.setVisible(false);
             }
         });
@@ -432,7 +464,41 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                logtypeLabel.setText("Measurement type: Continous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
                 intervalPanel.setVisible(true);
+            }
+        });
+
+        confirmButton.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String typeOfInstrument = instrumentLabel.getText().substring(19);
+
+                if (typeOfInstrument.equals("pH probe"))
+                {
+                    currentSensor = new pHSensor();
+                }
+                else if (typeOfInstrument.equals("Temperature sensor"))
+                {
+                    currentSensor = new TemperatureSensor();
+                }
+                else
+                {
+                    currentSensor = new ConductivitySensor();
+                }
+
+                if (intervalButton.isSelected())
+                {
+                    currentSensor.setMeasuringToInstant(false);
+                }
+
+                appendDebugText("Configured sensor: " + currentSensor.toString());
+                JLabel label = (JLabel)controlPanel.getComponent(1);
+                label.setText("Current Sensor: " + currentSensor.toString());
+
+                GUIconfig.setVisible(false);
             }
         });
 
@@ -449,6 +515,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         selectionPanel.add(buttonsContainer);
         selectionPanel.add(intervalPanel);
+
+        selectionPanel.add(confirmPanel);
 
         GUIconfig.add(selectionPanel);
     }
@@ -528,13 +596,16 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     @Override
     public void stateChanged(ChangeEvent e)
     {
+        // TODO logtypeLabel change can be condensed into one "function"
         if (e.getSource() == intervalSlider)
         {
             intervalLabel.setText("Interval: " + intervalSlider.getValue());
+            logtypeLabel.setText("Measurement type: Continous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
         }
         else if (e.getSource() == durationSlider)
         {
             durationLabel.setText("Duration: " + durationSlider.getValue());   
+            logtypeLabel.setText("Measurement type: Continous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
         }
     }
 }

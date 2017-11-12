@@ -5,7 +5,6 @@ public class Test
     public static void main(String[] args)
     {
         System.out.println("Starting tests");
-        testIntervalMeasurements();
     }
 
     public static void testInstantMeasurements()
@@ -30,13 +29,6 @@ public class Test
         {
             printMeasurement(sensor);
         }
-    }
-
-    public static void testIntervalMeasurements()
-    {
-        AbstractSensor sensor = new ConductivitySensor();
-
-        ArrayList<Measurement> meas = sensor.intervalMeasure(2, 60);
     }
 
     private static void printMeasurement(AbstractSensor sensor)

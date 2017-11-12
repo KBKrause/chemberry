@@ -5,7 +5,7 @@ public final class pHSensor extends AbstractSensor
 {
     public pHSensor()
     {
-        
+        super();
     }
 
     public Measurement instantMeasure()
@@ -19,6 +19,6 @@ public final class pHSensor extends AbstractSensor
     @Override
     public String toString()
     {
-        return "pH";
+        return "pH probe";
     }
 }
