@@ -207,21 +207,29 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                     {
                         appendDebugText(currentSensor.toString() + " measuring for " + durationSlider.getValue() + "s with " + intervalSlider.getValue() + "s intervals");
 
-                        // TODO
-                        // Need to parallelize this for loop
-                        for (int i = 0; i < durationSlider.getValue(); i++)
+                        Thread multiMeasure = new Thread()
                         {
-                            dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                            @Override
+                            public void run()
+                            {
+                                for (int i = 0; i < durationSlider.getValue(); i++)
+                                {
+                                    dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
 
-                            try
-                            {
-                                Thread.sleep(intervalSlider.getValue() * 1000);
+                                    try
+                                    {
+                                        Thread.sleep(intervalSlider.getValue() * 1000);
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                appendDebugText("Continuous measurement finished");
                             }
-                            catch(InterruptedException ie)
-                            {
-                                ie.printStackTrace();
-                            }
-                        }
+                        };
+                        multiMeasure.start();
                     }
                 }
             }
