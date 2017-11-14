@@ -6,7 +6,7 @@ public final class ConductivitySensor extends AbstractSensor
 {
     public ConductivitySensor()
     {
-        
+        super();
     }
 
     @Override
@@ -21,6 +21,6 @@ public final class ConductivitySensor extends AbstractSensor
     @Override
     public String toString()
     {
-        return "Conductivity";
+        return "Conductivity sensor";
     }
 }

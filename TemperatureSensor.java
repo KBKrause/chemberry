@@ -5,7 +5,7 @@ public final class TemperatureSensor extends AbstractSensor
 {
     public TemperatureSensor()
     {
-        
+        super();
     }
 
     @Override
@@ -20,6 +20,6 @@ public final class TemperatureSensor extends AbstractSensor
     @Override
     public String toString()
     {
-        return "Temperature";
+        return "Temperature sensor";
     }
 }

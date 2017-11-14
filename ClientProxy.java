@@ -42,10 +42,6 @@ public class ClientProxy
             System.out.println("ERROR: Failed to connect to: " + serverIP + ":" + serverPort);
             e.printStackTrace();
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     public String getServerIP()
