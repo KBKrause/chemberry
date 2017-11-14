@@ -12,6 +12,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
+import java.awt.Window;
 
 // TODO
 // Account for which thread of execution (instructor or student) begins first.
@@ -71,7 +72,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         // The rest of the constructor designs the main screen of the GUI.
         this.setSize(1000, 1000);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocation(100, 100);
 
         JButton saveData = new JButton();
@@ -297,7 +297,16 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         this.add(bottomRow);
 
         setVisible(true);
-        appendDebugText("Initialization complete");
+ 
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() 
+        {
+            @Override
+            public void windowClosing(WindowEvent event) 
+            {
+                closeFrame();
+            }
+        });
     }
 
     private void initializeTextAreas()
@@ -305,6 +314,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         dataTextArea = new JTextArea();
         DefaultCaret caret = (DefaultCaret)dataTextArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        
         debugTextArea = new JTextArea();
 
         debugTextArea.setEditable(false);
@@ -585,7 +595,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         try
         {
             String updateText = dataTextArea.getText(e.getOffset(), e.getLength());
-            update(updateText);
+            update("u:" + updateText);
         }
         catch(BadLocationException ble)
         {
@@ -610,7 +620,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         try
         {
             String updateText = dataTextArea.getText(e.getOffset(), e.getLength());
-            update(updateText);
+            update("u:" + updateText);
         }
         catch(BadLocationException ble)
         {
@@ -620,8 +630,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void update(String update)
     {
-        String updateWithHeader = "u:" + update;
-        proxy.receiveUpdate(updateWithHeader);
+        //String updateWithHeader = "u:" + update;
+        proxy.receiveUpdate(update);
     }
 
     @Override
@@ -638,5 +648,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             durationLabel.setText("Duration: " + durationSlider.getValue());   
             logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
         }
+    }
+
+    private void closeFrame()
+    {
+        update("d:esync");
+        // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
+        this.dispose();
     }
 }

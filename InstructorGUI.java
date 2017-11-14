@@ -2,7 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.UIManager.*;
 import java.awt.Dimension;
+import javax.swing.text.DefaultCaret;
 
+// TODO
+// Gonna have to create another class to encapsulate all the garbage down below.
+// Class will contain its text, measurements, etc., so I don't have to get each individual JComponent and modify it.
 public class InstructorGUI extends JFrame implements InstructorSubject
 {
     private JTabbedPane studentTabs;
@@ -49,11 +53,21 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         System.out.println("Tokenized string: " + tokens.toString());
         System.out.println("Tokenized update: " + tokens[0] + " " + tokens[1]);
 
+        // TODO
+        // Fix the appearance of this text area so it expands upon the whole panel.
         // Add a tab if it's the first time the student connects.
         if (tokens[0].equals("h"))
         {
             JPanel panel = new JPanel();
-            panel.add(new JTextArea());
+            panel.setLayout(new GridLayout(1, 2));
+
+            JTextArea text = new JTextArea();
+
+            // This JTextArea will be the view of a JScrollPane. Automatically scroll down as more data is received.
+            DefaultCaret caret = (DefaultCaret)text.getCaret();
+            caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+            panel.add(text);
     
             JScrollPane scrl = new JScrollPane(panel);
     
@@ -81,7 +95,14 @@ public class InstructorGUI extends JFrame implements InstructorSubject
                 JPanel textArea = (JPanel)textHolder.getViewport().getComponent(0);
                 JTextArea text = (JTextArea)textArea.getComponent(0);
                 text.append(tokens[2] + "\n");
+
+                // After the text has been appended to, update its calculations.
             }
         }
+    }
+
+    private void updateCalculations()
+    {
+
     }
 }
