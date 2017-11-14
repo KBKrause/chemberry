@@ -11,10 +11,7 @@ import java.io.IOException;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
-
-// TODO
-// Use the observer pattern to update the instructor when more data has been added
-// Just test this with console before adding instructor GUI
+import javax.swing.text.DefaultCaret;
 
 // TODO
 // Account for which thread of execution (instructor or student) begins first.
@@ -47,6 +44,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private JLabel instrumentLabel;
     private JLabel logtypeLabel;
+
+    private Thread multiMeasure;
 
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
@@ -189,8 +188,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                // TODO
-                // If they try to configure a new sensor while the current one has taken a measurement, do something about it
                 if (currentSensor == null)
                 {
                     appendDebugText("ERROR: No sensor has been configured");
@@ -205,31 +202,43 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                     }
                     else
                     {
-                        appendDebugText(currentSensor.toString() + " measuring for " + durationSlider.getValue() + "s with " + intervalSlider.getValue() + "s intervals");
-
-                        Thread multiMeasure = new Thread()
+                        // Do not run a multimeasure if one is currently running. This falls under two cases.
+                        // 1) No multimeasure has ever been run, so multimeasure is null.
+                        // 2) Multimeasure is not null and has been instantiated. It must be a dead thread to start a new one.
+                        if ((multiMeasure == null) || (multiMeasure.isAlive() == false))
                         {
-                            @Override
-                            public void run()
+                            appendDebugText(currentSensor.toString() + " measuring for " + durationSlider.getValue() + "s with " + intervalSlider.getValue() + "s intervals");
+                            
+                            multiMeasure = new Thread()
                             {
-                                for (int i = 0; i < durationSlider.getValue(); i++)
+                                @Override
+                                public void run()
                                 {
-                                    dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
-
-                                    try
+                                    for (int i = 0; i < durationSlider.getValue(); i++)
                                     {
-                                        Thread.sleep(intervalSlider.getValue() * 1000);
+                                        dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                            
+                                        try
+                                        {
+                                            Thread.sleep(intervalSlider.getValue() * 1000);
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            e.printStackTrace();
+                                        }
                                     }
-                                    catch(Exception e)
-                                    {
-                                        e.printStackTrace();
-                                    }
+                            
+                                    appendDebugText("Continuous measurement finished");
+                            
                                 }
+                            };
 
-                                appendDebugText("Continuous measurement finished");
-                            }
-                        };
-                        multiMeasure.start();
+                            multiMeasure.start();
+                        }
+                        else
+                        {
+                            appendDebugText("ERROR: A continuous measurement is already being ran!");
+                        }
                     }
                 }
             }
@@ -294,12 +303,10 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private void initializeTextAreas()
     {
         dataTextArea = new JTextArea();
+        DefaultCaret caret = (DefaultCaret)dataTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         debugTextArea = new JTextArea();
 
-        // TODO
-        // Reset this to false.
-        // Find a way to detect the latest change.
-        //dataTextArea.setEditable(false);
         debugTextArea.setEditable(false);
         dataTextArea.setEditable(false);
 
@@ -472,11 +479,13 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                logtypeLabel.setText("Measurement type: Continous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+                logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
                 intervalPanel.setVisible(true);
             }
         });
 
+        // TODO
+        // Add debug error message somewhere
         confirmButton.addActionListener(new ActionListener()
         {   
             @Override
@@ -484,29 +493,43 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             {
                 String typeOfInstrument = instrumentLabel.getText().substring(19);
 
-                if (typeOfInstrument.equals("pH probe"))
+                // Not selected
+                // Check status of thread here. Make a "finishedSensorReading() method or something."
+                // Thread must be null or dead to configure a new sensor.
+                if ((!(typeOfInstrument.equals("Not selected"))) && (((multiMeasure == null) || (multiMeasure.isAlive() == false))))
                 {
-                    currentSensor = new pHSensor();
-                }
-                else if (typeOfInstrument.equals("Temperature sensor"))
-                {
-                    currentSensor = new TemperatureSensor();
+                    if (typeOfInstrument.equals("pH probe"))
+                    {
+                        currentSensor = new pHSensor();
+                    }
+                    else if (typeOfInstrument.equals("Temperature sensor"))
+                    {
+                        currentSensor = new TemperatureSensor();
+                    }
+                    else
+                    {
+                        currentSensor = new ConductivitySensor();
+                    }
+    
+                    if (intervalButton.isSelected())
+                    {
+                        currentSensor.setMeasuringToInstant(false);
+                    }
+    
+                    appendDebugText("Configured sensor: " + currentSensor.toString());
+                    JLabel label = (JLabel)controlPanel.getComponent(1);
+                    label.setText("Current Sensor: " + currentSensor.toString());
+    
+                    GUIconfig.setVisible(false);
+
+                    // Reset the GUI config selection menu.
+                    instrumentLabel.setText("Chosen Instrument: Not selected");
+                    instantButton.setSelected(true);
                 }
                 else
                 {
-                    currentSensor = new ConductivitySensor();
+                    appendDebugText("ERROR: Attempted to configure a null instrument");
                 }
-
-                if (intervalButton.isSelected())
-                {
-                    currentSensor.setMeasuringToInstant(false);
-                }
-
-                appendDebugText("Configured sensor: " + currentSensor.toString());
-                JLabel label = (JLabel)controlPanel.getComponent(1);
-                label.setText("Current Sensor: " + currentSensor.toString());
-
-                GUIconfig.setVisible(false);
             }
         });
 
@@ -608,12 +631,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         if (e.getSource() == intervalSlider)
         {
             intervalLabel.setText("Interval: " + intervalSlider.getValue());
-            logtypeLabel.setText("Measurement type: Continous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
         }
         else if (e.getSource() == durationSlider)
         {
             durationLabel.setText("Duration: " + durationSlider.getValue());   
-            logtypeLabel.setText("Measurement type: Continous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
         }
     }
 }
