@@ -56,7 +56,7 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         }
         else if (tokens[0].equals("u"))
         {
-            StudentPanel textHolder = null;
+            StudentPanelInterface textHolder = null;
 
             for (int i = 0; i < studentTabs.getTabCount(); i++)
             {
@@ -77,10 +77,7 @@ public class InstructorGUI extends JFrame implements InstructorSubject
             else
             {
                 textHolder.append(tokens[2] + "\n");
-                //System.out.println("Text contained in object: " + textHolder.getStringOfText());
-
-                // After the text has been appended to, update its calculations.
-                
+                textHolder.updateCalculations();
             }
         }
     }
