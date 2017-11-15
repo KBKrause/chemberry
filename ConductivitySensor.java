@@ -13,7 +13,7 @@ public final class ConductivitySensor extends AbstractSensor
     public Measurement instantMeasure()
     {
         Random r = new Random();
-        Measurement measure = new Measurement(TypeOfMeasurement.CONDUCT, r.nextInt());
+        Measurement measure = new Measurement(TypeOfMeasurement.CONDUCT, r.nextInt() % 10000);
 
         return measure;
     }
