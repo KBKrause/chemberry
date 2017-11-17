@@ -1,10 +1,15 @@
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 
 public class Test
 {
     public static void main(String[] args)
     {
         System.out.println("Starting tests");
+
+        System.out.println("Local Month: " + LocalDateTime.now().getMonthValue());
+        System.out.println("Local Day: " + LocalDateTime.now().getDayOfMonth());
+        System.out.println("Time: " + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute());
     }
 
     public static void testInstantMeasurements()

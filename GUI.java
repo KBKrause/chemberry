@@ -13,6 +13,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Window;
+import java.util.Scanner;
 
 // TODO
 // Account for which thread of execution (instructor or student) begins first.
@@ -53,7 +54,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     public GUI()
     {
-        super("Chemberry");
+        super("Chemberry - Main");
         
         try 
         { 
@@ -296,8 +297,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         this.add(mainRow);
         this.add(bottomRow);
 
-        setVisible(true);
- 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() 
         {
@@ -307,6 +306,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                 closeFrame();
             }
         });
+
+        setVisible(true);
     }
 
     private void initializeTextAreas()
@@ -573,15 +574,53 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         GUIsettings.setLocation(100, 100);
 
         JTextField IPaddr = new JTextField("Address: " + Inet.getMyAddress());
+        JTextField port = new JTextField("Port: 8314");
         IPaddr.setEditable(false);
+        port.setEditable(false);
 
         GUIsettings.add(IPaddr);
     }
 
+    // TODO
+    // I hate this function
     private void initializeProxy()
     {
-        proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
-        appendDebugText("Set instructor IP");
+        JDialog configuration = new JDialog();
+        configuration.setTitle("Chemberry - Connecting to remote");
+        configuration.setSize(500, 500);
+        configuration.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        configuration.setLocation(100, 100);
+        configuration.setLayout(new GridLayout(2, 1));
+
+        JLabel statusText = new JLabel("Attempting to connect to remote ...");
+        JButton crashButton = new JButton("Ok");
+        crashButton.addActionListener(new ActionListener()
+        {   
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+
+        configuration.add(statusText);
+        configuration.setVisible(true);
+
+        try
+        {
+            proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
+            proxy.receiveUpdate("h:ello");
+            appendDebugText("Set instructor IP");
+            configuration.setVisible(false);
+        }
+        catch(ConnectionFailedException e)
+        {
+            configuration.add(crashButton);
+            statusText.setText("Could not establish connection.");
+            // Use this to pause the flow of execution.
+            Scanner s = new Scanner(System.in);
+            s.next();
+        }
     }
 
     public void appendDebugText(String s)
@@ -631,7 +670,16 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private void update(String update)
     {
         //String updateWithHeader = "u:" + update;
-        proxy.receiveUpdate(update);
+        try
+        {
+            proxy.receiveUpdate(update);
+        }
+        catch(ConnectionFailedException e)
+        {
+            // TODO Handle this exception
+            e.printStackTrace();
+        }
+        
     }
 
     @Override
@@ -655,5 +703,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         update("d:esync");
         // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
         this.dispose();
+        System.exit(0);
     }
 }

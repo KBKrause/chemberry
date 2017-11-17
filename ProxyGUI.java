@@ -16,12 +16,14 @@ public class ProxyGUI implements InstructorSubject
         // TODO
         // Perhaps instantiate AFTER we know the instructor is set up.
         connToIns = new ClientProxy(insIP, insPort);
-        connToIns.sendString("h:ello");
     }
 
     @Override
-    public void receiveUpdate(String update)
+    public void receiveUpdate(String update) throws ConnectionFailedException
     {
-       connToIns.sendString(update);
+       if (connToIns.sendString(update) == false)
+       {
+           throw new ConnectionFailedException();
+       }
     }
 }

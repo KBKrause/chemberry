@@ -56,13 +56,23 @@ public class InstructorProxy extends ServerProxy
         }
         else if (tokens[0].equals("d") && (tokens[1].equals("esync")))
         {
-            System.out.println(clientIP + " has disconnected");
+            updateGUI("d:" + clientIP);
+            ipListing.remove(clientIP);
         }
     }
 
     public void updateGUI(String theUpdate)
     {
-        instructor.receiveUpdate(theUpdate);
+        try
+        {
+            instructor.receiveUpdate(theUpdate);
+        }
+        catch(ConnectionFailedException e)
+        {
+            // TODO
+            // Handle this exception
+            e.printStackTrace();
+        }
     }
 
     // TODO
