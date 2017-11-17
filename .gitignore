@@ -1,5 +1,8 @@
 # Ignore all compiled source code
 *.class
 
+# Ignore the testing output
+out
+
 # Ignore all text files (for now)
 *.txt

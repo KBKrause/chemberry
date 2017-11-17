@@ -2,14 +2,25 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.UIManager.*;
 import java.awt.Dimension;
+import javax.swing.text.DefaultCaret;
+import java.io.PrintWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 
 public class InstructorGUI extends JFrame implements InstructorSubject
 {
     private JTabbedPane studentTabs;
 
+    private JDialog instructorSettings;
+    
+    private HashMap <String, Boolean> settings;
+
     public InstructorGUI()
     {
         super("Instructor");
+
+        initializeSettings();
 
         try 
         { 
@@ -35,6 +46,17 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         this.setVisible(true);
     }
 
+    // TODO
+    // Add this to the actual instructor screen.
+    private void initializeSettings()
+    {
+        instructorSettings = new JDialog();
+        settings = new HashMap<String, Boolean>();
+
+        // Default instructor settings.
+        settings.put("autosave", false);
+    }
+
     @Override
     public void receiveUpdate(String update)
     {
@@ -46,31 +68,16 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         // Desync:                   r:addr
         String[] tokens = update.split(":");
         System.out.println("Update msg received by GUI: " + update);
-        System.out.println("Tokenized string: " + tokens.toString());
+        //System.out.println("Tokenized string: " + tokens.toString());
         System.out.println("Tokenized update: " + tokens[0] + " " + tokens[1]);
 
-        // Add a tab if it's the first time the student connects.
         if (tokens[0].equals("h"))
         {
-            JPanel panel = new JPanel();
-            panel.add(new JTextArea());
-    
-            JScrollPane scrl = new JScrollPane(panel);
-    
-            studentTabs.addTab(tokens[1], scrl);
+            studentTabs.addTab(tokens[1], new StudentPanel(tokens[1]));
         }
         else if (tokens[0].equals("u"))
         {
-            JScrollPane textHolder = null;
-            // TODO
-            // Perhaps make a hashtable of IP to JTextAreas and use that instead of all this garbage.
-            for (int i = 0; i < studentTabs.getTabCount(); i++)
-            {
-                if (studentTabs.getTitleAt(i).equals(tokens[1]));
-                {
-                    textHolder = (JScrollPane)studentTabs.getComponentAt(i);
-                }
-            }
+            StudentPanelInterface textHolder = getStudentPanelAtIndex(getIndexOfPanelWithIdentifier(tokens[1]));
 
             if (textHolder == null)
             {
@@ -78,10 +85,82 @@ public class InstructorGUI extends JFrame implements InstructorSubject
             }
             else
             {
-                JPanel textArea = (JPanel)textHolder.getViewport().getComponent(0);
-                JTextArea text = (JTextArea)textArea.getComponent(0);
-                text.append(tokens[2] + "\n");
+                textHolder.append(tokens[2] + "\n");
+                textHolder.updateCalculations();
             }
         }
+        else if (tokens[0].equals("d"))
+        {
+            if (settings.get("autosave").equals(true))
+            {
+                // TODO
+                // Since this is used elsewhere, maybe condense to a function.
+                try
+                {
+                    LocalDateTime date = LocalDateTime.now();
+                    String append = "";
+
+                    append = append.concat(String.valueOf(date.getMonthValue()));
+                    append = append.concat("-" + String.valueOf(date.getDayOfMonth()));
+                    append = append.concat("-" + String.valueOf(date.getHour()));
+                    append = append.concat("-" + String.valueOf(date.getMinute()));
+
+                    PrintWriter writer = new PrintWriter("./out/" + tokens[1] + "-" + append + ".dat");
+
+                    StudentPanelInterface panel = getStudentPanelAtIndex(getIndexOfPanelWithIdentifier(tokens[1]));
+
+                    char[] arr = panel.getStringOfText().toCharArray();
+
+                    for (char ch : arr)
+                    {
+                        if (ch != '\n')
+                        {
+                            writer.print(ch);
+                        }
+                        else
+                        {
+                            writer.println();
+                        }
+                    }
+
+                    writer.close();
+                }
+                catch(IOException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+            
+            System.out.println(tokens[1] + " has disconnected");
+            studentTabs.remove(getIndexOfPanelWithIdentifier(tokens[1]));
+        }
+    }
+
+    private StudentPanelInterface getStudentPanelAtIndex(int index)
+    {
+        StudentPanelInterface retval = null;
+
+        retval = (StudentPanel)studentTabs.getComponentAt(index);
+
+        return retval;
+    }
+
+    private int getIndexOfPanelWithIdentifier(String ident)
+    {
+        int retval = 0;
+        
+        for (int i = 0; i < studentTabs.getTabCount(); i++)
+        {
+            // TODO
+            // Eventually, tabs should have names of students.
+            // Then the if statement below should become
+            // if (((StudentPanel)studentTabs.getComponentAt(i)).getIP().equals(tokens[1]))
+            if (studentTabs.getTitleAt(i).equals(ident));
+            {
+                retval = i;
+            }
+        }
+        
+        return retval;
     }
 }

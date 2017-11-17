@@ -15,7 +15,9 @@ public class ClientProxy
         serverPort = port;
     }
 
-    public void sendString(String data)
+    // TODO
+    // In the future, the boolean return value should be hidden from users.
+    public boolean sendString(String data)
     {
         try
         {
@@ -36,11 +38,14 @@ public class ClientProxy
             //System.out.println("Received response: " + responseFromServer);
 
             clientSocket.close();
+
+            return true;
         }
         catch(IOException e)
         {
             System.out.println("ERROR: Failed to connect to: " + serverIP + ":" + serverPort);
             e.printStackTrace();
+            return false;
         }
     }
 

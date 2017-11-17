@@ -22,10 +22,10 @@ public class InstructorProxy extends ServerProxy
     @Override
     public void handleRequest(String request, String clientIP)
     {
-        System.out.println("Received this as a request: " + request);
+        //System.out.println("Received this as a request: " + request);
         String[] tokens = request.split(":");
         //System.out.println("INSProxy tokenized string array: " + tokens.toString());
-        System.out.println("Received " + tokens[0] + ":" + tokens[1]);
+        //System.out.println("Received " + tokens[0] + ":" + tokens[1]);
 
         if ((tokens[0].equals("h")) && (tokens[1].equals("ello")))
         {
@@ -52,13 +52,27 @@ public class InstructorProxy extends ServerProxy
             String updateRequest = Inet.decodeUpdate(tokens[1]);
             updateGUI("u:" + clientIP + ":" + updateRequest);
         
-            System.out.println(clientIP + " says: " + updateRequest);
+            //System.out.println(clientIP + " says: " + updateRequest);
+        }
+        else if (tokens[0].equals("d") && (tokens[1].equals("esync")))
+        {
+            updateGUI("d:" + clientIP);
+            ipListing.remove(clientIP);
         }
     }
 
     public void updateGUI(String theUpdate)
     {
-        instructor.receiveUpdate(theUpdate);
+        try
+        {
+            instructor.receiveUpdate(theUpdate);
+        }
+        catch(ConnectionFailedException e)
+        {
+            // TODO
+            // Handle this exception
+            e.printStackTrace();
+        }
     }
 
     // TODO
