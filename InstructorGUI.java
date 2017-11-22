@@ -2,6 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.UIManager.*;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.text.DefaultCaret;
 import java.io.PrintWriter;
 import java.io.IOException;
@@ -18,7 +22,7 @@ public class InstructorGUI extends JFrame implements InstructorSubject
 
     public InstructorGUI()
     {
-        super("Instructor");
+        super("Chemberry Instructor");
 
         initializeSettings();
 
@@ -35,26 +39,69 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         this.setSize(1000, 1000);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocation(100, 100);
-        this.setLayout(new GridLayout(3,3));
+        this.setLayout(new GridLayout(1,2));
 
         studentTabs = new JTabbedPane();
 
         this.add(studentTabs);
+
+        JButton settingsBtn = new JButton("Settings");
+        settingsBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                instructorSettings.setVisible(true);
+            }
+        });
+
+        this.add(settingsBtn);
 
         //this.validate();
 
         this.setVisible(true);
     }
 
-    // TODO
-    // Add this to the actual instructor screen.
     private void initializeSettings()
     {
         instructorSettings = new JDialog();
         settings = new HashMap<String, Boolean>();
+        
+        instructorSettings.setLayout(new GridLayout(1, 1));
 
-        // Default instructor settings.
+        JPanel panelOfCheckBoxes = new JPanel();
+        panelOfCheckBoxes.setLayout(new GridLayout(2, 1));
+
+        // Checkboxes
+        JCheckBox chk_autosave = new JCheckBox("Autosave data on desync", false);
         settings.put("autosave", false);
+
+        JButton confirmChanges = new JButton("Confirm");
+        // Get all of the selected boxes and make the respective changes in the hashmap.
+        // This is not a scalable approach.
+        confirmChanges.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                HashMap < String, Boolean > changes = new HashMap < String, Boolean >();
+
+                changes.put("autosave", chk_autosave.isSelected());
+
+                // TODO
+                // Safe reference copy?
+                settings = changes;
+            }
+        });
+
+        panelOfCheckBoxes.add(chk_autosave);
+        panelOfCheckBoxes.add(confirmChanges);
+
+        instructorSettings.add(panelOfCheckBoxes);
+
+        instructorSettings.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        instructorSettings.setSize(500, 500);
+        instructorSettings.setVisible(false);
     }
 
     @Override
