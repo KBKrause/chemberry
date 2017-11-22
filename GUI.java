@@ -49,13 +49,16 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private Thread multiMeasure;
 
+    private boolean networkingAllowed;
+    private String username;
+
     // TODO
     // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
 
     public GUI()
     {
         super("Chemberry - Main");
-        
+    
         try 
         { 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -64,11 +67,18 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         {
             e.printStackTrace();
         }
-        
-        initializeTextAreas();
+
+        // TODO
+        // Fix this later
+        networkingAllowed = false;
+        //initialize();
         initializeConfig();
+        initializeTextAreas();
         initializeSettings();
-        initializeProxy();
+        if (networkingAllowed)
+        {
+            initializeProxy();
+        }
         initializeOther();
 
         // The rest of the constructor designs the main screen of the GUI.
@@ -310,6 +320,53 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         setVisible(true);
     }
 
+    private void initialize()
+    {
+        JDialog initDialog = new JDialog();
+        initDialog.setTitle("Chemberry Initialization");
+        JTextField name = new JTextField("Username:");
+
+        JPanel btnsPanel = new JPanel();
+        btnsPanel.setLayout(new GridLayout(2, 1));
+
+        // Make a local actionlistener/function to set networkingAllowed.
+        JButton online = new JButton("Online");
+        online.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (name.getText() != "")
+                {
+                    networkingAllowed = true;
+                    initDialog.dispose();
+                }
+            }
+        });
+
+        JButton offline = new JButton("Offline");
+        online.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (name.getText() != "")
+                {
+                    networkingAllowed = false;
+                    initDialog.dispose();
+                }
+            }
+        });
+        btnsPanel.add(online);
+        btnsPanel.add(offline);
+
+        initDialog.setSize(500, 500);
+        initDialog.setLayout(new GridLayout(2, 1));
+        initDialog.add(btnsPanel);
+        initDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        initDialog.setVisible(true);
+    }
+
     private void initializeTextAreas()
     {
         dataTextArea = new JTextArea();
@@ -323,7 +380,10 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         dataTextArea.append(">> No input device has been selected\n");
 
-        dataTextArea.getDocument().addDocumentListener(this);
+        if (networkingAllowed)
+        {
+            dataTextArea.getDocument().addDocumentListener(this);
+        }
     }
 
     private void initializeOther()
@@ -367,19 +427,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         // Add inet address to settings dialog
         // Add server port to settings dialog
         // Add my port to settings dialog
-
-        // Main Frame init
-        String addr = Inet.getMyAddress();
-
-        if (addr != "null")
-        {
-            appendDebugText("IPv4 address retrieved: " + addr);
-        }
-        else
-        {
-            System.out.println("ERROR: Unknown Host Exception");
-            appendDebugText("ERROR: Unable to resolve IPv4 address");
-        }
     }
 
     private void initializeConfig()
@@ -606,6 +653,20 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         configuration.add(statusText);
         configuration.setVisible(true);
 
+        String addr = Inet.getMyAddress();
+        
+        // TODO
+        // Error checking here. Do not allow flow to continue if IPv4 address cannot be resolved.
+        if (addr != "null")
+        {
+            appendDebugText("IPv4 address retrieved: " + addr);
+        }
+        else
+        {
+            System.out.println("ERROR: Unknown Host Exception");
+            appendDebugText("ERROR: Unable to resolve IPv4 address");
+        }
+
         try
         {
             proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
@@ -700,7 +761,10 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void closeFrame()
     {
-        update("d:esync");
+        if (networkingAllowed)
+        {
+            update("d:esync");
+        }
         // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
         this.dispose();
         System.exit(0);
