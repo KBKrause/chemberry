@@ -490,7 +490,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+                logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
                 intervalPanel.setVisible(true);
             }
         });
@@ -522,20 +522,26 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                         currentSensor = new ConductivitySensor();
                     }
     
-                    if (intervalButton.isSelected())
-                    {
-                        currentSensor.setMeasuringToInstant(false);
-                    }
-    
                     appendDebugText("Configured sensor: " + currentSensor.toString());
                     JLabel label = (JLabel)controlPanel.getComponent(1);
                     label.setText("Current Sensor: " + currentSensor.toString());
+
+                    if (intervalButton.isSelected())
+                    {
+                        currentSensor.setMeasuringToInstant(false);
+                        label.setText(label.getText() + " measuring for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
+                    }
     
                     GUIconfig.setVisible(false);
 
-                    // Reset the GUI config selection menu.
+                    // Reset the instrument selection menu.
                     instrumentLabel.setText("Chosen Instrument: Not selected");
                     instantButton.setSelected(true);
+                    intervalPanel.setVisible(false);
+                }
+                else if ((multiMeasure != null) && (multiMeasure.isAlive()))
+                {
+                    appendDebugText("ERROR: An interval measurement is being taken");
                 }
                 else
                 {
