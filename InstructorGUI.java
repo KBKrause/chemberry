@@ -91,6 +91,7 @@ public class InstructorGUI extends JFrame implements InstructorSubject
                 // TODO
                 // Safe reference copy?
                 settings = changes;
+                instructorSettings.setVisible(false);
             }
         });
 
@@ -140,6 +141,7 @@ public class InstructorGUI extends JFrame implements InstructorSubject
         {
             if (settings.get("autosave").equals(true))
             {
+                System.out.println("Autosaving a disconnected client");
                 // TODO
                 // Since this is used elsewhere, maybe condense to a function.
                 try
