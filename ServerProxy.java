@@ -30,7 +30,7 @@ public abstract class ServerProxy implements Runnable
 
             while (true)
             {
-                // accept() blocks until a connection is made between this and ClientProxy.
+                // accept() blocks until a connection is made between this and a client.
                 Socket serverSocket = welcomeSocket.accept();
 
                 DataOutputStream outToClient = new DataOutputStream(serverSocket.getOutputStream());
@@ -39,7 +39,7 @@ public abstract class ServerProxy implements Runnable
                 String requestFromClient = inFromClient.readLine();
 
                 // TODO
-                // Is this the true address?
+                // Is this the true address? serverSocket.getInetAdress().getHostAddress()
                 handleRequest(requestFromClient, serverSocket.getInetAddress().getHostAddress());
 
                 // Tell the client we have received their message. The ClientProxy is expecting this acknowledgment.

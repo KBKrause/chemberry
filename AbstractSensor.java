@@ -10,6 +10,7 @@ public abstract class AbstractSensor
 
     protected AbstractSensor()
     {
+        // Instant measurements are the default.
         measuringInstantly = true;
     }
 
@@ -22,10 +23,7 @@ public abstract class AbstractSensor
     {
         measuringInstantly = flag;
     }
-    // TODO
-    // The measure() method will call either instantMeasure() or intervalMeasure() depending on the state of the sensor.
-    // This way, useres of a sensor will just call measure() and not need to worry about which measurement function to call.
-    // public void measure()
+
     // Measure the reading as soon as the method is called
     public abstract Measurement instantMeasure();
 

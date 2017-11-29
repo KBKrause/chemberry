@@ -1,7 +1,5 @@
 import java.lang.Number;
 
-// TODO
-// PROBLEM: Colon is separating tokens. Yikes.
 public class Measurement
 {
     private TypeOfMeasurement type;

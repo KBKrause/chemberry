@@ -1,5 +1,5 @@
 // This interface will be used by the InstructorGUI.
-// The instructor GUI doesn't need to know that the StudentPanel is actually a JPanel.
+// The instructor GUI doesn't need to know that the StudentPanel is also a JPanel.
 public interface StudentPanelInterface
 {
     public void append(String newLine);

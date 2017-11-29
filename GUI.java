@@ -15,45 +15,40 @@ import javax.swing.text.DefaultCaret;
 import java.awt.Window;
 import java.util.Scanner;
 
-// TODO
-// Account for which thread of execution (instructor or student) begins first.
-// TODO
-// Account for when one side closes the connection - do not hang up on a function!
-// TODO
-// Have only 1 popup menu, but change its contents depending on the matching popup.
-// Add sounds for measurement button
 public class GUI extends JFrame implements DocumentListener, ChangeListener
 {
-    // Config screen and settings screen
+    // Config screen and settings "screens."
     private JDialog GUIconfig;
     private JDialog GUIsettings;
+
+    // Main screen components.
     private JTextArea dataTextArea;
     private JTextArea debugTextArea;
-
     private JPanel controlPanel;
     private JButton measurementBtn;
-
-    private AbstractSensor currentSensor;
 
     private InstructorSubject proxy;
 
     private JPopupMenu clearDataPopup;
 
+    // Config screen components.
     private JSlider intervalSlider;
     private JSlider durationSlider;
     private JLabel intervalLabel;
     private JLabel durationLabel;
-
     private JLabel instrumentLabel;
     private JLabel logtypeLabel;
 
+    // Miscellaneous private members.
+    // The current sensor, which could be any of a variety.
+    private AbstractSensor currentSensor;
+    // This thread runs when an interval measurement is being taken.
     private Thread multiMeasure;
-
+    // if statements evaluate if networking aspects of code need to be ran.
+    // TODO
+    // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
     private String username;
-
-    // TODO
-    // Add a "Load -> Confirmation" screen when user elects to open a locally saved file.
 
     public GUI()
     {
@@ -68,8 +63,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             e.printStackTrace();
         }
 
-        // TODO
-        // Fix this later
         networkingAllowed = true;
         //initialize();
         initializeConfig();
@@ -123,8 +116,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                     }
                     catch(IOException ex)
                     {
-                        // TODO
-                        // Perhaps do something else here
                         ex.printStackTrace();
                         appendDebugText("ERROR: Unable to save data");
                     }
@@ -147,8 +138,9 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                     try
                     {         
                         BufferedReader bfr = new BufferedReader(new FileReader(jfc.getSelectedFile()));
+
                         // TODO
-                        // Prompt to make sure user wants to clear text area.
+                        // Confirm opening. This will need to be changed.
                         dataTextArea.setText("");
 
                         String content;
@@ -187,8 +179,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         JPanel mainRow = new JPanel();
         mainRow.setLayout(new GridLayout(1, 3));
 
-        // TODO
-        // Make the scroll panes responsive - have them move as more and more text is added
         JScrollPane datascrl = new JScrollPane(dataTextArea);
         JScrollPane debugscrl = new JScrollPane(debugTextArea);
 
@@ -427,11 +417,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         clearDataPopup.add("");
         clearDataPopup.add(yes);
         clearDataPopup.add(no);
-
-        // TODO
-        // Add inet address to settings dialog
-        // Add server port to settings dialog
-        // Add my port to settings dialog
     }
 
     private void initializeConfig()
@@ -623,7 +608,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void initializeSettings()
     {
-        // Settings init
         // TODO
         // Set up layout manager for GUIsettings
         GUIsettings = new JDialog();
@@ -639,8 +623,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         GUIsettings.add(IPaddr);
     }
 
-    // TODO
-    // I hate this function
     private void initializeProxy()
     {
         JDialog configuration = new JDialog();
@@ -667,7 +649,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         String addr = Inet.getMyAddress();
         
         // TODO
-        // Error checking here. Do not allow flow to continue if IPv4 address cannot be resolved.
+        // Error checking here. Do not allow flow to continue if address cannot be resolved.
         if (addr != "null")
         {
             appendDebugText("IPv4 address retrieved: " + addr);
@@ -692,6 +674,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             // Use this to pause the flow of execution.
             Scanner s = new Scanner(System.in);
             s.next();
+            s.close();
         }
     }
 
@@ -718,16 +701,14 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     public void removeUpdate(DocumentEvent e)
     {
         // TODO
-        // I am not sure what would go here.
-        // If the GUI is doing a different reading, update the instructor.
-        // The instructor's screen will need to keep the old data and be prepared for a new data set.
+        // I am unsure what needs to go here.
     }
 
-    // TODO
-    // When is this function called?
     @Override
     public void changedUpdate(DocumentEvent e)
     {
+        // TODO
+        // I am unsure what needs to go here also!
         try
         {
             String updateText = dataTextArea.getText(e.getOffset(), e.getLength());

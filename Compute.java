@@ -17,6 +17,7 @@ public abstract class Compute
         return retval;
     }
 
+    // std = standard deviation (of the sample, n-1 in divisor).
     public static double std(ArrayList <Double> values)
     {
         double avg = average(values);

@@ -108,12 +108,6 @@ public class InstructorGUI extends JFrame implements InstructorSubject
     @Override
     public void receiveUpdate(String update)
     {
-        // TODO
-        // Finish "detokenizing."
-        // Updates received:
-        // New connection:           h:addr
-        // Update to existing conn:  u:text:update
-        // Desync:                   r:addr
         String[] tokens = update.split(":");
         System.out.println("Update msg received by GUI: " + update);
         //System.out.println("Tokenized string: " + tokens.toString());

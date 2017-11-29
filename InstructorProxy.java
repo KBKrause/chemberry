@@ -43,12 +43,6 @@ public class InstructorProxy extends ServerProxy
         // "Update case"
         else if (tokens[0].equals("u"))
         {
-            // TODO
-            // If it is an update, handle it - possibly using the receiveUpdate() functionality from InsSubject interface.
-            // TODO
-            // Lump together requests by client IP.
-            // TODO
-            // I think the instructor is not correctly decoding the updates.
             String updateRequest = Inet.decodeUpdate(tokens[1]);
             updateGUI("u:" + clientIP + ":" + updateRequest);
         
@@ -74,8 +68,4 @@ public class InstructorProxy extends ServerProxy
             e.printStackTrace();
         }
     }
-
-    // TODO
-    // Give this method the power to parse request tokens from the GUI.
-    // For example: --u update, --n new set, --i new instrument, --c instrument configuration, etc.
 }
