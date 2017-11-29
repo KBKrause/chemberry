@@ -70,15 +70,17 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         // TODO
         // Fix this later
-        networkingAllowed = false;
+        networkingAllowed = true;
         //initialize();
         initializeConfig();
         initializeTextAreas();
         initializeSettings();
+
         if (networkingAllowed)
         {
             initializeProxy();
         }
+
         initializeOther();
 
         // The rest of the constructor designs the main screen of the GUI.
@@ -322,6 +324,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void initialize()
     {
+        String username = "";
+
         JDialog initDialog = new JDialog();
         initDialog.setTitle("Chemberry Initialization");
         JTextField name = new JTextField("Username:");
@@ -336,7 +340,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                if (name.getText() != "")
+                if (!name.getText().equals(""))
                 {
                     networkingAllowed = true;
                     initDialog.dispose();
@@ -350,13 +354,14 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                if (name.getText() != "")
+                if (!name.getText().equals(""))
                 {
                     networkingAllowed = false;
                     initDialog.dispose();
                 }
             }
         });
+
         btnsPanel.add(online);
         btnsPanel.add(offline);
 
