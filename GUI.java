@@ -14,9 +14,12 @@ import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Window;
 import java.util.Scanner;
+import java.util.ArrayList;
 
-public class GUI extends JFrame implements DocumentListener, ChangeListener
+public class GUI extends JFrame implements DocumentListener, ChangeListener, GUISubject
 {
+    private ArrayList <InstructorObserver> observers;
+
     // Config screen and settings "screens."
     private JDialog GUIconfig;
     private JDialog GUIsettings;
@@ -26,8 +29,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private JTextArea debugTextArea;
     private JPanel controlPanel;
     private JButton measurementBtn;
-
-    private InstructorSubject proxy;
 
     private JPopupMenu clearDataPopup;
 
@@ -45,9 +46,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     // This thread runs when an interval measurement is being taken.
     private Thread multiMeasure;
     // if statements evaluate if networking aspects of code need to be ran.
-    // TODO
-    // This will be removed once the proxy is removed out of the scope of this class.
-    private boolean networkingAllowed;
     private String username;
 
     public GUI()
@@ -63,16 +61,19 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             e.printStackTrace();
         }
 
-        networkingAllowed = true;
         //initialize();
         initializeConfig();
         initializeTextAreas();
         initializeSettings();
 
+        initializeGUISubject();
+
+        /*
         if (networkingAllowed)
         {
             initializeProxy();
         }
+        */
 
         initializeOther();
 
@@ -332,7 +333,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             {
                 if (!name.getText().equals(""))
                 {
-                    networkingAllowed = true;
+                    //networkingAllowed = true;
                     initDialog.dispose();
                 }
             }
@@ -346,7 +347,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             {
                 if (!name.getText().equals(""))
                 {
-                    networkingAllowed = false;
+                    //networkingAllowed = false;
                     initDialog.dispose();
                 }
             }
@@ -375,10 +376,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         dataTextArea.append(">> No input device has been selected\n");
 
-        if (networkingAllowed)
-        {
-            dataTextArea.getDocument().addDocumentListener(this);
-        }
+
+        dataTextArea.getDocument().addDocumentListener(this);
     }
 
     private void initializeOther()
@@ -660,10 +659,11 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             appendDebugText("ERROR: Unable to resolve IPv4 address");
         }
 
+        /*
         try
         {
-            proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
-            proxy.receiveUpdate("h:ello");
+            //proxy = new GUIProxy(8314, Inet.getMyAddress(), 6023);
+            //proxy.receiveUpdate("h:ello");
             appendDebugText("Set instructor IP");
             configuration.setVisible(false);
         }
@@ -676,6 +676,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             s.next();
             s.close();
         }
+        */
     }
 
     public void appendDebugText(String s)
@@ -723,16 +724,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private void update(String update)
     {
         //String updateWithHeader = "u:" + update;
-        try
-        {
-            proxy.receiveUpdate(update);
-        }
-        catch(ConnectionFailedException e)
-        {
-            // TODO Handle this exception
-            e.printStackTrace();
-        }
-        
+        notifyObservers(update);
     }
 
     @Override
@@ -751,14 +743,40 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         }
     }
 
+    // closeFrame() does all of the post-program cleanup.
     private void closeFrame()
     {
-        if (networkingAllowed)
-        {
-            update("d:esync");
-        }
+        notifyObservers("d:esync");
         // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
         this.dispose();
         System.exit(0);
+    }
+
+    @Override
+    public void initializeGUISubject()
+    {
+        observers = new ArrayList <InstructorObserver> ();
+    }
+
+    @Override
+    public void attach(InstructorObserver io)
+    {
+        observers.add(io);
+    }
+
+    @Override
+    public void notifyObservers(String updateText)
+    {
+        for (InstructorObserver io : observers)
+        {
+            try
+            {
+                io.update(updateText);
+            }
+            catch(ConnectionFailedException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
     }
 }

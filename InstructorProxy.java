@@ -3,9 +3,9 @@ import java.util.HashSet;
 public class InstructorProxy extends ServerProxy
 {
     private HashSet <String> ipListing;
-    private InstructorSubject instructor;
+    private InstructorInterface instructor;
 
-    public InstructorProxy(int p, InstructorSubject ins)
+    public InstructorProxy(int p, InstructorInterface ins)
     {
         super(p);
 
