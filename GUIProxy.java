@@ -19,7 +19,7 @@ public class GUIProxy implements InstructorObserver
     {
         if (connToIns.sendString(theUpdate) == false)
         {
-            throw new ConnectionFailedException();
+            throw new ConnectionFailedException(connToIns.getServerIP(), connToIns.getServerPort());
         }
     }
 }

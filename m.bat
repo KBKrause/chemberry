@@ -1,2 +1,2 @@
 javac *.java
-java Main
+java Main -online

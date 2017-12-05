@@ -1,4 +1,4 @@
 public interface InstructorObserver
 {
-    public void update(String theUpdate) throws ConnectionFailedException;
+    public void update(String theUpdate) throws ChemberryException;
 }

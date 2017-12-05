@@ -51,6 +51,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     public GUI()
     {
         super("Chemberry - Main");
+        
+        //username = name;
     
         try 
         { 
@@ -67,13 +69,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         initializeSettings();
 
         initializeGUISubject();
-
-        /*
-        if (networkingAllowed)
-        {
-            initializeProxy();
-        }
-        */
 
         initializeOther();
 
@@ -311,56 +306,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         });
 
         setVisible(true);
-    }
-
-    private void initialize()
-    {
-        String username = "";
-
-        JDialog initDialog = new JDialog();
-        initDialog.setTitle("Chemberry Initialization");
-        JTextField name = new JTextField("Username:");
-
-        JPanel btnsPanel = new JPanel();
-        btnsPanel.setLayout(new GridLayout(2, 1));
-
-        // Make a local actionlistener/function to set networkingAllowed.
-        JButton online = new JButton("Online");
-        online.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if (!name.getText().equals(""))
-                {
-                    //networkingAllowed = true;
-                    initDialog.dispose();
-                }
-            }
-        });
-
-        JButton offline = new JButton("Offline");
-        online.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if (!name.getText().equals(""))
-                {
-                    //networkingAllowed = false;
-                    initDialog.dispose();
-                }
-            }
-        });
-
-        btnsPanel.add(online);
-        btnsPanel.add(offline);
-
-        initDialog.setSize(500, 500);
-        initDialog.setLayout(new GridLayout(2, 1));
-        initDialog.add(btnsPanel);
-        initDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        initDialog.setVisible(true);
     }
 
     private void initializeTextAreas()
@@ -658,25 +603,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             System.out.println("ERROR: Unknown Host Exception");
             appendDebugText("ERROR: Unable to resolve IPv4 address");
         }
-
-        /*
-        try
-        {
-            //proxy = new GUIProxy(8314, Inet.getMyAddress(), 6023);
-            //proxy.receiveUpdate("h:ello");
-            appendDebugText("Set instructor IP");
-            configuration.setVisible(false);
-        }
-        catch(ConnectionFailedException e)
-        {
-            configuration.add(crashButton);
-            statusText.setText("Could not establish connection.");
-            // Use this to pause the flow of execution.
-            Scanner s = new Scanner(System.in);
-            s.next();
-            s.close();
-        }
-        */
     }
 
     public void appendDebugText(String s)
@@ -734,12 +660,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         if (e.getSource() == intervalSlider)
         {
             intervalLabel.setText("Interval: " + intervalSlider.getValue());
-            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
         }
         else if (e.getSource() == durationSlider)
         {
             durationLabel.setText("Duration: " + durationSlider.getValue());   
-            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
         }
     }
 
@@ -774,6 +700,11 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 io.update(updateText);
             }
             catch(ConnectionFailedException ex)
+            {
+                System.out.println("Caught a Connection Failure!!!");
+                ex.printStackTrace();
+            }
+            catch(ChemberryException ex)
             {
                 ex.printStackTrace();
             }
