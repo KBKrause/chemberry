@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-public class InstructorGUI extends JFrame implements InstructorSubject
+public class InstructorGUI extends JFrame implements InstructorInterface
 {
     private JTabbedPane studentTabs;
 
