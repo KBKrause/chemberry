@@ -4,7 +4,6 @@ import java.io.*;
 public class GUIProxy implements InstructorObserver
 {
     private int myPort;
-
     private ClientProxy connToIns;
 
     public GUIProxy(int p, String insIP, int insPort)
@@ -12,6 +11,11 @@ public class GUIProxy implements InstructorObserver
         myPort = p;
 
         connToIns = new ClientProxy(insIP, insPort);
+    }
+
+    public int getPort()
+    {
+        return myPort;
     }
 
     @Override

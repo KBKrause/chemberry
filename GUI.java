@@ -691,6 +691,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     }
 
     @Override
+    public void detach(InstructorObserver io)
+    {
+        observers.remove(io);
+    }
+
+    @Override
     public void notifyObservers(String updateText)
     {
         for (InstructorObserver io : observers)

@@ -1,4 +1,4 @@
-// This ChemberryException is thrown when the client cannot reach or receive a packet from the instructor.
+// This ChemberryException is thrown when the client cannot reach, or receive a packet from, the instructor.
 public class ConnectionFailedException extends ChemberryException
 {
     private String remoteIP;
@@ -15,5 +15,10 @@ public class ConnectionFailedException extends ChemberryException
     public String getRemoteIP()
     {
         return remoteIP;
+    }
+
+    public int getRemotePort()
+    {
+        return remotePort;
     }
 }
