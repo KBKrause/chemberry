@@ -16,7 +16,7 @@ public class Main
         if (args[0].equals("-online"))
         {
             GUIProxy proxy = new GUIProxy(8314, Inet.getMyAddress(), 6023);
-            gui.attach(proxy);
+            //gui.attach(proxy);
             
             try
             {
