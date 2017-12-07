@@ -1,9 +1,9 @@
 import java.util.Scanner; 
 
 // TODO
-// Add back in the InstructorSubject implementation.
+// Add back in the InstructorInterface implementation.
 // Have it only set up a connection when receiveUpdate() is called.
-public class InstructorMain //implements InstructorSubject
+public class InstructorMain //implements InstructorInterface
 {
     public static void main(String[] args)
     {

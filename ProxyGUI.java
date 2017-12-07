@@ -1,7 +1,7 @@
 import java.net.*;
 import java.io.*;
 
-public class ProxyGUI implements InstructorSubject
+public class ProxyGUI implements InstructorInterface
 {
     private int myPort;
 
@@ -19,7 +19,7 @@ public class ProxyGUI implements InstructorSubject
     {
        if (connToIns.sendString(update) == false)
        {
-           throw new ConnectionFailedException();
+           throw new ConnectionFailedException(connToIns.getServerIP(), connToIns.getServerPort());
        }
     }
 }
