@@ -27,7 +27,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private JPanel controlPanel;
     private JButton measurementBtn;
 
-    private InstructorSubject proxy;
+    private InstructorInterface proxy;
 
     private JPopupMenu clearDataPopup;
 
@@ -742,12 +742,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         if (e.getSource() == intervalSlider)
         {
             intervalLabel.setText("Interval: " + intervalSlider.getValue());
-            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
         }
         else if (e.getSource() == durationSlider)
         {
             durationLabel.setText("Duration: " + durationSlider.getValue());   
-            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + " intervals");
+            logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
         }
     }
 
