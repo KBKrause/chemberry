@@ -2,14 +2,12 @@ import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
 
-// TODO
-// Rename to ClientConnection.
-public class ClientProxy
+public class ClientConnection
 {
     private String serverIP;
     private int serverPort;
 
-    public ClientProxy(String IP, int port)
+    public ClientConnection(String IP, int port)
     {
         serverIP = IP;
         serverPort = port;

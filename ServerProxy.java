@@ -42,7 +42,7 @@ public abstract class ServerProxy implements Runnable
                 // Is this the true address? serverSocket.getInetAdress().getHostAddress()
                 handleRequest(requestFromClient, serverSocket.getInetAddress().getHostAddress());
 
-                // Tell the client we have received their message. The ClientProxy is expecting this acknowledgment.
+                // Tell the client we have received their message. The ClientConnection is expecting this acknowledgment.
                 outToClient.writeBytes("This packet smelled nice, thanks" + '\n');
                 serverSocket.close();
             }

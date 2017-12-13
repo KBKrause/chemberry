@@ -5,13 +5,13 @@ public class ProxyGUI implements InstructorInterface
 {
     private int myPort;
 
-    private ClientProxy connToIns;
+    private ClientConnection connToIns;
 
     public ProxyGUI(int p, String insIP, int insPort)
     {
         myPort = p;
 
-        connToIns = new ClientProxy(insIP, insPort);
+        connToIns = new ClientConnection(insIP, insPort);
     }
 
     @Override

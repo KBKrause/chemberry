@@ -6,11 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowListener;
 import javax.swing.text.DefaultCaret;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.awt.event.*;
+import javax.swing.event.*;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
@@ -37,7 +40,17 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         // Initialize main frame
         this.setSize(1000, 1000);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        this.addWindowListener(new WindowAdapter() 
+        {
+            @Override
+            public void windowClosing(WindowEvent event) 
+            {
+                closeWindow();
+            }
+        });
+
         this.setLocation(100, 100);
         this.setLayout(new GridLayout(1,2));
 
@@ -205,5 +218,13 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         }
         
         return retval;
+    }
+
+    private void closeWindow()
+    {
+        ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
+        conn.sendString("d:esync");
+        this.dispose();
+        System.exit(0);
     }
 }

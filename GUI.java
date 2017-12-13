@@ -14,8 +14,9 @@ import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Window;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
-public class GUI extends JFrame implements DocumentListener, ChangeListener
+public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
     // Config screen and settings "screens."
     private JDialog GUIconfig;
@@ -50,7 +51,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private boolean networkingAllowed;
     private String username;
 
-    public GUI()
+    public GUI(boolean networking)
     {
         super("Chemberry - Main");
     
@@ -63,7 +64,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             e.printStackTrace();
         }
 
-        networkingAllowed = true;
+        networkingAllowed = networking;
         //initialize();
         initializeConfig();
         initializeTextAreas();
@@ -625,6 +626,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void initializeProxy()
     {
+        String name = JOptionPane.showInputDialog(null, "Enter your name: ");
+
         JDialog configuration = new JDialog();
         configuration.setTitle("Chemberry - Connecting to remote");
         configuration.setSize(500, 500);
@@ -663,7 +666,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         try
         {
             proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
-            proxy.receiveUpdate("h:ello");
+            proxy.receiveUpdate("h:" + name);
             appendDebugText("Set instructor IP");
             configuration.setVisible(false);
         }
@@ -732,7 +735,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             // TODO Handle this exception
             e.printStackTrace();
         }
-        
     }
 
     @Override
@@ -753,6 +755,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void closeFrame()
     {
+        appendDebugText("Shutting down ...");
         if (networkingAllowed)
         {
             update("d:esync");
@@ -760,5 +763,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
         this.dispose();
         System.exit(0);
+    }
+    
+    @Override
+    public void setNetworking(boolean b)
+    {
+        networkingAllowed = b;
+        appendDebugText("Networking change detected: " + networkingAllowed);
     }
 }
