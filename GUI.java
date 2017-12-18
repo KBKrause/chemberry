@@ -49,9 +49,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     // TODO
     // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
-    private String username;
 
-    public GUI(boolean networking)
+    public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry - Main");
     
@@ -72,7 +71,14 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
         if (networkingAllowed)
         {
-            initializeProxy();
+            try
+            {
+                initializeProxy(instructorIP);
+            }
+            catch(ChemberryException cbe)
+            {
+                throw cbe;
+            }
         }
 
         initializeOther();
@@ -388,7 +394,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
         clearDataPopup.setLayout(new GridLayout(2,2));
         clearDataPopup.setPopupSize(500, 500);
-        clearDataPopup.setLocation(500, 500);
+        clearDataPopup.setLocation(150, 150);
 
         JButton yes = new JButton("Yes");
         yes.addActionListener(new ActionListener()
@@ -425,7 +431,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         GUIconfig = new JDialog();
         GUIconfig.setSize(1000, 1000);
         GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIconfig.setLocation(100, 100);
+        GUIconfig.setLocation(150, 150);
 
         JPanel selectionPanel = new JPanel();
         selectionPanel.setLayout(new GridLayout(3, 3));
@@ -614,17 +620,42 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         GUIsettings = new JDialog();
         GUIsettings.setSize(1000, 1000);
         GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIsettings.setLocation(100, 100);
+        GUIsettings.setLocation(150, 150);
 
-        JTextField IPaddr = new JTextField("Address: " + Inet.getMyAddress());
-        JTextField port = new JTextField("Port: 8314");
+        // TODO
+        // Fix this so that it is not null.
+        JTextField IPaddr = new JTextField();
+        JTextField port = new JTextField();
+
+        if (networkingAllowed)
+        {
+            port = new JTextField("Listening Port: 9648");
+
+            try
+            {
+                IPaddr.setText("Address: " + Inet.getMyAddress());
+            }
+            catch(ChemberryException cbe)
+            {
+                inetError();
+                closeFrame();
+            }
+        }
+        else
+        {
+            IPaddr.setText("Networking disabled");
+            port.setText("Networking disabled");
+        }
+        
         IPaddr.setEditable(false);
         port.setEditable(false);
 
+        GUIsettings.setLayout(new GridLayout(2, 1));
         GUIsettings.add(IPaddr);
+        GUIsettings.add(port);
     }
 
-    private void initializeProxy()
+    private void initializeProxy(String instructorIP) throws ChemberryException
     {
         String name = JOptionPane.showInputDialog(null, "Enter your name: ");
 
@@ -632,7 +663,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         configuration.setTitle("Chemberry - Connecting to remote");
         configuration.setSize(500, 500);
         configuration.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        configuration.setLocation(100, 100);
+        configuration.setLocation(150, 150);
         configuration.setLayout(new GridLayout(2, 1));
 
         JLabel statusText = new JLabel("Attempting to connect to remote ...");
@@ -649,23 +680,22 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         configuration.add(statusText);
         configuration.setVisible(true);
 
-        String addr = Inet.getMyAddress();
+        try
+        {
+            String addr = Inet.getMyAddress();
+            appendDebugText("IPv4 address retrieved: " + addr);
+        }
+        catch(ChemberryException cbe)
+        {
+            throw cbe;
+        }
+        
         
         // TODO
         // Error checking here. Do not allow flow to continue if address cannot be resolved.
-        if (addr != "null")
-        {
-            appendDebugText("IPv4 address retrieved: " + addr);
-        }
-        else
-        {
-            System.out.println("ERROR: Unknown Host Exception");
-            appendDebugText("ERROR: Unable to resolve IPv4 address");
-        }
-
         try
         {
-            proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
+            proxy = new GUIProxy(8314, instructorIP, 6023);
             proxy.receiveUpdate("h:" + name);
             appendDebugText("Set instructor IP");
             configuration.setVisible(false);
@@ -770,5 +800,28 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     {
         networkingAllowed = b;
         appendDebugText("Networking change detected: " + networkingAllowed);
+    }
+
+    @Override
+    public void setScreenDimensions(int height, int width)
+    {
+        Double newHeight = height * 0.9;
+        Double newWidth = width * 0.9;
+
+        // The setSize function only accepts int parameters.
+        this.setSize(Math.round(newHeight.floatValue()), Math.round(newWidth.floatValue()));
+        
+        // Set the config and settings menu to overlay the main screen.
+        GUIconfig.setSize(Math.round(newHeight.floatValue()), Math.round(newWidth.floatValue()));
+        GUIsettings.setSize(Math.round(newHeight.floatValue()), Math.round(newWidth.floatValue()));
+        
+        // Other JComponents to adjust:
+        // initDialog
+        // configuration
+    }
+
+    private void inetError()
+    {
+        System.out.println("This happened because Inet.getMyAddress() threw an exception");
     }
 }

@@ -2,7 +2,7 @@ import java.net.*;
 
 public abstract class Inet 
 {
-    public static String getMyAddress() 
+    public static String getMyAddress() throws ChemberryException
     {
         String addr = "null";
 
@@ -14,6 +14,11 @@ public abstract class Inet
         {
             System.out.println("Unknown Host Exception thrown!!!");
             uhe.printStackTrace();
+        }
+
+        if (addr.equals("127.0.0.1"))
+        {
+            throw new ChemberryException("Unable to resolve LAN address - check connection");
         }
 
         return addr;

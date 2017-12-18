@@ -23,9 +23,19 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     
     private HashMap <String, Boolean> settings;
 
-    public InstructorGUI()
+    public InstructorGUI() throws ChemberryException
     {
         super("Chemberry Instructor");
+
+        String myAddr;
+        try
+        {
+            myAddr = Inet.getMyAddress();
+        }
+        catch(ChemberryException cbe)
+        {
+            throw cbe;
+        }
 
         initializeSettings();
 
@@ -78,9 +88,24 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     private void initializeSettings()
     {
         instructorSettings = new JDialog();
+        instructorSettings.setTitle("Settings");
+        
         settings = new HashMap<String, Boolean>();
         
-        instructorSettings.setLayout(new GridLayout(1, 1));
+        instructorSettings.setLayout(new GridLayout(2, 1));
+
+        JTextField ipAddr = new JTextField();
+        ipAddr.setEditable(false);
+
+        try
+        {
+            ipAddr.setText("Address: " + Inet.getMyAddress());
+        }
+        catch(ChemberryException cbe)
+        {
+            cbe.printStackTrace();
+        }
+        instructorSettings.add(ipAddr);
 
         JPanel panelOfCheckBoxes = new JPanel();
         panelOfCheckBoxes.setLayout(new GridLayout(2, 1));
@@ -222,8 +247,8 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
     private void closeWindow()
     {
-        ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
-        conn.sendString("d:esync");
+        //ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
+        //conn.sendString("d:esync");
         this.dispose();
         System.exit(0);
     }

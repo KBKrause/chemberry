@@ -1,13 +1,13 @@
 import java.net.*;
 import java.io.*;
 
-public class ProxyGUI implements InstructorInterface
+public class GUIProxy implements InstructorInterface
 {
     private int myPort;
 
     private ClientConnection connToIns;
 
-    public ProxyGUI(int p, String insIP, int insPort)
+    public GUIProxy(int p, String insIP, int insPort)
     {
         myPort = p;
 
