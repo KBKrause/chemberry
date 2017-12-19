@@ -429,6 +429,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     private void initializeConfig()
     {
         GUIconfig = new JDialog();
+        GUIconfig.setTitle("Chemberry - Sensor Configuration");
         GUIconfig.setSize(1000, 1000);
         GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         GUIconfig.setLocation(150, 150);
@@ -618,6 +619,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         // TODO
         // Set up layout manager for GUIsettings
         GUIsettings = new JDialog();
+        GUIsettings.setTitle("Chemberry - Settings");
         GUIsettings.setSize(1000, 1000);
         GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         GUIsettings.setLocation(150, 150);
@@ -696,7 +698,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         try
         {
             proxy = new GUIProxy(8314, instructorIP, 6023);
-            proxy.receiveUpdate("h:" + name);
+            proxy.receiveUpdate("h:" + Inet.getMyAddress() + ":" + name);
             appendDebugText("Set instructor IP");
             configuration.setVisible(false);
         }
@@ -708,6 +710,10 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             Scanner s = new Scanner(System.in);
             s.next();
             s.close();
+        }
+        catch(ChemberryException cbe)
+        {
+            cbe.printStackTrace();
         }
     }
 

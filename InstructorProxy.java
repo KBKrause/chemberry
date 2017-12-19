@@ -33,7 +33,7 @@ public class InstructorProxy extends ServerProxy
             {
                 System.out.println(clientIP + " has connected for the first time");
                 ipListing.add(clientIP);
-                updateGUI("h:" + tokens[1]);
+                updateGUI("h:" + clientIP + ":" + tokens[2]);
             }
             else
             {

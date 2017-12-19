@@ -62,7 +62,6 @@ public class Main
                 
             try
             {
-                System.out.println("Creating the gui");
                 gui = new GUI(enableNetworking, addr);
             }
             catch(ChemberryException cbe)

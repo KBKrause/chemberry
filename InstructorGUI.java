@@ -89,7 +89,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     {
         instructorSettings = new JDialog();
         instructorSettings.setTitle("Settings");
-        
+
         settings = new HashMap<String, Boolean>();
         
         instructorSettings.setLayout(new GridLayout(2, 1));
@@ -153,11 +153,11 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         if (tokens[0].equals("h"))
         {
-            studentTabs.addTab(tokens[1], new StudentPanel(tokens[1]));
+            studentTabs.addTab(tokens[2], new StudentPanel(tokens[1]));
         }
         else if (tokens[0].equals("u"))
         {
-            StudentPanelInterface textHolder = getStudentPanelAtIndex(getIndexOfPanelWithIdentifier(tokens[1]));
+            StudentPanelInterface textHolder = getStudentPanelWithIdentifier(tokens[1]);
 
             if (textHolder == null)
             {
@@ -217,6 +217,23 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         }
     }
 
+    private StudentPanelInterface getStudentPanelWithIdentifier(String identifier) 
+    {
+        StudentPanelInterface retval = null;
+        
+        for (int i = 0; i < studentTabs.getTabCount(); i++) 
+        {
+            StudentPanelInterface spi = (StudentPanelInterface)studentTabs.getComponentAt(i);
+            System.out.println("IP of current spi: " + spi.getIP());
+            if (spi.getIP().equals(identifier))
+            {
+                retval = (StudentPanelInterface)studentTabs.getComponentAt(i);
+            }
+        }
+        
+        return retval;
+    }
+
     private StudentPanelInterface getStudentPanelAtIndex(int index)
     {
         StudentPanelInterface retval = null;
@@ -228,19 +245,24 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
     private int getIndexOfPanelWithIdentifier(String ident)
     {
+        System.out.println("Ident searching for is " + ident);
         int retval = 0;
         
         for (int i = 0; i < studentTabs.getTabCount(); i++)
         {
+            System.out.println("IP of tab at " + i + " : " + ((StudentPanel)studentTabs.getComponentAt(i)).getIP());
             // TODO
             // Eventually, tabs should have names of students.
             // Then the if statement below should become
-            // if (((StudentPanel)studentTabs.getComponentAt(i)).getIP().equals(tokens[1]))
-            if (studentTabs.getTitleAt(i).equals(ident));
+            if (((StudentPanel)studentTabs.getComponentAt(i)).getIP().equals(ident))
+            //if (studentTabs.getTitleAt(i).equals(ident));
             {
+                System.out.println("Found a match");
                 retval = i;
             }
         }
+
+        System.out.println("Index is " + retval);
         
         return retval;
     }
