@@ -41,8 +41,7 @@ public class ClientConnection
         }
         catch(IOException e)
         {
-            System.out.println("ERROR: Failed to connect to: " + serverIP + ":" + serverPort);
-            e.printStackTrace();
+            // The sockets could not connect.
             return false;
         }
     }

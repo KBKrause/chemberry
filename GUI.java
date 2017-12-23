@@ -752,7 +752,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         catch(ConnectionFailedException e)
         {
             // TODO Handle this exception
-            e.printStackTrace();
+            e.printMessage();
         }
     }
 

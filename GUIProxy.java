@@ -19,7 +19,7 @@ public class GUIProxy implements InstructorInterface
     {
        if (connToIns.sendString(update) == false)
        {
-           throw new ConnectionFailedException(connToIns.getServerIP(), connToIns.getServerPort());
+           throw new ConnectionFailedException("Unable to connect to instructor");
        }
     }
 }
