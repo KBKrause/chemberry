@@ -2,14 +2,12 @@ import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
 
-// TODO
-// Rename to ClientConnection.
-public class ClientProxy
+public class ClientConnection
 {
     private String serverIP;
     private int serverPort;
 
-    public ClientProxy(String IP, int port)
+    public ClientConnection(String IP, int port)
     {
         serverIP = IP;
         serverPort = port;
@@ -43,8 +41,7 @@ public class ClientProxy
         }
         catch(IOException e)
         {
-            System.out.println("ERROR: Failed to connect to: " + serverIP + ":" + serverPort);
-            e.printStackTrace();
+            // The sockets could not connect.
             return false;
         }
     }

@@ -14,8 +14,9 @@ import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Window;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
-public class GUI extends JFrame implements DocumentListener, ChangeListener
+public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
     // Config screen and settings "screens."
     private JDialog GUIconfig;
@@ -48,9 +49,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     // TODO
     // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
-    private String username;
 
-    public GUI()
+    public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry - Main");
     
@@ -63,7 +63,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             e.printStackTrace();
         }
 
-        networkingAllowed = true;
+        networkingAllowed = networking;
         //initialize();
         initializeConfig();
         initializeTextAreas();
@@ -71,7 +71,14 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         if (networkingAllowed)
         {
-            initializeProxy();
+            try
+            {
+                initializeProxy(instructorIP);
+            }
+            catch(ChemberryException cbe)
+            {
+                throw cbe;
+            }
         }
 
         initializeOther();
@@ -197,8 +204,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                 }
                 else
                 {
-                    // TODO
-                    // dataTextArea append function can be simplified
+                    // If the current sensor is set to instantaneous measurements, just do a one time measurement.
                     if (currentSensor.isMeasuringInstantly())
                     {
                         dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
@@ -232,7 +238,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
                                     }
                             
                                     appendDebugText("Continuous measurement finished");
-                            
                                 }
                             };
 
@@ -312,6 +317,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         setVisible(true);
     }
 
+    // This method may eventually be removed
+    /* 
     private void initialize()
     {
         String username = "";
@@ -361,6 +368,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         initDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         initDialog.setVisible(true);
     }
+    */
 
     private void initializeTextAreas()
     {
@@ -387,7 +395,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
         clearDataPopup.setLayout(new GridLayout(2,2));
         clearDataPopup.setPopupSize(500, 500);
-        clearDataPopup.setLocation(500, 500);
+        clearDataPopup.setLocation(150, 150);
 
         JButton yes = new JButton("Yes");
         yes.addActionListener(new ActionListener()
@@ -422,9 +430,10 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
     private void initializeConfig()
     {
         GUIconfig = new JDialog();
+        GUIconfig.setTitle("Chemberry - Sensor Configuration");
         GUIconfig.setSize(1000, 1000);
         GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIconfig.setLocation(100, 100);
+        GUIconfig.setLocation(150, 150);
 
         JPanel selectionPanel = new JPanel();
         selectionPanel.setLayout(new GridLayout(3, 3));
@@ -441,41 +450,23 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         confirmPanel.add(logtypeLabel);
         confirmPanel.add(confirmButton);
 
-        // TODO
-        // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
-        JButton btnPH = new JButton("pH Probe");
-        btnPH.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                instrumentLabel.setText("Chosen Instrument: pH probe");
-            }
-        });
+        String[] probeTypes = {"pH probe", "Temperature sensor", "Conductivity probe"};
 
-        JButton btnTemp = new JButton("Temperature Sensor");
-        btnTemp.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                instrumentLabel.setText("Chosen Instrument: Temperature sensor");
-            }
-        });
+        for (String s : probeTypes)
+        {
+            JButton newSensorButton = new JButton(s);
 
-        JButton btnConduct = new JButton("Conductivity Probe");
-        btnConduct.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                instrumentLabel.setText("Chosen Instrument: Conductivity probe");
-            }
-        });
+            newSensorButton.addActionListener(new ActionListener()
+            {   
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    instrumentLabel.setText("Chosen Instrument: " + s);
+                }
+            });
 
-        selectionPanel.add(btnPH);
-        selectionPanel.add(btnTemp);
-        selectionPanel.add(btnConduct);
+            selectionPanel.add(newSensorButton);
+        }
 
         JPanel intervalPanel = new JPanel();
         intervalPanel.setLayout(new GridLayout(3, 2));
@@ -611,25 +602,53 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         // TODO
         // Set up layout manager for GUIsettings
         GUIsettings = new JDialog();
+        GUIsettings.setTitle("Chemberry - Settings");
         GUIsettings.setSize(1000, 1000);
         GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIsettings.setLocation(100, 100);
+        GUIsettings.setLocation(150, 150);
 
-        JTextField IPaddr = new JTextField("Address: " + Inet.getMyAddress());
-        JTextField port = new JTextField("Port: 8314");
+        // TODO
+        // Fix this so that it is not null.
+        JTextField IPaddr = new JTextField();
+        JTextField port = new JTextField();
+
+        if (networkingAllowed)
+        {
+            port = new JTextField("Listening Port: 9648");
+
+            try
+            {
+                IPaddr.setText("Address: " + Inet.getMyAddress());
+            }
+            catch(ChemberryException cbe)
+            {
+                inetError();
+                closeFrame();
+            }
+        }
+        else
+        {
+            IPaddr.setText("Networking disabled");
+            port.setText("Networking disabled");
+        }
+        
         IPaddr.setEditable(false);
         port.setEditable(false);
 
+        GUIsettings.setLayout(new GridLayout(2, 1));
         GUIsettings.add(IPaddr);
+        GUIsettings.add(port);
     }
 
-    private void initializeProxy()
+    private void initializeProxy(String instructorIP) throws ChemberryException
     {
+        String name = JOptionPane.showInputDialog(null, "Enter your name: ");
+
         JDialog configuration = new JDialog();
         configuration.setTitle("Chemberry - Connecting to remote");
         configuration.setSize(500, 500);
         configuration.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        configuration.setLocation(100, 100);
+        configuration.setLocation(150, 150);
         configuration.setLayout(new GridLayout(2, 1));
 
         JLabel statusText = new JLabel("Attempting to connect to remote ...");
@@ -646,24 +665,22 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         configuration.add(statusText);
         configuration.setVisible(true);
 
-        String addr = Inet.getMyAddress();
+        try
+        {
+            String addr = Inet.getMyAddress();
+            appendDebugText("IPv4 address retrieved: " + addr);
+        }
+        catch(ChemberryException cbe)
+        {
+            throw cbe;
+        }
         
         // TODO
         // Error checking here. Do not allow flow to continue if address cannot be resolved.
-        if (addr != "null")
-        {
-            appendDebugText("IPv4 address retrieved: " + addr);
-        }
-        else
-        {
-            System.out.println("ERROR: Unknown Host Exception");
-            appendDebugText("ERROR: Unable to resolve IPv4 address");
-        }
-
         try
         {
-            proxy = new ProxyGUI(8314, Inet.getMyAddress(), 6023);
-            proxy.receiveUpdate("h:ello");
+            proxy = new GUIProxy(8314, instructorIP, 6023);
+            proxy.receiveUpdate("h:" + Inet.getMyAddress() + ":" + name);
             appendDebugText("Set instructor IP");
             configuration.setVisible(false);
         }
@@ -676,8 +693,13 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
             s.next();
             s.close();
         }
+        catch(ChemberryException cbe)
+        {
+            cbe.printStackTrace();
+        }
     }
 
+    @Override
     public void appendDebugText(String s)
     {
         debugTextArea.append(">> " + s + '\n');
@@ -730,9 +752,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         catch(ConnectionFailedException e)
         {
             // TODO Handle this exception
-            e.printStackTrace();
+            e.printMessage();
         }
-        
     }
 
     @Override
@@ -753,6 +774,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
 
     private void closeFrame()
     {
+        appendDebugText("Shutting down ...");
         if (networkingAllowed)
         {
             update("d:esync");
@@ -760,5 +782,39 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener
         // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
         this.dispose();
         System.exit(0);
+    }
+    
+    @Override
+    public void setNetworking(boolean b)
+    {
+        networkingAllowed = b;
+        appendDebugText("Networking change detected: " + networkingAllowed);
+    }
+
+    // Method primarily used for the raspberry pi's small screen.
+    @Override
+    public void setScreenDimensions(int height, int width)
+    {
+        Double newWidth = width * 0.9;
+
+        // The setSize function only accepts int parameters.
+        this.setSize(height, Math.round(newWidth.floatValue()));
+        
+        // Set the config and settings menu to overlay the main screen.
+        GUIconfig.setSize(height, Math.round(newWidth.floatValue()));
+        GUIsettings.setSize(height, Math.round(newWidth.floatValue()));
+
+        this.setLocation(0, 0);
+        GUIconfig.setLocation(0, 0);
+        GUIsettings.setLocation(0, 0);
+        
+        // Other JComponents to adjust:
+        // initDialog
+        // configuration
+    }
+
+    private void inetError()
+    {
+        System.out.println("This happened because Inet.getMyAddress() threw an exception");
     }
 }

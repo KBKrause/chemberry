@@ -6,11 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowListener;
 import javax.swing.text.DefaultCaret;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.awt.event.*;
+import javax.swing.event.*;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
@@ -20,9 +23,19 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     
     private HashMap <String, Boolean> settings;
 
-    public InstructorGUI()
+    public InstructorGUI() throws ChemberryException
     {
         super("Chemberry Instructor");
+
+        String myAddr;
+        try
+        {
+            myAddr = Inet.getMyAddress();
+        }
+        catch(ChemberryException cbe)
+        {
+            throw cbe;
+        }
 
         initializeSettings();
 
@@ -37,7 +50,16 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         // Initialize main frame
         this.setSize(1000, 1000);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() 
+        {
+            @Override
+            public void windowClosing(WindowEvent event) 
+            {
+                closeWindow();
+            }
+        });
+
         this.setLocation(100, 100);
         this.setLayout(new GridLayout(1,2));
 
@@ -65,9 +87,24 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     private void initializeSettings()
     {
         instructorSettings = new JDialog();
+        instructorSettings.setTitle("Settings");
+
         settings = new HashMap<String, Boolean>();
         
-        instructorSettings.setLayout(new GridLayout(1, 1));
+        instructorSettings.setLayout(new GridLayout(2, 1));
+
+        JTextField ipAddr = new JTextField();
+        ipAddr.setEditable(false);
+
+        try
+        {
+            ipAddr.setText("Address: " + Inet.getMyAddress());
+        }
+        catch(ChemberryException cbe)
+        {
+            cbe.printStackTrace();
+        }
+        instructorSettings.add(ipAddr);
 
         JPanel panelOfCheckBoxes = new JPanel();
         panelOfCheckBoxes.setLayout(new GridLayout(2, 1));
@@ -115,11 +152,11 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         if (tokens[0].equals("h"))
         {
-            studentTabs.addTab(tokens[1], new StudentPanel(tokens[1]));
+            studentTabs.addTab(tokens[2], new StudentPanel(tokens[1], tokens[2]));
         }
         else if (tokens[0].equals("u"))
         {
-            StudentPanelInterface textHolder = getStudentPanelAtIndex(getIndexOfPanelWithIdentifier(tokens[1]));
+            StudentPanelInterface textHolder = getStudentPanelWithIdentifier(tokens[1]);
 
             if (textHolder == null)
             {
@@ -148,9 +185,9 @@ public class InstructorGUI extends JFrame implements InstructorInterface
                     append = append.concat("-" + String.valueOf(date.getHour()));
                     append = append.concat("-" + String.valueOf(date.getMinute()));
 
-                    PrintWriter writer = new PrintWriter("./out/" + tokens[1] + "-" + append + ".dat");
+                    StudentPanelInterface panel = getStudentPanelWithIdentifier(tokens[1]);
 
-                    StudentPanelInterface panel = getStudentPanelAtIndex(getIndexOfPanelWithIdentifier(tokens[1]));
+                    PrintWriter writer = new PrintWriter("./out/" + panel.getName() + "-" + append + ".dat");
 
                     char[] arr = panel.getStringOfText().toCharArray();
 
@@ -179,6 +216,26 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         }
     }
 
+    // This method finds the StudentPanel with the specified ID.
+    // TODO: ventually, it should locate panels by name rather than IP to add a layer of abstraction.
+    private StudentPanelInterface getStudentPanelWithIdentifier(String identifier) 
+    {
+        StudentPanelInterface retval = null;
+        
+        for (int i = 0; i < studentTabs.getTabCount(); i++) 
+        {
+            StudentPanelInterface spi = (StudentPanelInterface)studentTabs.getComponentAt(i);
+            //System.out.println("IP of current spi: " + spi.getIP());
+            if (spi.getIP().equals(identifier))
+            {
+                retval = (StudentPanelInterface)studentTabs.getComponentAt(i);
+            }
+        }
+        
+        return retval;
+    }
+
+    /*
     private StudentPanelInterface getStudentPanelAtIndex(int index)
     {
         StudentPanelInterface retval = null;
@@ -187,23 +244,43 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         return retval;
     }
+    */
 
     private int getIndexOfPanelWithIdentifier(String ident)
     {
+        System.out.println("Ident searching for is " + ident);
         int retval = 0;
         
         for (int i = 0; i < studentTabs.getTabCount(); i++)
         {
+            System.out.println("IP of tab at " + i + " : " + ((StudentPanel)studentTabs.getComponentAt(i)).getIP());
             // TODO
             // Eventually, tabs should have names of students.
             // Then the if statement below should become
-            // if (((StudentPanel)studentTabs.getComponentAt(i)).getIP().equals(tokens[1]))
-            if (studentTabs.getTitleAt(i).equals(ident));
+            if (((StudentPanel)studentTabs.getComponentAt(i)).getIP().equals(ident))
+            //if (studentTabs.getTitleAt(i).equals(ident));
             {
+                System.out.println("Found a match");
                 retval = i;
             }
         }
+
+        System.out.println("Index is " + retval);
         
         return retval;
+    }
+    
+    private void closeWindow()
+    {
+        for (int i = 0; i < studentTabs.getTabCount(); i++)
+        {
+            StudentPanelInterface spi = (StudentPanelInterface)studentTabs.getComponentAt(i);
+            // Make this more abstract.
+            ClientConnection conn = new ClientConnection(spi.getIP(), 9648);
+            conn.sendString("d:esync");
+        }
+        
+        this.dispose();
+        System.exit(0);
     }
 }

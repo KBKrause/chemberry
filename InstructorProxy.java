@@ -27,13 +27,13 @@ public class InstructorProxy extends ServerProxy
         //System.out.println("INSProxy tokenized string array: " + tokens.toString());
         //System.out.println("Received " + tokens[0] + ":" + tokens[1]);
 
-        if ((tokens[0].equals("h")) && (tokens[1].equals("ello")))
+        if (tokens[0].equals("h"))
         {
             if (ipListing.contains(clientIP) == false)
             {
                 System.out.println(clientIP + " has connected for the first time");
                 ipListing.add(clientIP);
-                updateGUI("h:" + clientIP);
+                updateGUI("h:" + clientIP + ":" + tokens[2]);
             }
             else
             {

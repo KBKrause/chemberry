@@ -3,6 +3,7 @@
 
 # Ignore the testing output
 out
+Test.java
 
 # Ignore the batch and shell files
 m.bat
