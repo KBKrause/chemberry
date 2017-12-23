@@ -204,8 +204,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 }
                 else
                 {
-                    // TODO
-                    // dataTextArea append function can be simplified
+                    // If the current sensor is set to instantaneous measurements, just do a one time measurement.
                     if (currentSensor.isMeasuringInstantly())
                     {
                         dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
@@ -239,7 +238,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                                     }
                             
                                     appendDebugText("Continuous measurement finished");
-                            
                                 }
                             };
 
@@ -319,6 +317,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         setVisible(true);
     }
 
+    // This method may eventually be removed
+    /* 
     private void initialize()
     {
         String username = "";
@@ -368,6 +368,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         initDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         initDialog.setVisible(true);
     }
+    */
 
     private void initializeTextAreas()
     {
@@ -449,41 +450,23 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         confirmPanel.add(logtypeLabel);
         confirmPanel.add(confirmButton);
 
-        // TODO
-        // Maybe condense all this down to one function, pass as parameters the new sensor and the debugText
-        JButton btnPH = new JButton("pH Probe");
-        btnPH.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                instrumentLabel.setText("Chosen Instrument: pH probe");
-            }
-        });
+        String[] probeTypes = {"pH probe", "Temperature sensor", "Conductivity probe"};
 
-        JButton btnTemp = new JButton("Temperature Sensor");
-        btnTemp.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                instrumentLabel.setText("Chosen Instrument: Temperature sensor");
-            }
-        });
+        for (String s : probeTypes)
+        {
+            JButton newSensorButton = new JButton(s);
 
-        JButton btnConduct = new JButton("Conductivity Probe");
-        btnConduct.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                instrumentLabel.setText("Chosen Instrument: Conductivity probe");
-            }
-        });
+            newSensorButton.addActionListener(new ActionListener()
+            {   
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    instrumentLabel.setText("Chosen Instrument: " + s);
+                }
+            });
 
-        selectionPanel.add(btnPH);
-        selectionPanel.add(btnTemp);
-        selectionPanel.add(btnConduct);
+            selectionPanel.add(newSensorButton);
+        }
 
         JPanel intervalPanel = new JPanel();
         intervalPanel.setLayout(new GridLayout(3, 2));
@@ -692,7 +675,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             throw cbe;
         }
         
-        
         // TODO
         // Error checking here. Do not allow flow to continue if address cannot be resolved.
         try
@@ -717,6 +699,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         }
     }
 
+    @Override
     public void appendDebugText(String s)
     {
         debugTextArea.append(">> " + s + '\n');
@@ -808,18 +791,22 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         appendDebugText("Networking change detected: " + networkingAllowed);
     }
 
+    // Method primarily used for the raspberry pi's small screen.
     @Override
     public void setScreenDimensions(int height, int width)
     {
-        Double newHeight = height * 0.9;
         Double newWidth = width * 0.9;
 
         // The setSize function only accepts int parameters.
-        this.setSize(Math.round(newHeight.floatValue()), Math.round(newWidth.floatValue()));
+        this.setSize(height, Math.round(newWidth.floatValue()));
         
         // Set the config and settings menu to overlay the main screen.
-        GUIconfig.setSize(Math.round(newHeight.floatValue()), Math.round(newWidth.floatValue()));
-        GUIsettings.setSize(Math.round(newHeight.floatValue()), Math.round(newWidth.floatValue()));
+        GUIconfig.setSize(height, Math.round(newWidth.floatValue()));
+        GUIsettings.setSize(height, Math.round(newWidth.floatValue()));
+
+        this.setLocation(0, 0);
+        GUIconfig.setLocation(0, 0);
+        GUIsettings.setLocation(0, 0);
         
         // Other JComponents to adjust:
         // initDialog

@@ -51,7 +51,6 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         // Initialize main frame
         this.setSize(1000, 1000);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
         this.addWindowListener(new WindowAdapter() 
         {
             @Override
@@ -153,7 +152,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         if (tokens[0].equals("h"))
         {
-            studentTabs.addTab(tokens[2], new StudentPanel(tokens[1]));
+            studentTabs.addTab(tokens[2], new StudentPanel(tokens[1], tokens[2]));
         }
         else if (tokens[0].equals("u"))
         {
@@ -186,9 +185,9 @@ public class InstructorGUI extends JFrame implements InstructorInterface
                     append = append.concat("-" + String.valueOf(date.getHour()));
                     append = append.concat("-" + String.valueOf(date.getMinute()));
 
-                    PrintWriter writer = new PrintWriter("./out/" + tokens[1] + "-" + append + ".dat");
+                    StudentPanelInterface panel = getStudentPanelWithIdentifier(tokens[1]);
 
-                    StudentPanelInterface panel = getStudentPanelAtIndex(getIndexOfPanelWithIdentifier(tokens[1]));
+                    PrintWriter writer = new PrintWriter("./out/" + panel.getName() + "-" + append + ".dat");
 
                     char[] arr = panel.getStringOfText().toCharArray();
 
@@ -217,6 +216,8 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         }
     }
 
+    // This method finds the StudentPanel with the specified ID.
+    // TODO: ventually, it should locate panels by name rather than IP to add a layer of abstraction.
     private StudentPanelInterface getStudentPanelWithIdentifier(String identifier) 
     {
         StudentPanelInterface retval = null;
@@ -224,7 +225,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         for (int i = 0; i < studentTabs.getTabCount(); i++) 
         {
             StudentPanelInterface spi = (StudentPanelInterface)studentTabs.getComponentAt(i);
-            System.out.println("IP of current spi: " + spi.getIP());
+            //System.out.println("IP of current spi: " + spi.getIP());
             if (spi.getIP().equals(identifier))
             {
                 retval = (StudentPanelInterface)studentTabs.getComponentAt(i);
@@ -234,6 +235,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         return retval;
     }
 
+    /*
     private StudentPanelInterface getStudentPanelAtIndex(int index)
     {
         StudentPanelInterface retval = null;
@@ -242,6 +244,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         return retval;
     }
+    */
 
     private int getIndexOfPanelWithIdentifier(String ident)
     {
@@ -266,11 +269,17 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         
         return retval;
     }
-
+    
     private void closeWindow()
     {
-        //ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
-        //conn.sendString("d:esync");
+        for (int i = 0; i < studentTabs.getTabCount(); i++)
+        {
+            StudentPanelInterface spi = (StudentPanelInterface)studentTabs.getComponentAt(i);
+            // Make this more abstract.
+            ClientConnection conn = new ClientConnection(spi.getIP(), 9648);
+            conn.sendString("d:esync");
+        }
+        
         this.dispose();
         System.exit(0);
     }

@@ -7,6 +7,7 @@ import java.lang.Number;
 public class StudentPanel extends JPanel implements StudentPanelInterface
 {
     private String IPaddr;
+    private String name;
 
     private JTextArea dataArea;
     private JScrollPane scrollPane;
@@ -14,7 +15,7 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
     private JLabel averageLabel;
     private JLabel deviationLabel;
 
-    public StudentPanel(String ip)
+    public StudentPanel(String ip, String name)
     {
         super();
 
@@ -30,6 +31,7 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
         scrollPane = new JScrollPane(dataArea);
 
         IPaddr = ip;
+        this.name = name;
 
         this.setLayout(new GridLayout(1, 2));
 
@@ -42,6 +44,12 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
         this.add(sidePanel);
 
         this.setVisible(true);
+    }
+
+    @Override
+    public String getName()
+    {
+        return name;
     }
 
     @Override

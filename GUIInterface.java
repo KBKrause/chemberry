@@ -4,4 +4,5 @@ public interface GUIInterface
     public void setNetworking(boolean b);
     // Set the dimensions of the screen. Everything will adjust.
     public void setScreenDimensions(int height, int width);
+    public void appendDebugText(String s);
 }

@@ -5,6 +5,8 @@ public abstract class AbstractSensor
 {
     protected boolean measuringInstantly;
 
+    // TODO: this may not be necessary to have in the base class.
+    // Override the Object.toString() method by having the subclasses of AbstractSensor override them in different ways.
     @Override
     public abstract String toString();
 
