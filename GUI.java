@@ -49,10 +49,25 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     // TODO
     // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
+    
+    private boolean useRealSensors = false;
+    // TODO is arduino necessary?
+    private SerialConnection arduino;
 
     public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry - Main");
+        
+        try
+		{
+			// TODO since the static method is being used to gather data, there's no need to keep this in the end.
+			arduino = new SerialConnection();
+			arduino.start();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
     
         try 
         { 
@@ -207,7 +222,9 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     // If the current sensor is set to instantaneous measurements, just do a one time measurement.
                     if (currentSensor.isMeasuringInstantly())
                     {
-                        dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+						// TODO THIS MUST CHANGE for each sensor.
+						dataTextArea.append("pH >> "SerialConnection.getData() + "\n");
+                        //dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
                     }
                     else
                     {

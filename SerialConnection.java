@@ -7,7 +7,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener; 
 import java.util.Enumeration;
 
-public class SerialTest implements SerialPortEventListener {
+public class SerialConnection implements SerialPortEventListener {
 	SerialPort serialPort;
         /** The port we're normally going to use. */
 	private static final String PORT_NAMES[] = { 
@@ -21,7 +21,7 @@ public class SerialTest implements SerialPortEventListener {
 	* converting the bytes into characters 
 	* making the displayed results codepage independent
 	*/
-	private BufferedReader input;
+	private static BufferedReader input;
 	/** The output stream to the port */
 	private OutputStream output;
 	/** Milliseconds to block while waiting for port open */
@@ -32,7 +32,7 @@ public class SerialTest implements SerialPortEventListener {
 	public void initialize() {
                 // the next line is for Raspberry Pi and 
                 // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
-                //System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
 
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
@@ -92,7 +92,10 @@ public class SerialTest implements SerialPortEventListener {
 	public synchronized void serialEvent(SerialPortEvent oEvent) {
 		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
+				
+				//TODO there is some debug text here.
 				String inputLine=input.readLine();
+				
 				System.out.println(inputLine);
 			} catch (Exception e) {
 				System.err.println(e.toString());
@@ -100,10 +103,29 @@ public class SerialTest implements SerialPortEventListener {
 		}
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
+	
+	// TODO Make sure the initialize() method has been called before calling this method!!!
+	public static String getData()
+	{
+		String retval = "";
+		
+		try 
+		{
+			String inputLine=input.readLine();
+			
+			retval = inputLine;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println(e.toString());
+		}
+		
+		return retval;
+	}
 
-	public static void main(String[] args) throws Exception {
-		SerialTest main = new SerialTest();
-		main.initialize();
+	public void start() throws Exception {
+		initialize();
+		/*
 		Thread t=new Thread() {
 			public void run() {
 				//the following line will keep this app alive for 1000 seconds,
@@ -112,6 +134,7 @@ public class SerialTest implements SerialPortEventListener {
 			}
 		};
 		t.start();
+		*/
 		System.out.println("Started");
 	}
 }
