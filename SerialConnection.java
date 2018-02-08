@@ -7,6 +7,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener; 
 import java.util.Enumeration;
 
+
 public class SerialConnection implements SerialPortEventListener {
 	SerialPort serialPort;
         /** The port we're normally going to use. */
@@ -21,18 +22,22 @@ public class SerialConnection implements SerialPortEventListener {
 	* converting the bytes into characters 
 	* making the displayed results codepage independent
 	*/
-	private static BufferedReader input;
+	private BufferedReader input;
 	/** The output stream to the port */
 	private OutputStream output;
 	/** Milliseconds to block while waiting for port open */
 	private static final int TIME_OUT = 2000;
 	/** Default bits per second for COM port. */
 	private static final int DATA_RATE = 9600;
+	private String os;
 
-	public void initialize() {
+	public void initialize(String os) {
                 // the next line is for Raspberry Pi and 
                 // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
-                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+				if (!(os.equals("Windows 10")))
+				{
+					System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+				}
 
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
@@ -68,8 +73,8 @@ public class SerialConnection implements SerialPortEventListener {
 			output = serialPort.getOutputStream();
 
 			// add event listeners
-			serialPort.addEventListener(this);
-			serialPort.notifyOnDataAvailable(true);
+			//serialPort.addEventListener(this);
+			//serialPort.notifyOnDataAvailable(true);
 		} catch (Exception e) {
 			System.err.println(e.toString());
 		}
@@ -92,10 +97,7 @@ public class SerialConnection implements SerialPortEventListener {
 	public synchronized void serialEvent(SerialPortEvent oEvent) {
 		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
-				
-				//TODO there is some debug text here.
 				String inputLine=input.readLine();
-				
 				System.out.println(inputLine);
 			} catch (Exception e) {
 				System.err.println(e.toString());
@@ -103,28 +105,26 @@ public class SerialConnection implements SerialPortEventListener {
 		}
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
-	
-	// TODO Make sure the initialize() method has been called before calling this method!!!
-	public static String getData()
+
+	public String getData()
 	{
 		String retval = "";
-		
 		try 
 		{
-			String inputLine=input.readLine();
-			
-			retval = inputLine;
+			retval=input.readLine();
+			//System.out.println(inputLine);
 		} 
-		catch (Exception e) 
+		catch (Exception e)
 		{
-			System.err.println(e.toString());
+			//System.err.println(e.toString());
 		}
-		
+
 		return retval;
 	}
 
-	public void start() throws Exception {
-		initialize();
+	public void beginMeasuring(String os) throws Exception {
+		//SerialConnection main = new SerialConnection();
+		initialize(os);
 		/*
 		Thread t=new Thread() {
 			public void run() {
@@ -135,6 +135,6 @@ public class SerialConnection implements SerialPortEventListener {
 		};
 		t.start();
 		*/
-		System.out.println("Started");
+		//System.out.println("Started");
 	}
 }
