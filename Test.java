@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 
 public class Test
 {
+    /*
     public static void main(String[] args)
     {
         System.out.println("Starting tests");
@@ -36,8 +37,10 @@ public class Test
         }
     }
 
+    
     private static void printMeasurement(AbstractSensor sensor)
     {
         System.out.println("Sensor reads: " + sensor.instantMeasure().getValue());
     }
+    */
 }

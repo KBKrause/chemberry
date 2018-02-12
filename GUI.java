@@ -244,8 +244,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     if (currentSensor.isMeasuringInstantly())
                     {
 						// TODO THIS MUST CHANGE for each sensor.
-						dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
-                        //dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+						//dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
+                        dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
                     }
                     else
                     {
@@ -263,7 +263,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                                 {
                                     for (int i = 0; i < durationSlider.getValue(); i++)
                                     {
-                                        dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                                        dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
                             
                                         try
                                         {

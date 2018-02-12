@@ -10,10 +10,16 @@ public final class ConductivitySensor extends AbstractSensor
     }
 
     @Override
-    public Measurement instantMeasure()
+    public Measurement instantMeasure(SerialConnection conn)
     {
-        Random r = new Random();
-        Measurement measure = new Measurement(TypeOfMeasurement.CONDUCT, r.nextInt() % 10000);
+        String output = conn.getData();
+        
+        while (output.charAt(0) != 'V')
+        {
+            output = conn.getData();
+        }
+        
+        Measurement measure = new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(9, output.length() - 1)));
 
         return measure;
     }
