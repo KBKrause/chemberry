@@ -1,5 +1,5 @@
-#define pHPin 0          //pH meter Analog output to Arduino Analog Input 0
-#define condPin 1
+#define pHPin A0          //pH meter Analog output to Arduino Analog Input 0
+#define condPin A1
 unsigned long int avgValue;  //Store the average value of the sensor feedback
 float b;
 int buf[10],temp;

@@ -7,15 +7,17 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener; 
 import java.util.Enumeration;
 
-
-public class SerialConnection implements SerialPortEventListener {
+public class SerialConnection implements SerialPortEventListener 
+{
 	SerialPort serialPort;
-        /** The port we're normally going to use. */
-	private static final String PORT_NAMES[] = { 
+	
+	// List all possible port names here
+	private static String PORT_NAMES[] = 
+	{ 
 			"/dev/tty.usbserial-A9007UX1", // Mac OS X
-                        "/dev/ttyACM0", // Raspberry Pi
-			"/dev/ttyUSB0", // Linux
-			"COM3", // Windows
+            "/dev/ttyACM0",                // Raspberry Pi
+			"/dev/ttyUSB0",                // Linux
+			"COM3",                        // Windows
 	};
 	/**
 	* A BufferedReader which will be fed by a InputStreamReader 
@@ -29,38 +31,42 @@ public class SerialConnection implements SerialPortEventListener {
 	private static final int TIME_OUT = 2000;
 	/** Default bits per second for COM port. */
 	private static final int DATA_RATE = 9600;
-	private String os;
 
-	public void initialize(String os) {
-                // the next line is for Raspberry Pi and 
-                // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
-				if (!(os.equals("Windows 10")))
-				{
-					System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
-				}
+	public void initialize(String os) throws SerialConnectionException
+	{
+        // the next line is for Raspberry Pi and 
+        // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
+		if (!(os.equals("Windows 10")))
+		{
+			System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+		}
 
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
 
-		//First, Find an instance of serial port as set in PORT_NAMES.
-		while (portEnum.hasMoreElements()) {
+		//Find an instance of a serial port as set in PORT_NAMES
+		while (portEnum.hasMoreElements()) 
+		{
 			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-			for (String portName : PORT_NAMES) {
-				if (currPortId.getName().equals(portName)) {
+			for (String portName : PORT_NAMES) 
+			{
+				if (currPortId.getName().equals(portName)) 
+				{
 					portId = currPortId;
 					break;
 				}
 			}
 		}
-		if (portId == null) {
-			System.out.println("Could not find COM port.");
-			return;
+
+		if (portId == null) 
+		{
+			throw new SerialConnectionException("Could not find arduino port");
 		}
 
-		try {
+		try 
+		{
 			// open serial port, and use class name for the appName.
-			serialPort = (SerialPort) portId.open(this.getClass().getName(),
-					TIME_OUT);
+			serialPort = (SerialPort)portId.open(this.getClass().getName(), TIME_OUT);
 
 			// set port parameters
 			serialPort.setSerialPortParams(DATA_RATE,
@@ -75,7 +81,9 @@ public class SerialConnection implements SerialPortEventListener {
 			// add event listeners
 			//serialPort.addEventListener(this);
 			//serialPort.notifyOnDataAvailable(true);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			System.err.println(e.toString());
 		}
 	}
@@ -84,8 +92,10 @@ public class SerialConnection implements SerialPortEventListener {
 	 * This should be called when you stop using the port.
 	 * This will prevent port locking on platforms like Linux.
 	 */
-	public synchronized void close() {
-		if (serialPort != null) {
+	public synchronized void close() 
+	{
+		if (serialPort != null) 
+		{
 			serialPort.removeEventListener();
 			serialPort.close();
 		}
@@ -94,19 +104,24 @@ public class SerialConnection implements SerialPortEventListener {
 	/**
 	 * Handle an event on the serial port. Read the data and print it.
 	 */
-	public synchronized void serialEvent(SerialPortEvent oEvent) {
-		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-			try {
+	public synchronized void serialEvent(SerialPortEvent oEvent) 
+	{
+		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) 
+		{
+			try 
+			{
 				String inputLine=input.readLine();
 				System.out.println(inputLine);
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
 				System.err.println(e.toString());
 			}
 		}
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
 
-	public String getData()
+	public String getData() throws SerialConnectionException
 	{
 		String retval = "";
 		try 
@@ -116,13 +131,14 @@ public class SerialConnection implements SerialPortEventListener {
 		} 
 		catch (Exception e)
 		{
-			//System.err.println(e.toString());
+			throw new SerialConnectionException("Unable to read from arduino");
 		}
 
 		return retval;
 	}
 
-	public void beginMeasuring(String os) throws Exception {
+	public void beginMeasuring(String os) throws Exception 
+	{
 		//SerialConnection main = new SerialConnection();
 		initialize(os);
 		/*

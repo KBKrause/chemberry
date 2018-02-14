@@ -11,11 +11,21 @@ public final class pHSensor extends AbstractSensor
     @Override
     public Measurement instantMeasure(SerialConnection conn)
     {
-        String output = conn.getData();
-
-        while (output.charAt(0) != 'p')
+        String output = "";
+        
+        try
         {
             output = conn.getData();
+
+            while (output.charAt(0) != 'p')
+            {
+                output = conn.getData();
+            }
+        }
+        catch(SerialConnectionException e)
+        {
+            e.printStackTrace();
+            System.exit(1);
         }
 
         Measurement measure = new Measurement(TypeOfMeasurement.PH, Float.parseFloat(output.substring(3)));
