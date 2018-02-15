@@ -22,4 +22,10 @@ public final class TemperatureSensor extends AbstractSensor
     {
         return "Temperature sensor";
     }
+
+    @Override
+    public TypeOfMeasurement getType()
+    {
+        return TypeOfMeasurement.TEMP;
+    }
 }

@@ -39,4 +39,10 @@ public final class ConductivitySensor extends AbstractSensor
     {
         return "Conductivity sensor";
     }
+
+    @Override
+    public TypeOfMeasurement getType()
+    {
+        return TypeOfMeasurement.CONDUCT;
+    }
 }

@@ -19,9 +19,9 @@ void loop()
 void readCond()
 {
   condVal = analogRead(condPin);
-  float voltage = condVal * (5.0/1023.0);
+  float voltage = condVal; //* (5.0/1023.0);
   Serial.print("Voltage: ");
-  Serial.print(voltage,1);
+  Serial.print(voltage,3);
   Serial.println(" ");
   delay(1000);
 }
@@ -51,7 +51,7 @@ void readPH()
   float phValue=(float)avgValue*5.0/1024/6; //convert the analog into millivolt
   phValue=3.5*phValue;                      //convert the millivolt into pH value
   Serial.print("pH: ");  
-  Serial.print(phValue,1);
+  Serial.print(phValue,3);
   Serial.println(" ");
   digitalWrite(13, HIGH);       
   delay(800);

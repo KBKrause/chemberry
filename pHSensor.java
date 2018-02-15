@@ -25,7 +25,7 @@ public final class pHSensor extends AbstractSensor
         catch(SerialConnectionException e)
         {
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         }
 
         Measurement measure = new Measurement(TypeOfMeasurement.PH, Float.parseFloat(output.substring(3)));
@@ -37,5 +37,11 @@ public final class pHSensor extends AbstractSensor
     public String toString()
     {
         return "pH probe";
+    }
+
+    @Override
+    public TypeOfMeasurement getType()
+    {
+        return TypeOfMeasurement.PH;
     }
 }

@@ -1,4 +1,6 @@
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
@@ -29,6 +31,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     private JTextArea debugTextArea;
     private JPanel controlPanel;
     private JButton measurementBtn;
+    private JLabel currentReading;
 
     private InstructorInterface proxy;
 
@@ -286,7 +289,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                                         catch(Exception e)
                                         {
                                             e.printStackTrace();
-                                            System.exit(1);
+                                            //System.exit(1);
                                         }
                             
                                         try
@@ -315,7 +318,13 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         });
         controlPanel.setLayout(new GridLayout(3, 1));
 
-        controlPanel.add(new JLabel("Measurement Interface"));
+        JPanel topControlRow = new JPanel();
+        topControlRow.setLayout(new GridLayout(1, 2));
+        topControlRow.add(new JLabel("Current Reading: "));
+        currentReading = new JLabel("No sensor configured");
+        topControlRow.add(currentReading);
+
+        controlPanel.add(topControlRow);
         controlPanel.add(new JLabel("Current instrument: None"));
         controlPanel.add(measurementBtn);
 
@@ -375,6 +384,28 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 closeFrame();
             }
         });
+
+        Thread displayReadingThread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Thread.sleep(1500);
+                        displayCurrentSensorReading();
+                    }
+                    catch(InterruptedException ie)
+                    {
+                        System.out.println("displayReadingThread interrupted!");
+                        //ie.printStackTrace();
+                    }
+                }
+            }
+        };
+        displayReadingThread.start();
 
         setVisible(true);
     }
@@ -878,5 +909,20 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     private void inetError()
     {
         System.out.println("This happened because Inet.getMyAddress() threw an exception");
+    }
+
+    private void displayCurrentSensorReading()
+    {
+        if (currentSensor != null)
+        {
+            try
+            {
+                currentReading.setText(currentSensor.instantMeasure(arduino).toString());
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 }

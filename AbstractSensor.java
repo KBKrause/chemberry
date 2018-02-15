@@ -10,6 +10,8 @@ public abstract class AbstractSensor
     @Override
     public abstract String toString();
 
+    public abstract TypeOfMeasurement getType();
+
     protected AbstractSensor()
     {
         // Instant measurements are the default.
