@@ -322,11 +322,36 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         topControlRow.setLayout(new GridLayout(1, 2));
         topControlRow.add(new JLabel("Current Reading: "));
         currentReading = new JLabel("No sensor configured");
+
+        JButton cancelMeasureButton = new JButton("Stop");
+        cancelMeasureButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if ((multiMeasure == null) || (!(multiMeasure.isAlive())))
+                {
+                    appendDebugText("ERROR: Multimeasure not running!");
+                }       
+                else
+                {
+                    multiMeasure.stop();
+                    appendDebugText("Multimeasure stopped");
+                }
+            }
+        });
+
+        JPanel btmCtrlPanel = new JPanel();
+        btmCtrlPanel.setLayout(new GridLayout(1, 2));
+        btmCtrlPanel.add(measurementBtn);
+        btmCtrlPanel.add(cancelMeasureButton);
+
         topControlRow.add(currentReading);
 
         controlPanel.add(topControlRow);
         controlPanel.add(new JLabel("Current instrument: None"));
-        controlPanel.add(measurementBtn);
+        controlPanel.add(btmCtrlPanel);
+        //controlPanel.add(measurementBtn);
 
         mainRow.add(controlPanel);
         mainRow.add(debugscrl);
@@ -575,7 +600,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         durationSlider.addChangeListener(this);
 
         intervalSlider.setMinimum(0);
-        intervalSlider.setMaximum(60);
+        intervalSlider.setMaximum(10);
         intervalSlider.addChangeListener(this);
 
         intervalPanel.add(durationSlider);
