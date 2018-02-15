@@ -10,6 +10,8 @@ public abstract class AbstractSensor
     @Override
     public abstract String toString();
 
+    public abstract TypeOfMeasurement getType();
+
     protected AbstractSensor()
     {
         // Instant measurements are the default.
@@ -27,7 +29,7 @@ public abstract class AbstractSensor
     }
 
     // Measure the reading as soon as the method is called
-    public abstract Measurement instantMeasure();
+    public abstract Measurement instantMeasure(SerialConnection conn);
 
     // TODO
     // Configure option to continously display results, or do it indefinitely

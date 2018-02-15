@@ -83,7 +83,7 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
 
         for (String s : text)
         {
-            numbers.add(Double.parseDouble(s.substring(s.indexOf(">> ") + 2, s.length() - 1)));
+            numbers.add(Double.parseDouble(s.substring(s.indexOf(">>") + 2, s.length())));
         }
 
         averageLabel.setText("Average: " + Compute.average(numbers));

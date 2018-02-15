@@ -1,4 +1,6 @@
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
@@ -16,6 +18,8 @@ import java.awt.Window;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
+// TODO Add System.exit(1) to bad exceptions
+
 public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
     // Config screen and settings "screens."
@@ -27,6 +31,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     private JTextArea debugTextArea;
     private JPanel controlPanel;
     private JButton measurementBtn;
+    private JLabel currentReading;
 
     private InstructorInterface proxy;
 
@@ -49,10 +54,51 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     // TODO
     // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
+    
+    // TODO is arduino necessary?
+    private SerialConnection arduino;
 
     public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry - Main");
+
+        String os = System.getProperty("os.name");
+
+        try
+        {
+            arduino = new SerialConnection();
+            arduino.beginMeasuring(os);
+        }
+        catch(SerialConnectionException e)
+        {
+            e.printMessage();
+            System.exit(1);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+		{
+            // TODO since the static method is being used to gather data, there's no need to keep this in the end.
+            /*
+            arduino = new SerialConnection();
+            if (System.getProperty("os.name").equals("Windows 10"))
+            {
+                arduino.start(false);
+            }
+            else
+            {
+                arduino.start(true);
+            }
+            */
+			
+		}
+		catch(Exception e)
+		{
+            e.printStackTrace();
+		}
     
         try 
         { 
@@ -207,7 +253,18 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     // If the current sensor is set to instantaneous measurements, just do a one time measurement.
                     if (currentSensor.isMeasuringInstantly())
                     {
-                        dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+						// TODO THIS MUST CHANGE for each sensor.
+                        //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
+                        try
+                        {
+                            dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
+                        }
+                        catch(Exception ex)
+                        {
+                            ex.printStackTrace();
+
+                            System.exit(1);
+                        }
                     }
                     else
                     {
@@ -225,7 +282,15 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                                 {
                                     for (int i = 0; i < durationSlider.getValue(); i++)
                                     {
-                                        dataTextArea.append(currentSensor.instantMeasure().toString() + "\n");
+                                        try
+                                        {
+                                            dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            e.printStackTrace();
+                                            //System.exit(1);
+                                        }
                             
                                         try
                                         {
@@ -253,9 +318,40 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         });
         controlPanel.setLayout(new GridLayout(3, 1));
 
-        controlPanel.add(new JLabel("Measurement Interface"));
+        JPanel topControlRow = new JPanel();
+        topControlRow.setLayout(new GridLayout(1, 2));
+        topControlRow.add(new JLabel("Current Reading: "));
+        currentReading = new JLabel("No sensor configured");
+
+        JButton cancelMeasureButton = new JButton("Stop");
+        cancelMeasureButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if ((multiMeasure == null) || (!(multiMeasure.isAlive())))
+                {
+                    appendDebugText("ERROR: Multimeasure not running!");
+                }       
+                else
+                {
+                    multiMeasure.stop();
+                    appendDebugText("Multimeasure stopped");
+                }
+            }
+        });
+
+        JPanel btmCtrlPanel = new JPanel();
+        btmCtrlPanel.setLayout(new GridLayout(1, 2));
+        btmCtrlPanel.add(measurementBtn);
+        btmCtrlPanel.add(cancelMeasureButton);
+
+        topControlRow.add(currentReading);
+
+        controlPanel.add(topControlRow);
         controlPanel.add(new JLabel("Current instrument: None"));
-        controlPanel.add(measurementBtn);
+        controlPanel.add(btmCtrlPanel);
+        //controlPanel.add(measurementBtn);
 
         mainRow.add(controlPanel);
         mainRow.add(debugscrl);
@@ -313,6 +409,28 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 closeFrame();
             }
         });
+
+        Thread displayReadingThread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Thread.sleep(1500);
+                        displayCurrentSensorReading();
+                    }
+                    catch(InterruptedException ie)
+                    {
+                        System.out.println("displayReadingThread interrupted!");
+                        //ie.printStackTrace();
+                    }
+                }
+            }
+        };
+        displayReadingThread.start();
 
         setVisible(true);
     }
@@ -482,7 +600,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         durationSlider.addChangeListener(this);
 
         intervalSlider.setMinimum(0);
-        intervalSlider.setMaximum(60);
+        intervalSlider.setMaximum(10);
         intervalSlider.addChangeListener(this);
 
         intervalPanel.add(durationSlider);
@@ -816,5 +934,20 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     private void inetError()
     {
         System.out.println("This happened because Inet.getMyAddress() threw an exception");
+    }
+
+    private void displayCurrentSensorReading()
+    {
+        if (currentSensor != null)
+        {
+            try
+            {
+                currentReading.setText(currentSensor.instantMeasure(arduino).toString());
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 }

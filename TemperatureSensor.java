@@ -9,7 +9,7 @@ public final class TemperatureSensor extends AbstractSensor
     }
 
     @Override
-    public Measurement instantMeasure()
+    public Measurement instantMeasure(SerialConnection conn)
     {
         Random r = new Random();
         Measurement measure = new Measurement(TypeOfMeasurement.TEMP, r.nextFloat());
@@ -21,5 +21,11 @@ public final class TemperatureSensor extends AbstractSensor
     public String toString()
     {
         return "Temperature sensor";
+    }
+
+    @Override
+    public TypeOfMeasurement getType()
+    {
+        return TypeOfMeasurement.TEMP;
     }
 }
