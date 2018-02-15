@@ -93,12 +93,13 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         
         instructorSettings.setLayout(new GridLayout(2, 1));
 
-        JTextField ipAddr = new JTextField();
+        JTextArea ipAddr = new JTextArea();
         ipAddr.setEditable(false);
 
         try
         {
-            ipAddr.setText("Address: " + Inet.getMyAddress());
+            ipAddr.append("Address: " + Inet.getMyAddress());
+            ipAddr.append("\nListening port: 6023");
         }
         catch(ChemberryException cbe)
         {
