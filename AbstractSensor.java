@@ -29,7 +29,41 @@ public abstract class AbstractSensor
     }
 
     // Measure the reading as soon as the method is called
-    public abstract Measurement instantMeasure(SerialConnection conn);
+    // TODO MAke this method final.
+    public Measurement instantMeasure(SerialConnection conn)
+    {
+        String output = "";
+        
+        try
+        {
+            output = conn.getData();
+            
+            while (output.charAt(0) != this.toString().charAt(0))
+            {
+                output = conn.getData();
+            }
+        }
+        catch(SerialConnectionException e)
+        {
+            e.printStackTrace();
+            //System.exit(1);
+        }
+
+        Measurement measure = null;
+
+        try
+        {
+            measure = generateMeasurement(output);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return measure;
+    }
+
+    protected abstract Measurement generateMeasurement(String output);
 
     // TODO
     // Configure option to continously display results, or do it indefinitely

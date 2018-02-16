@@ -18,6 +18,12 @@ public final class TemperatureSensor extends AbstractSensor
     }
 
     @Override
+    protected Measurement generateMeasurement(String output)
+    {
+        return new Measurement(TypeOfMeasurement.TEMP, 5.0);
+    }
+
+    @Override
     public String toString()
     {
         return "Temperature sensor";

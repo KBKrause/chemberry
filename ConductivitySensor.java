@@ -10,34 +10,15 @@ public final class ConductivitySensor extends AbstractSensor
     }
 
     @Override
-    public Measurement instantMeasure(SerialConnection conn)
+    protected Measurement generateMeasurement(String output)
     {
-        String output = "";
-        
-        try
-        {
-            output = conn.getData();
-            
-            while (output.charAt(0) != 'V')
-            {
-                output = conn.getData();
-            }
-        }
-        catch(SerialConnectionException e)
-        {
-            e.printStackTrace();
-            //System.exit(1);
-        }
-        
-        Measurement measure = new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(9, output.length() - 1)));
-
-        return measure;
+        return new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(9, output.length() - 1)));
     }
 
     @Override
     public String toString()
     {
-        return "Conductivity sensor";
+        return "Voltage sensor";
     }
 
     @Override
