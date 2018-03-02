@@ -1,6 +1,5 @@
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
