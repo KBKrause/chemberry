@@ -14,6 +14,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Window;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
@@ -21,6 +22,7 @@ import javax.swing.JOptionPane;
 
 public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
+    private ArrayList <Number> measurements;
     // Config screen and settings "screens."
     private JDialog GUIconfig;
     private JDialog GUIsettings;
@@ -62,6 +64,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         super("Chemberry - Main");
 
         String os = System.getProperty("os.name");
+        measurements = new ArrayList <Number>();
 
         try
         {
@@ -230,11 +233,29 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
         JPanel mainRow = new JPanel();
         mainRow.setLayout(new GridLayout(1, 3));
-
+        
         JScrollPane datascrl = new JScrollPane(dataTextArea);
         JScrollPane debugscrl = new JScrollPane(debugTextArea);
 
-        mainRow.add(datascrl);
+        JPanel datapanel = new JPanel();
+        datapanel.setLayout(new GridLayout(2, 1));
+
+        datapanel.add(datascrl);
+
+        JButton visbtn = new JButton("Visualize");
+        visbtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                CBLineGraph graph = new CBLineGraph("Chemberry Line Graph", "", TypeOfMeasurement.PH, measurements);
+                graph.displayChart();
+            }
+        });
+
+        datapanel.add(visbtn);
+
+        mainRow.add(datapanel);
         
         controlPanel = new JPanel();
         measurementBtn = new JButton("Measure");
@@ -283,7 +304,9 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                                     {
                                         try
                                         {
-                                            dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
+                                            Measurement measure = currentSensor.instantMeasure(arduino);
+                                            measurements.add(measure.getValue());
+                                            dataTextArea.append(measure.toString() + "\n");
                                         }
                                         catch(Exception e)
                                         {
@@ -523,6 +546,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 dataTextArea.setText("");
                 appendDebugText("Data cleared");
                 clearDataPopup.setVisible(false);
+                measurements.clear();
             }
         });
 
