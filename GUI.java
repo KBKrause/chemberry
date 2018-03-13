@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
     private ArrayList <Number> measurements;
+    private TypeOfMeasurement currenttom;
     // Config screen and settings "screens."
     private JDialog GUIconfig;
     private JDialog GUIsettings;
@@ -248,7 +249,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                CBLineGraph graph = new CBLineGraph("Chemberry Line Graph", "", TypeOfMeasurement.PH, measurements);
+                CBLineGraph graph = new CBLineGraph("Chemberry Line Graph", currenttom.toString(), currenttom, measurements);
                 graph.displayChart();
             }
         });
@@ -277,13 +278,15 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                         //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
                         try
                         {
-                            dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
+                            Measurement measure = currentSensor.instantMeasure(arduino);
+                            dataTextArea.append(measure.toString() + "\n");
+                            measurements.add(measure.getValue());
                         }
                         catch(Exception ex)
                         {
                             ex.printStackTrace();
 
-                            System.exit(1);
+                            //System.exit(1);
                         }
                     }
                     else
@@ -681,14 +684,17 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     if (typeOfInstrument.equals("pH probe"))
                     {
                         currentSensor = new pHSensor();
+                        currenttom = TypeOfMeasurement.PH;
                     }
                     else if (typeOfInstrument.equals("Temperature sensor"))
                     {
                         currentSensor = new TemperatureSensor();
+                        currenttom = TypeOfMeasurement.TEMP;
                     }
                     else
                     {
                         currentSensor = new ConductivitySensor();
+                        currenttom = TypeOfMeasurement.CONDUCT;
                     }
     
                     appendDebugText("Configured sensor: " + currentSensor.toString());

@@ -19,7 +19,7 @@ public class CBLineGraph extends ApplicationFrame
         super(windowTitle);
         measurementType = tom;
         // x axis title, y axis title
-        JFreeChart lineChart = ChartFactory.createLineChart(chartTitle, "", "Value", createDataset(measurements), PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart lineChart = ChartFactory.createLineChart(chartTitle, "", "Value (" + tom.toString() + ")", createDataset(measurements), PlotOrientation.VERTICAL, true, true, false);
         ChartPanel chartPanel = new ChartPanel(lineChart);
         graphArea = chartPanel;
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 367));
@@ -28,7 +28,7 @@ public class CBLineGraph extends ApplicationFrame
 
     public void displayChart()
     {
-        JFrame jf = new JFrame("test");
+        JFrame jf = new JFrame("Chemberry Data Visualization");
         jf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         jf.setLayout(new BorderLayout(0, 5));
         jf.add(graphArea, BorderLayout.CENTER);
