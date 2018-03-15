@@ -137,6 +137,23 @@ public class SerialConnection implements SerialPortEventListener
 		return retval;
 	}
 
+	public void sendData(String data)
+	{
+		try
+		{
+			//this.output = serialPort.getOutputStream();
+			System.out.println("Writing data");
+			this.output.write(data.getBytes());
+			System.out.println("Flushing data");
+			this.output.flush();
+			System.out.println("Flushing finished");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	public void beginMeasuring(String os) throws Exception 
 	{
 		//SerialConnection main = new SerialConnection();

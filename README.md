@@ -71,7 +71,7 @@ java -cp "RXTXcomm.jar;" Main -of
 
 <i>Linux</i> users need to add the Java Native Interface (JNI) to their command
 ```
-java -Djava.library.path=/usr/lib/jni -cp /usr/share/java/RXTXcomm.jar:. Main -of
+java -cp /usr/share/java/RXTXcomm.jar:. Main -of
 ```
 
 <hr>

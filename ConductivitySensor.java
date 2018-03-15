@@ -1,43 +1,37 @@
 import java.util.Random;
 import java.util.ArrayList;
 
-// Conductivity measured in siemens or microsiemens per centimeter (for our purposes).
+/**
+ * The <code>ConductivitySensor</code> is a type of <code>AbstractSensor</code>. It measures the voltage of solutions; measurements are reported in
+ * units of V (volts). As with the other sensors, this class expects a certain format to be printed by the arduino board when it measures
+ * from one if its analog inputs.
+ * 
+ * @author      kevbkraus
+ * @see         AbstractSensor
+ * @since       1.8
+ */
 public final class ConductivitySensor extends AbstractSensor
 {
+    /** 
+     * The default constructor calls <code>super()</code> to <code>AbstractSensor</code>.
+     * 
+     * @since           1.8
+     */
     public ConductivitySensor()
     {
         super();
     }
 
     @Override
-    public Measurement instantMeasure(SerialConnection conn)
+    protected Measurement generateMeasurement(String output)
     {
-        String output = "";
-        
-        try
-        {
-            output = conn.getData();
-            
-            while (output.charAt(0) != 'V')
-            {
-                output = conn.getData();
-            }
-        }
-        catch(SerialConnectionException e)
-        {
-            e.printStackTrace();
-            //System.exit(1);
-        }
-        
-        Measurement measure = new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(9, output.length() - 1)));
-
-        return measure;
+        return new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(9, output.length() - 1)));
     }
 
     @Override
     public String toString()
     {
-        return "Conductivity sensor";
+        return "Voltage sensor";
     }
 
     @Override

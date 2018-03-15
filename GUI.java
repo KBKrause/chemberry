@@ -1,6 +1,5 @@
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
@@ -15,6 +14,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.UIManager.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Window;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 
 public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
+    private ArrayList <Number> measurements;
+    private TypeOfMeasurement currenttom;
     // Config screen and settings "screens."
     private JDialog GUIconfig;
     private JDialog GUIsettings;
@@ -63,6 +65,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         super("Chemberry - Main");
 
         String os = System.getProperty("os.name");
+        measurements = new ArrayList <Number>();
 
         try
         {
@@ -231,11 +234,29 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
         JPanel mainRow = new JPanel();
         mainRow.setLayout(new GridLayout(1, 3));
-
+        
         JScrollPane datascrl = new JScrollPane(dataTextArea);
         JScrollPane debugscrl = new JScrollPane(debugTextArea);
 
-        mainRow.add(datascrl);
+        JPanel datapanel = new JPanel();
+        datapanel.setLayout(new GridLayout(2, 1));
+
+        datapanel.add(datascrl);
+
+        JButton visbtn = new JButton("Visualize");
+        visbtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                CBLineGraph graph = new CBLineGraph("Chemberry Line Graph", currenttom.toString(), currenttom, measurements);
+                graph.displayChart();
+            }
+        });
+
+        datapanel.add(visbtn);
+
+        mainRow.add(datapanel);
         
         controlPanel = new JPanel();
         measurementBtn = new JButton("Measure");
@@ -257,13 +278,15 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                         //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
                         try
                         {
-                            dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
+                            Measurement measure = currentSensor.instantMeasure(arduino);
+                            dataTextArea.append(measure.toString() + "\n");
+                            measurements.add(measure.getValue());
                         }
                         catch(Exception ex)
                         {
                             ex.printStackTrace();
 
-                            System.exit(1);
+                            //System.exit(1);
                         }
                     }
                     else
@@ -284,7 +307,9 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                                     {
                                         try
                                         {
-                                            dataTextArea.append(currentSensor.instantMeasure(arduino).toString() + "\n");
+                                            Measurement measure = currentSensor.instantMeasure(arduino);
+                                            measurements.add(measure.getValue());
+                                            dataTextArea.append(measure.toString() + "\n");
                                         }
                                         catch(Exception e)
                                         {
@@ -524,6 +549,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 dataTextArea.setText("");
                 appendDebugText("Data cleared");
                 clearDataPopup.setVisible(false);
+                measurements.clear();
             }
         });
 
@@ -658,14 +684,17 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     if (typeOfInstrument.equals("pH probe"))
                     {
                         currentSensor = new pHSensor();
+                        currenttom = TypeOfMeasurement.PH;
                     }
                     else if (typeOfInstrument.equals("Temperature sensor"))
                     {
                         currentSensor = new TemperatureSensor();
+                        currenttom = TypeOfMeasurement.TEMP;
                     }
                     else
                     {
                         currentSensor = new ConductivitySensor();
+                        currenttom = TypeOfMeasurement.CONDUCT;
                     }
     
                     appendDebugText("Configured sensor: " + currentSensor.toString());
