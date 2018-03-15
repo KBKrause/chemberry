@@ -1,6 +1,13 @@
 import java.net.*;
 import java.io.*;
 
+/**
+ * <code>ServerProxy</code> is a base class used for opening and listening on server sockets. It provides the method {@link #handleRequest(String, String)}
+ * so that concrete instantiations of the class can react to data differently.
+ * 
+ * @author      kevbkraus
+ * @since       1.8
+ */
 public abstract class ServerProxy implements Runnable
 {
     private int myPort;
@@ -17,6 +24,16 @@ public abstract class ServerProxy implements Runnable
         return myPort;
     }
 
+    /**
+     * This is the overridden method for {@link Runnable#run()}. The server will indefinitely wait and accept connections to this machine's IP and designated port.
+     * Once a request is received, as a <code>String</code>, it is handled by {@link #handleRequest(String, String)}. Afterwards, the socket is closed
+     * and not kept open. This thread will run indefinitely and must be terminated or killed by another thread.
+     * This method is expected to work in unison with {@link ClientConnection#sendString(String)}.
+     * 
+     * @see         ClientConnection
+     * @see         Runnable
+     * @since       1.8
+     */
     @Override
     public void run()
     {
