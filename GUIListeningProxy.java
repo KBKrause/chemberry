@@ -20,5 +20,9 @@ public class GUIListeningProxy extends ServerProxy
             gui.appendDebugText("WARNING: The remote server has disconnected");
             //gui.setNetworking(false);
         }
+        else if (tokens[0].equals("u"))
+        {
+            System.out.println("Instructor says: " + tokens[1]);
+        }
     }
 }

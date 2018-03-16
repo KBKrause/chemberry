@@ -77,7 +77,33 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        this.add(settingsBtn);
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new GridLayout(2, 1));
+
+        // TODO
+        // eventually conceal the IP logic
+        JButton sendDataButton = new JButton("Send something");
+        sendDataButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                try
+                {
+                    ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
+                    conn.sendString("u:Hello ... it's me");
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        rightPanel.add(sendDataButton);
+        rightPanel.add(settingsBtn);
+
+        this.add(rightPanel);
 
         //this.validate();
 
