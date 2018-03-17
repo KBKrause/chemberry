@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.awt.event.*;
 import javax.swing.event.*;
+import java.util.ArrayList;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
@@ -22,6 +23,8 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     private JDialog instructorSettings;
     
     private HashMap <String, Boolean> settings;
+
+    private JDialog dialog_procedure;
 
     public InstructorGUI() throws ChemberryException
     {
@@ -38,6 +41,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         }
 
         initializeSettings();
+        initializeDialogs();
 
         try 
         { 
@@ -60,12 +64,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        this.setLocation(100, 100);
-        this.setLayout(new GridLayout(1,2));
-
         studentTabs = new JTabbedPane();
-
-        this.add(studentTabs);
 
         JButton settingsBtn = new JButton("Settings");
         settingsBtn.addActionListener(new ActionListener()
@@ -100,14 +99,143 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        rightPanel.add(sendDataButton);
+        JButton procedureBtn = new JButton("Procedure");
+        procedureBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                dialog_procedure.setVisible(true);
+            }
+        });
+
+        JPanel menu = new JPanel();
+        menu.setLayout(new GridLayout(2, 1));
+        
+        menu.add(procedureBtn);
+        menu.add(sendDataButton);
+        //rightPanel.add(sendDataButton);
+
+        rightPanel.add(menu);
         rightPanel.add(settingsBtn);
 
+        this.setLocation(100, 100);
+        this.setLayout(new GridLayout(1,2));
+        
+        this.add(studentTabs);
         this.add(rightPanel);
 
         //this.validate();
 
         this.setVisible(true);
+    }
+
+    private void initializeDialogs()
+    {
+        dialog_procedure = new JDialog();
+        dialog_procedure.setTitle("Experimental Procedure Settings");
+
+        dialog_procedure.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+
+        JPanel rhs = new JPanel();
+        rhs.setLayout(new GridLayout(3, 1));
+
+        JButton writeProcButton = new JButton("Write Procedure");
+        writeProcButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                ArrayList < String > stepList = new ArrayList < String >();
+                JDialog dialog = new JDialog();
+                JDialog newStepDialog = new JDialog();
+
+                newStepDialog.setSize(400, 400);
+                newStepDialog.setLayout(new GridLayout(1, 2));
+
+                JTextArea stepDesc = new JTextArea();
+                
+                JButton confirmBtn = new JButton("Add Step");
+
+                newStepDialog.add(stepDesc);
+                newStepDialog.add(confirmBtn);
+
+                dialog.setTitle("Chemberry - Write a New Procedure");
+                dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+                dialog.setSize(400, 400);
+                
+                JPanel btm = new JPanel();
+                btm.setLayout(new GridLayout(1, 3));
+
+                JButton nextStepBtn = new JButton("Add Next Step");
+                nextStepBtn.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        newStepDialog.setVisible(true);
+                    }
+                });
+
+                btm.add(nextStepBtn);
+                btm.add(new JButton("Undo"));
+                btm.add(new JButton("Finish"));
+
+                dialog.setLayout(new GridLayout(2, 1));
+                
+                JTextArea tarea = new JTextArea();
+                tarea.setEditable(false);
+
+                confirmBtn.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        if (stepDesc.getText().equals(""))
+                        {
+                            System.out.println("Something must be typed in the step description");
+                        }
+                        else
+                        {
+                            stepList.add(stepDesc.getText());
+                            stepDesc.setText("");
+                            tarea.append(stepList.get(stepList.size() - 1) + "\n");
+                            newStepDialog.setVisible(false);
+                        }
+                    }
+                });
+
+                dialog.add(tarea);
+                dialog.add(btm);
+                
+                dialog.setVisible(true);
+            }
+        });
+
+        rhs.add(new JButton("Load Existing Procedure"));
+        rhs.add(new JButton("Save"));
+        rhs.add(writeProcButton);
+    
+        JTextArea lhstxt = new JTextArea();
+        lhstxt.setText("No procedure identified");
+        lhstxt.setEditable(false);
+
+        JPanel lhs_btm = new JPanel();
+        lhs_btm.setLayout(new GridLayout(1, 2));
+        lhs_btm.add(new JButton("Broadcast"));
+        lhs_btm.add(new JButton("Edit"));
+
+        JPanel lhs = new JPanel();
+        lhs.setLayout(new GridLayout(2, 1));
+
+        lhs.add(lhstxt);
+        lhs.add(lhs_btm);
+
+        dialog_procedure.setLayout(new GridLayout(1, 2));
+
+        dialog_procedure.add(lhs);
+        dialog_procedure.add(rhs);
+        dialog_procedure.setSize(400, 400);
     }
 
     private void initializeSettings()
