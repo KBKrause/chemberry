@@ -78,7 +78,7 @@ java -cp /usr/share/java/RXTXcomm.jar:. Main -of
 
 <h3>About</h3>
 
-This program was written using Visual Studio Code, Red Hat's Java language extension, the Arduino IDE, and the RXTXcomm library.<br> It was authored by Kevin Krause. <a href = "https://www.linkedin.com/in/kevin-krause-131664105/"> Find him on LinkedIn.</a>
+This program was written using Visual Studio Code, Red Hat's Java language extension, the Arduino IDE, the RXTXcomm library, and JFreeChart.<br> It was authored by Kevin Krause. <a href = "https://www.linkedin.com/in/kevin-krause-131664105/"> Find him on LinkedIn.</a>
 
 <h3>Acknowledgements</h3>
 

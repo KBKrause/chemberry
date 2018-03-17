@@ -140,6 +140,10 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         JPanel rhs = new JPanel();
         rhs.setLayout(new GridLayout(3, 1));
 
+        JTextArea lhstxt = new JTextArea();
+        lhstxt.setText("No procedure identified");
+        lhstxt.setEditable(false);
+
         JButton writeProcButton = new JButton("Write Procedure");
         writeProcButton.addActionListener(new ActionListener()
         {
@@ -152,12 +156,15 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
                 newStepDialog.setSize(400, 400);
                 newStepDialog.setLayout(new GridLayout(1, 2));
+                newStepDialog.setTitle("New Procedure - Add a new step");
 
                 JTextArea stepDesc = new JTextArea();
                 
                 JButton confirmBtn = new JButton("Add Step");
+                JButton undobtn = new JButton("Undo");
 
                 newStepDialog.add(stepDesc);
+                newStepDialog.add(undobtn);
                 newStepDialog.add(confirmBtn);
 
                 dialog.setTitle("Chemberry - Write a New Procedure");
@@ -178,8 +185,8 @@ public class InstructorGUI extends JFrame implements InstructorInterface
                 });
 
                 btm.add(nextStepBtn);
-                btm.add(new JButton("Undo"));
-                btm.add(new JButton("Finish"));
+                btm.add(undobtn);
+                btm.add(finishbtn);
 
                 dialog.setLayout(new GridLayout(2, 1));
                 
@@ -199,9 +206,35 @@ public class InstructorGUI extends JFrame implements InstructorInterface
                         {
                             stepList.add(stepDesc.getText());
                             stepDesc.setText("");
-                            tarea.append(stepList.get(stepList.size() - 1) + "\n");
+                            tarea.append(stepList.get(stepList.size() - 1) + "\n\n");
                             newStepDialog.setVisible(false);
                         }
+                    }
+                });
+
+                undobtn.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        stepList.remove(stepList.size() - 1);
+                        tarea.setText("");
+
+                        for (String s : stepList)
+                        {
+                            tarea.append(s + "\n\n");
+                        }
+                    }
+                });
+
+                JButton finishbtn = new JButton("Finish");
+                finishbtn.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        lhstxt.setText(tarea.getText());
+                        dialog.setVisible(false);
                     }
                 });
 
@@ -215,10 +248,6 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         rhs.add(new JButton("Load Existing Procedure"));
         rhs.add(new JButton("Save"));
         rhs.add(writeProcButton);
-    
-        JTextArea lhstxt = new JTextArea();
-        lhstxt.setText("No procedure identified");
-        lhstxt.setEditable(false);
 
         JPanel lhs_btm = new JPanel();
         lhs_btm.setLayout(new GridLayout(1, 2));
