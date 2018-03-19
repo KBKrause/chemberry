@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.awt.event.*;
 import javax.swing.event.*;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
@@ -184,6 +186,8 @@ public class InstructorGUI extends JFrame implements InstructorInterface
                     }
                 });
 
+                JButton finishbtn = new JButton("Finish");
+
                 btm.add(nextStepBtn);
                 btm.add(undobtn);
                 btm.add(finishbtn);
@@ -206,7 +210,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
                         {
                             stepList.add(stepDesc.getText());
                             stepDesc.setText("");
-                            tarea.append(stepList.get(stepList.size() - 1) + "\n\n");
+                            tarea.append(stepList.get(stepList.size() - 1) + "\n");
                             newStepDialog.setVisible(false);
                         }
                     }
@@ -222,12 +226,11 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
                         for (String s : stepList)
                         {
-                            tarea.append(s + "\n\n");
+                            tarea.append(s + "\n");
                         }
                     }
                 });
 
-                JButton finishbtn = new JButton("Finish");
                 finishbtn.addActionListener(new ActionListener()
                 {
                     @Override
@@ -245,8 +248,29 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        rhs.add(new JButton("Load Existing Procedure"));
-        rhs.add(new JButton("Save"));
+        JButton ldbtn = new JButton("Load Existing Procedure");
+        ldbtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String fileText = FileManipulator.loadFile();
+                lhstxt.setText(fileText);
+            }
+        });
+        rhs.add(ldbtn);
+
+        JButton savebtn = new JButton("Save");
+        savebtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                FileManipulator.saveFile(lhstxt.getText());
+            }
+        });
+
+        rhs.add(savebtn);
         rhs.add(writeProcButton);
 
         JPanel lhs_btm = new JPanel();

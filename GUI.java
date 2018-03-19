@@ -141,39 +141,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser jfc = new JFileChooser();
-                int retVal = jfc.showSaveDialog(null);
-
-                if (retVal == JFileChooser.APPROVE_OPTION)
-                {
-                    try
-                    {
-                        PrintWriter writer = new PrintWriter(jfc.getSelectedFile());
-
-                        char[] arr = dataTextArea.getText().toCharArray();
-
-                        for (char ch : arr)
-                        {
-                            if (ch != '\n')
-                            {
-                                writer.print(ch);
-                            }
-                            else
-                            {
-                                writer.println();
-                            }
-                        }
-
-                        writer.close();
-
-                        appendDebugText("Your data has been saved at " + jfc.getSelectedFile().toString());
-                    }
-                    catch(IOException ex)
-                    {
-                        ex.printStackTrace();
-                        appendDebugText("ERROR: Unable to save data");
-                    }
-                }
+                FileManipulator.saveFile(dataTextArea.getText());
             }
         });
 
@@ -184,36 +152,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser jfc = new JFileChooser();
-                int retVal = jfc.showOpenDialog(null);
-
-                if (retVal == JFileChooser.APPROVE_OPTION)
-                {
-                    try
-                    {         
-                        BufferedReader bfr = new BufferedReader(new FileReader(jfc.getSelectedFile()));
-
-                        // TODO
-                        // Confirm opening. This will need to be changed.
-                        dataTextArea.setText("");
-
-                        String content;
-                        
-                        while ((content = bfr.readLine()) != null)
-                        {
-                            dataTextArea.append(content);
-                            dataTextArea.append("\n");
-                        }
-
-                        appendDebugText("Data file successfully opened");
-                        bfr.close();
-                    }
-                    catch(IOException ioe)
-                    {
-                        appendDebugText("Error opening the file");
-                        ioe.printStackTrace();
-                    }
-                }
+                String bytes_read = FileManipulator.loadFile();
+                dataTextArea.setText(bytes_read);
             }
         });
 
@@ -696,6 +636,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     }
     
                     appendDebugText("Configured sensor: " + currentSensor.toString());
+                    dataTextArea.setText("");
                     JLabel label = (JLabel)controlPanel.getComponent(1);
                     label.setText("Current Sensor: " + currentSensor.toString());
 
