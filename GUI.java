@@ -79,27 +79,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         {
             e.printStackTrace();
         }
-
-        try
-		{
-            // TODO since the static method is being used to gather data, there's no need to keep this in the end.
-            /*
-            arduino = new SerialConnection();
-            if (System.getProperty("os.name").equals("Windows 10"))
-            {
-                arduino.start(false);
-            }
-            else
-            {
-                arduino.start(true);
-            }
-            */
-			
-		}
-		catch(Exception e)
-		{
-            e.printStackTrace();
-		}
     
         try 
         { 

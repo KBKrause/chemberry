@@ -84,7 +84,7 @@ public class Main
 
             if (enableNetworking)
             {
-                GUIListeningProxy server = new GUIListeningProxy(9648, gui);
+                GUIListeningProxy server = new GUIListeningProxy(9649, gui);
                 Thread t = new Thread(server);
                 t.start();
             }

@@ -12,8 +12,10 @@ public class GUIListeningProxy extends ServerProxy
     public void handleRequest(String request, String clientIP)
     {
         System.out.println("Received this request: " + request);
-        String tokens[] = request.split(":");
-        System.out.println(tokens);
+        String decodedRequest = Inet.decodeUpdate(request);
+
+        String tokens[] = decodedRequest.split(":");
+        //System.out.println(tokens);
 
         if (tokens[0].equals("d") && (tokens[1].equals("esync")))
         {
@@ -23,6 +25,10 @@ public class GUIListeningProxy extends ServerProxy
         else if (tokens[0].equals("u"))
         {
             System.out.println("Instructor says: " + tokens[1]);
+        }
+        else if (tokens[0].equals("bp"))
+        {
+            System.out.println("Received this broadcasted procedure: " + tokens[1]);
         }
     }
 }

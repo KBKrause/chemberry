@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * A ClientConnection is an abstract representation of a TCP client socket that sends and receives data from a server.
  * This class provides very basic functionality to communicate with a <code>ServerProxy</code>.
- * Changing the destination address of the server would require a new 
+ * Changing the destination address of the server would require a new instantation of this object.
  * 
  * @author      kevbkraus
  * @see         ServerProxy

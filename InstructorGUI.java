@@ -274,9 +274,34 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         rhs.add(writeProcButton);
 
         JPanel lhs_btm = new JPanel();
-        lhs_btm.setLayout(new GridLayout(1, 2));
-        lhs_btm.add(new JButton("Broadcast"));
-        lhs_btm.add(new JButton("Edit"));
+        lhs_btm.setLayout(new GridLayout(1, 1));
+
+        JButton broadBtn = new JButton("Broadcast");
+        broadBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                try
+                {
+                    // TODO Send to all clients.
+                    for (int i = 0; i < studentTabs.getTabCount(); i++)
+                    {
+                        //System.out.println("IP of tab at " + i + " : " + ((StudentPanel)studentTabs.getComponentAt(i)).getIP());
+                        String ipaddr = ((StudentPanel)studentTabs.getComponentAt(i)).getIP();
+                        ClientConnection conn = new ClientConnection(ipaddr, 9648);
+                        conn.sendString(Inet.encodeUpdate("bp:" + lhstxt.getText()));
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        lhs_btm.add(broadBtn);
+        //lhs_btm.add(new JButton("Edit"));
 
         JPanel lhs = new JPanel();
         lhs.setLayout(new GridLayout(2, 1));
