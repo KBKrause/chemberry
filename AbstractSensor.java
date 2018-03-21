@@ -114,6 +114,7 @@ public abstract class AbstractSensor
      * This is the abstract method used by <code>instantMeasure</code> and overridden by concrete sensor classes. It creates
      * the actual <code>Measurement</code> that is returned by <code>instantMeasure</code>. 
      *
+     * @param output    the output of the arduino serial monitor
      * @return          a Measurement representative of the most recent or buffered data transmitted by the Arduino
      * @see             Measurement
      * @since           1.8

@@ -306,7 +306,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         bottomRow.add(clearData);
 
         JPanel topRow = new JPanel();
-        topRow.setLayout(new GridLayout(1, 2));
+        topRow.setLayout(new GridLayout(1, 3));
 
         JButton configBtn = new JButton();
         configBtn.setText("Configuration");
@@ -334,6 +334,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         //topRow.add(dataBtn);
         topRow.add(configBtn);
         topRow.add(settingsBtn);
+        topRow.add(new JButton("Procedure"));
 
         // Set the layout for GUI with 3 rows and 0 columns.
         // The GUI can append one component per row-column intersection.
