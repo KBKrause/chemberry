@@ -14,7 +14,6 @@ public class CBLineGraph extends ApplicationFrame
     private TypeOfMeasurement measurementType;
     private ChartPanel graphArea;
 
-    
     public CBLineGraph(String windowTitle, String chartTitle, TypeOfMeasurement tom, ArrayList <Number> measurements) 
     {
         super(windowTitle);

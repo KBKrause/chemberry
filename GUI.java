@@ -58,6 +58,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     // TODO is arduino necessary?
     private SerialConnection arduino;
 
+    private JTextArea procedureText;
+
     public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry - Main");
@@ -334,7 +336,29 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         //topRow.add(dataBtn);
         topRow.add(configBtn);
         topRow.add(settingsBtn);
-        topRow.add(new JButton("Procedure"));
+
+        JDialog procedureDialog = new JDialog(this);
+        procedureDialog.setLayout(new GridLayout(1, 1));
+        procedureDialog.setSize(400, 400);
+        procedureDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+
+        procedureText = new JTextArea();
+        JScrollPane procScrl = new JScrollPane(procedureText);
+    
+        procedureText.setEditable(false);
+
+        procedureDialog.add(procScrl);
+
+        JButton procedureBtn = new JButton("Procedure");
+        procedureBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                procedureDialog.setVisible(true);
+            }
+        });
+        topRow.add(procedureBtn);
 
         // Set the layout for GUI with 3 rows and 0 columns.
         // The GUI can append one component per row-column intersection.
@@ -897,5 +921,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void setProcedure(String s)
+    {
+        procedureText.setText(s);
+        appendDebugText("You just received a new experimental procedure");
     }
 }
