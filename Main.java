@@ -4,13 +4,6 @@ public class Main
 {
     public static void main(String[] args)
     {
-        Experiment testexp = new Experiment("My First Experiment");
-        testexp.setProcedure("Here's the procedure");
-        testexp.setMaterials("Here are some materials needed");
-        testexp.addDataType(TypeOfMeasurement.PH);
-        testexp.addDataType(TypeOfMeasurement.CONDUCT);
-        testexp.render();
-        
         boolean enableNetworking = true;
         ArrayList <String> argList = new ArrayList <String>();
 

@@ -79,7 +79,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         });
 
         JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new GridLayout(2, 1));
+        rightPanel.setLayout(new GridLayout(3, 1));
 
         // TODO
         // eventually conceal the IP logic
@@ -120,6 +120,22 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         rightPanel.add(menu);
         rightPanel.add(settingsBtn);
+
+        JButton expsetupbtn = new JButton("Experiment Setup");
+        expsetupbtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                Experiment newexp = new Experiment("Default title");
+                newexp.setMaterials("");
+                newexp.setProcedure("");
+                newexp.addDataType(TypeOfMeasurement.PH);
+                newexp.render();
+            }
+        });
+
+        rightPanel.add(expsetupbtn);
 
         this.setLocation(100, 100);
         this.setLayout(new GridLayout(1,2));

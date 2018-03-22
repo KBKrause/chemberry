@@ -7,105 +7,121 @@ import java.awt.event.ActionEvent;
 import java.awt.event.*;
 import javax.swing.event.*;
 
-public class Experiment
+public class Experiment 
 {
-   private String title;
-   private String procedure;
-   private String materials;
-   private HashSet <TypeOfMeasurement> dataTypes;
+    private String title;
+    private String procedure;
+    private String materials;
+    private HashSet<TypeOfMeasurement> dataTypes;
 
-   public Experiment(String title)
-   {
-       this.title = title;
-       dataTypes = new HashSet <TypeOfMeasurement>();
-       procedure = "";
-       materials = "";
-   }
+    private JDialog experimentDialog;
+    private JTextField titleText;
+    private JTextArea procText;
+    private JTextArea materialsText;
+    private JTextArea dataTypesText;
 
-   public String getTitle()
-   {
-       return title;
-   }
+    public Experiment(String title) 
+    {
+        this.title = title;
+        dataTypes = new HashSet<TypeOfMeasurement>();
+        procedure = "";
+        materials = "";
+    }
 
-   public String getProcedure()
-   {
-       return procedure;
-   }
+    public String getTitle() 
+    {
+        return title;
+    }
 
-   public String getMaterials()
-   {
-       return materials;
-   }
+    public String getProcedure() 
+    {
+        return procedure;
+    }
 
-   public String stringifyDataTypes()
-   {
-       String retval = "";
+    public String getMaterials() 
+    {
+        return materials;
+    }
 
-       for (TypeOfMeasurement tom : dataTypes)
-       {
-           retval += tom.toString() + "\n";
-       }
+    public String stringifyDataTypes() 
+    {
+        String retval = "";
 
-       return retval;
-   }
+        for (TypeOfMeasurement tom : dataTypes) 
+        {
+            retval += tom.toString() + "\n";
+        }
 
-   public void setProcedure(String s)
-   {
+        return retval;
+    }
+
+    public void setProcedure(String s) 
+    {
         procedure = s;
-   }
+    }
 
-   public void setMaterials(String s)
+    public void setMaterials(String s) 
+    {
+        materials = s;
+    }
+
+    public void addDataType(TypeOfMeasurement tom) 
+    {
+        dataTypes.add(tom);
+    }
+
+   public void setup() 
    {
-       materials = s;
+        experimentDialog = new JDialog();
+        experimentDialog.setLayout(new GridLayout(3, 1));
+        experimentDialog.setSize(800, 800);
+        experimentDialog.setLocation(100, 100);
+        experimentDialog.setTitle("Chemberry - " + title);
+        experimentDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+
+        titleText = new JTextField(title);
+        //titleText.setEditable(false);
+        titleText.setSize(600, 200);
+
+        procText = new JTextArea(procedure);
+        JScrollPane scrl_procText = new JScrollPane(procText);
+        procText.setEditable(false);
+
+        materialsText = new JTextArea(materials);
+        JScrollPane scrl_materialsText = new JScrollPane(materialsText);
+        //materialsText.setEditable(false);
+
+        dataTypesText = new JTextArea(stringifyDataTypes());
+        JScrollPane scrl_dataTypesText = new JScrollPane(dataTypesText);
+        dataTypesText.setEditable(false);
+
+        JPanel one = new JPanel();
+        one.setLayout(new GridLayout(1, 2));
+
+        JPanel two = new JPanel();
+        two.setLayout(new GridLayout(2, 1));
+
+        two.add(scrl_materialsText);
+        two.add(scrl_dataTypesText);
+
+        one.add(scrl_procText);
+        one.add(two);
+
+        JPanel btm = new JPanel();
+        btm.setLayout(new GridLayout(1, 3));
+        
+        JButton clearbtn = new JButton("Clear All");
+        JButton procbtn = new JButton("Add Procedure");
+
+        // TODO continue building GUI here for instructor
+
+        experimentDialog.add(titleText);
+        experimentDialog.add(one);
+        experimentDialog.setVisible(true);
    }
 
-   public void addDataType(TypeOfMeasurement tom)
-   {
-       dataTypes.add(tom);
-   }
+    public void render() 
+    {
 
-   public void render()
-   {
-       if (procedure != "" && materials != "" && dataTypes.isEmpty() == false && title != "")
-       {
-           JDialog experimentDialog = new JDialog();
-           experimentDialog.setLayout(new GridLayout(2, 1));
-           experimentDialog.setSize(800, 800);
-           experimentDialog.setLocation(100, 100);
-           experimentDialog.setTitle("Chemberry - " + title);
-           experimentDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-
-           JTextField titleText = new JTextField(title);
-           titleText.setEditable(false);
-           titleText.setSize(600, 200);
-
-           JTextArea procText = new JTextArea(procedure);
-           JScrollPane scrl_procText = new JScrollPane(procText);
-           procText.setEditable(false);
-
-           JTextArea materialsText = new JTextArea(materials);
-           JScrollPane scrl_materialsText = new JScrollPane(materialsText);
-           materialsText.setEditable(false);
-
-           JTextArea dataTypesText = new JTextArea(stringifyDataTypes());
-           JScrollPane scrl_dataTypesText = new JScrollPane(dataTypesText);
-           dataTypesText.setEditable(false);
-
-           JPanel one = new JPanel();
-           one.setLayout(new GridLayout(1, 2));
-
-           JPanel two = new JPanel();
-           two.setLayout(new GridLayout(2, 1));
-
-           two.add(scrl_materialsText);
-           two.add(scrl_dataTypesText);
-
-           one.add(scrl_procText);
-           one.add(two);
-
-           experimentDialog.add(titleText);
-           experimentDialog.add(one);
-           experimentDialog.setVisible(true);
-       }
-   }
+    }
 }
