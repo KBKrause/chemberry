@@ -26,8 +26,6 @@ public class InstructorGUI extends JFrame implements InstructorInterface
     
     private HashMap <String, Boolean> settings;
 
-    private JDialog dialog_procedure;
-
     public InstructorGUI() throws ChemberryException
     {
         super("Chemberry Instructor");
@@ -43,7 +41,6 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         }
 
         initializeSettings();
-        initializeDialogs();
 
         try 
         { 
@@ -101,20 +98,9 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        JButton procedureBtn = new JButton("Procedure");
-        procedureBtn.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                dialog_procedure.setVisible(true);
-            }
-        });
-
         JPanel menu = new JPanel();
-        menu.setLayout(new GridLayout(2, 1));
-        
-        menu.add(procedureBtn);
+        menu.setLayout(new GridLayout(1, 1));
+
         menu.add(sendDataButton);
         //rightPanel.add(sendDataButton);
 
@@ -128,10 +114,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             public void actionPerformed(ActionEvent e) 
             {
                 Experiment newexp = new Experiment("Default title");
-                newexp.setMaterials("");
-                newexp.setProcedure("");
-                newexp.addDataType(TypeOfMeasurement.PH);
-                newexp.render();
+                newexp.setup();
             }
         });
 
@@ -146,190 +129,6 @@ public class InstructorGUI extends JFrame implements InstructorInterface
         //this.validate();
 
         this.setVisible(true);
-    }
-
-    private void initializeDialogs()
-    {
-        dialog_procedure = new JDialog();
-        dialog_procedure.setTitle("Experimental Procedure Settings");
-
-        dialog_procedure.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-
-        JPanel rhs = new JPanel();
-        rhs.setLayout(new GridLayout(3, 1));
-
-        JTextArea lhstxt = new JTextArea();
-        lhstxt.setText("No procedure identified");
-        lhstxt.setEditable(false);
-
-        JButton writeProcButton = new JButton("Write Procedure");
-        writeProcButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                ArrayList < String > stepList = new ArrayList < String >();
-                JDialog dialog = new JDialog();
-                JDialog newStepDialog = new JDialog();
-
-                newStepDialog.setSize(400, 400);
-                newStepDialog.setLayout(new GridLayout(1, 2));
-                newStepDialog.setTitle("New Procedure - Add a new step");
-
-                JTextArea stepDesc = new JTextArea();
-                
-                JButton confirmBtn = new JButton("Add Step");
-                JButton undobtn = new JButton("Undo");
-
-                newStepDialog.add(stepDesc);
-                newStepDialog.add(undobtn);
-                newStepDialog.add(confirmBtn);
-
-                dialog.setTitle("Chemberry - Write a New Procedure");
-                dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-                dialog.setSize(400, 400);
-                
-                JPanel btm = new JPanel();
-                btm.setLayout(new GridLayout(1, 3));
-
-                JButton nextStepBtn = new JButton("Add Next Step");
-                nextStepBtn.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e) 
-                    {
-                        newStepDialog.setVisible(true);
-                    }
-                });
-
-                JButton finishbtn = new JButton("Finish");
-
-                btm.add(nextStepBtn);
-                btm.add(undobtn);
-                btm.add(finishbtn);
-
-                dialog.setLayout(new GridLayout(2, 1));
-                
-                JTextArea tarea = new JTextArea();
-                tarea.setEditable(false);
-
-                confirmBtn.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e) 
-                    {
-                        if (stepDesc.getText().equals(""))
-                        {
-                            System.out.println("Something must be typed in the step description");
-                        }
-                        else
-                        {
-                            stepList.add(stepDesc.getText());
-                            stepDesc.setText("");
-                            tarea.append(stepList.get(stepList.size() - 1) + "\n");
-                            newStepDialog.setVisible(false);
-                        }
-                    }
-                });
-
-                undobtn.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e) 
-                    {
-                        stepList.remove(stepList.size() - 1);
-                        tarea.setText("");
-
-                        for (String s : stepList)
-                        {
-                            tarea.append(s + "\n");
-                        }
-                    }
-                });
-
-                finishbtn.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e) 
-                    {
-                        lhstxt.setText(tarea.getText());
-                        dialog.setVisible(false);
-                    }
-                });
-
-                dialog.add(tarea);
-                dialog.add(btm);
-                
-                dialog.setVisible(true);
-            }
-        });
-
-        JButton ldbtn = new JButton("Load Existing Procedure");
-        ldbtn.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                String fileText = FileManipulator.loadFile();
-                lhstxt.setText(fileText);
-            }
-        });
-        rhs.add(ldbtn);
-
-        JButton savebtn = new JButton("Save");
-        savebtn.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                FileManipulator.saveFile(lhstxt.getText());
-            }
-        });
-
-        rhs.add(savebtn);
-        rhs.add(writeProcButton);
-
-        JPanel lhs_btm = new JPanel();
-        lhs_btm.setLayout(new GridLayout(1, 1));
-
-        JButton broadBtn = new JButton("Broadcast");
-        broadBtn.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                try
-                {
-                    // TODO Send to all clients.
-                    for (int i = 0; i < studentTabs.getTabCount(); i++)
-                    {
-                        //System.out.println("IP of tab at " + i + " : " + ((StudentPanel)studentTabs.getComponentAt(i)).getIP());
-                        String ipaddr = ((StudentPanel)studentTabs.getComponentAt(i)).getIP();
-                        ClientConnection conn = new ClientConnection(ipaddr, 9648);
-                        conn.sendString(Inet.encodeUpdate("bp:" + lhstxt.getText()));
-                    }
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        lhs_btm.add(broadBtn);
-        //lhs_btm.add(new JButton("Edit"));
-
-        JPanel lhs = new JPanel();
-        lhs.setLayout(new GridLayout(2, 1));
-
-        lhs.add(lhstxt);
-        lhs.add(lhs_btm);
-
-        dialog_procedure.setLayout(new GridLayout(1, 2));
-
-        dialog_procedure.add(lhs);
-        dialog_procedure.add(rhs);
-        dialog_procedure.setSize(400, 400);
     }
 
     private void initializeSettings()
