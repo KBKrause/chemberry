@@ -33,7 +33,11 @@ public class GUIListeningProxy extends ServerProxy
         }
         else if (tokens[0].equals("exp"))
         {
-            
+            // [1]title -- [2]proc -- [3]mats -- [4]types
+            System.out.println(tokens[1]);
+            System.out.println(tokens[2]);
+            System.out.println(tokens[3]);
+            System.out.println(tokens[4]);
         }
     }
 }

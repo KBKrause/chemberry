@@ -75,124 +75,14 @@ public class Experiment
         dataTypes.add(tom);
     }
 
-   public void setup() 
+   public void showSetup() 
    {
-       if (experimentDialog == null)
-       {
-           experimentDialog = new JDialog();
-            experimentDialog.setLayout(new GridLayout(3, 1));
-            experimentDialog.setSize(800, 800);
-            experimentDialog.setLocation(100, 100);
-            experimentDialog.setTitle("Chemberry - Experiment Design");
-            experimentDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-
-            titleText = new JTextPane();
-            titleText.setContentType("text/html");
-            titleText.setText("<html><h1>" + title + "</h1></html>");
-            //titleText.setEditable(false);
-            titleText.setSize(200, 200);
-
-            procText = new JTextArea(procedure);
-            procText.setText("Use the 'Add Procedure' button to add a procedure to this area.\n" + 
-                            "Keep the stepwise instructions short, simple, and easy to understand for the students.");
-            JScrollPane scrl_procText = new JScrollPane(procText);
-            procText.setEditable(false);
-
-            materialsText = new JTextArea(materials);
-            JScrollPane scrl_materialsText = new JScrollPane(materialsText);
-            //materialsText.setEditable(false);
-
-            JPanel dataTypesPanel = new JPanel();
-            dataTypesPanel.setLayout(new GridLayout(2,1));
-            dataTypesPanel.add(new JLabel("Select all measurements that are part of this experiment:"));
-            JPanel btmOfData = new JPanel(new GridLayout(1, 3));
-
-            JCheckBox chk_pH = new JCheckBox("pH");
-            JCheckBox chk_volt = new JCheckBox("Voltage");
-            JCheckBox chk_temp = new JCheckBox("Temperature");
-
-            btmOfData.add(chk_pH);
-            btmOfData.add(chk_volt);
-            btmOfData.add(chk_temp);
-            dataTypesPanel.add(btmOfData);
-
-            JPanel one = new JPanel();
-            one.setLayout(new GridLayout(1, 2));
-
-            JPanel two = new JPanel();
-            two.setLayout(new GridLayout(2, 1));
-
-            two.add(scrl_materialsText);
-            two.add(dataTypesPanel);
-
-            one.add(scrl_procText);
-            one.add(two);
-
-            JPanel btm = new JPanel();
-            btm.setLayout(new GridLayout(1, 3));
-            
-            JButton clearbtn = new JButton("Clear All");
-            clearbtn.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e) 
-                {
-                    titleText.setText("<html><h1>Default title</h1></html>");
-                    procText.setText("Use the 'Add Procedure' button to add a procedure to this area.\n" + 
-                    "Keep the stepwise instructions short, simple, and easy to understand for the students.");
-                    materialsText.setText("");
-
-                    chk_pH.setSelected(false);
-                    chk_volt.setSelected(false);
-                    chk_temp.setSelected(false);
-                }
-            });
-
-            JButton procbtn = new JButton("Add Procedure");
-
-            procbtn.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e) 
-                {
-                    dialog_procedure.setVisible(true);
-                }
-            });
-
-            JButton finalbtn = new JButton("Finish");
-            finalbtn.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e) 
-                {
-                    title = titleText.getText();
-                    procedure = procText.getText();
-                    materials = materialsText.getText();
-                    
-                    if (chk_pH.isSelected())
-                        dataTypes.add(TypeOfMeasurement.PH);
-                    if (chk_temp.isSelected())
-                        dataTypes.add(TypeOfMeasurement.TEMP);
-                    if (chk_volt.isSelected())
-                        dataTypes.add(TypeOfMeasurement.CONDUCT);
-                    //experimentDialog.setVisible(false);
-                }
-            });
-
-            btm.add(clearbtn);
-            btm.add(procbtn);
-            btm.add(finalbtn);
-
-            experimentDialog.add(titleText);
-            experimentDialog.add(one);
-            experimentDialog.add(btm);
-
-            experimentDialog.setVisible(true);
-       }
+       experimentDialog.setVisible(true);
    }
 
    private void initializeDialogs()
    {
+       // Procedure dialog //
        dialog_procedure = new JDialog();
        dialog_procedure.setTitle("Experimental Procedure Settings");
 
@@ -361,5 +251,122 @@ public class Experiment
        dialog_procedure.add(lhs);
        dialog_procedure.add(rhs);
        dialog_procedure.setSize(400, 400);
+
+       // Experiment dialog //
+       experimentDialog = new JDialog();
+       experimentDialog.setLayout(new GridLayout(3, 1));
+       experimentDialog.setSize(800, 800);
+       experimentDialog.setLocation(100, 100);
+       experimentDialog.setTitle("Chemberry - Experiment Design");
+       experimentDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+
+       titleText = new JTextPane();
+       titleText.setContentType("text/html");
+       titleText.setText("<html><h1>" + title + "</h1></html>");
+       //titleText.setEditable(false);
+       titleText.setSize(200, 200);
+
+       procText = new JTextArea(procedure);
+       procText.setText("Use the 'Add Procedure' button to add a procedure to this area.\n" + 
+                       "Keep the stepwise instructions short, simple, and easy to understand for the students.");
+       JScrollPane scrl_procText = new JScrollPane(procText);
+       procText.setEditable(false);
+
+       materialsText = new JTextArea(materials);
+       JScrollPane scrl_materialsText = new JScrollPane(materialsText);
+       //materialsText.setEditable(false);
+
+       JPanel dataTypesPanel = new JPanel();
+       dataTypesPanel.setLayout(new GridLayout(2,1));
+       dataTypesPanel.add(new JLabel("Select all measurements that are part of this experiment:"));
+       JPanel btmOfData = new JPanel(new GridLayout(1, 3));
+
+       JCheckBox chk_pH = new JCheckBox("pH");
+       JCheckBox chk_volt = new JCheckBox("Voltage");
+       JCheckBox chk_temp = new JCheckBox("Temperature");
+
+       btmOfData.add(chk_pH);
+       btmOfData.add(chk_volt);
+       btmOfData.add(chk_temp);
+       dataTypesPanel.add(btmOfData);
+
+       JPanel one = new JPanel();
+       one.setLayout(new GridLayout(1, 2));
+
+       JPanel two = new JPanel();
+       two.setLayout(new GridLayout(2, 1));
+
+       two.add(scrl_materialsText);
+       two.add(dataTypesPanel);
+
+       one.add(scrl_procText);
+       one.add(two);
+
+       JPanel btm = new JPanel();
+       btm.setLayout(new GridLayout(1, 3));
+       
+       JButton clearbtn = new JButton("Clear All");
+       clearbtn.addActionListener(new ActionListener()
+       {
+           @Override
+           public void actionPerformed(ActionEvent e) 
+           {
+               titleText.setText("<html><h1>Default title</h1></html>");
+               procText.setText("Use the 'Add Procedure' button to add a procedure to this area.\n" + 
+               "Keep the stepwise instructions short, simple, and easy to understand for the students.");
+               materialsText.setText("");
+
+               chk_pH.setSelected(false);
+               chk_volt.setSelected(false);
+               chk_temp.setSelected(false);
+           }
+       });
+
+       JButton procbtn = new JButton("Add Procedure");
+
+       procbtn.addActionListener(new ActionListener()
+       {
+           @Override
+           public void actionPerformed(ActionEvent e) 
+           {
+               dialog_procedure.setVisible(true);
+           }
+       });
+
+       JButton finalbtn = new JButton("Finish");
+       finalbtn.addActionListener(new ActionListener()
+       {
+           @Override
+           public void actionPerformed(ActionEvent e) 
+           {
+               try
+               {
+                   title = titleText.getText().substring(titleText.getText().indexOf("<h1>") + 11, titleText.getText().indexOf("</h1>") - 5);
+               }
+               catch(Exception ex)
+               {
+                   ex.printStackTrace();
+               }
+
+               procedure = procText.getText();
+               materials = materialsText.getText();
+               
+               if (chk_pH.isSelected())
+                   dataTypes.add(TypeOfMeasurement.PH);
+               if (chk_temp.isSelected())
+                   dataTypes.add(TypeOfMeasurement.TEMP);
+               if (chk_volt.isSelected())
+                   dataTypes.add(TypeOfMeasurement.CONDUCT);
+               experimentDialog.setVisible(false);
+           }
+       });
+
+       btm.add(clearbtn);
+       btm.add(procbtn);
+       btm.add(finalbtn);
+
+       experimentDialog.add(titleText);
+       experimentDialog.add(one);
+       experimentDialog.add(btm);
    }
 }

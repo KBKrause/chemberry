@@ -122,8 +122,12 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                thisExperiment = new Experiment("Default title");
-                thisExperiment.setup();
+                if (thisExperiment == null)
+                {
+                    thisExperiment = new Experiment("Default title");
+                }
+                
+                thisExperiment.showSetup();
             }
         });
 
