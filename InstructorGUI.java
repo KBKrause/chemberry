@@ -20,6 +20,8 @@ import java.io.FileReader;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
+    private Experiment thisExperiment;
+
     private JTabbedPane studentTabs;
 
     private JDialog instructorSettings;
@@ -80,20 +82,27 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         // TODO
         // eventually conceal the IP logic
-        JButton sendDataButton = new JButton("Send something");
+        JButton sendDataButton = new JButton("Broadcast Experiment");
         sendDataButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                try
+                if (thisExperiment != null)
                 {
-                    ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
-                    conn.sendString("u:Hello ... it's me");
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
+                    try
+                    {
+                        ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
+                        conn.sendString(Inet.encodeUpdate("exp:" + 
+                            thisExperiment.getTitle() + ":" + 
+                            thisExperiment.getProcedure() + ":" + 
+                            thisExperiment.getMaterials() + ":" + 
+                            thisExperiment.getDataTypes()));
+                    }
+                    catch(Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
@@ -113,8 +122,8 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                Experiment newexp = new Experiment("Default title");
-                newexp.setup();
+                thisExperiment = new Experiment("Default title");
+                thisExperiment.setup();
             }
         });
 

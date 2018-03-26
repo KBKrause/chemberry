@@ -47,7 +47,8 @@ public class Experiment
         return materials;
     }
 
-    public String stringifyDataTypes() 
+    // Returns each TypeOfMeasurement in dataTypes separated by newlines
+    public String getDataTypes() 
     {
         String retval = "";
 
@@ -105,9 +106,14 @@ public class Experiment
             dataTypesPanel.setLayout(new GridLayout(2,1));
             dataTypesPanel.add(new JLabel("Select all measurements that are part of this experiment:"));
             JPanel btmOfData = new JPanel(new GridLayout(1, 3));
-            btmOfData.add(new JCheckBox("pH"));
-            btmOfData.add(new JCheckBox("Voltage"));
-            btmOfData.add(new JCheckBox("Temperature"));
+
+            JCheckBox chk_pH = new JCheckBox("pH");
+            JCheckBox chk_volt = new JCheckBox("Voltage");
+            JCheckBox chk_temp = new JCheckBox("Temperature");
+
+            btmOfData.add(chk_pH);
+            btmOfData.add(chk_volt);
+            btmOfData.add(chk_temp);
             dataTypesPanel.add(btmOfData);
 
             JPanel one = new JPanel();
@@ -126,6 +132,22 @@ public class Experiment
             btm.setLayout(new GridLayout(1, 3));
             
             JButton clearbtn = new JButton("Clear All");
+            clearbtn.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e) 
+                {
+                    titleText.setText("<html><h1>Default title</h1></html>");
+                    procText.setText("Use the 'Add Procedure' button to add a procedure to this area.\n" + 
+                    "Keep the stepwise instructions short, simple, and easy to understand for the students.");
+                    materialsText.setText("");
+
+                    chk_pH.setSelected(false);
+                    chk_volt.setSelected(false);
+                    chk_temp.setSelected(false);
+                }
+            });
+
             JButton procbtn = new JButton("Add Procedure");
 
             procbtn.addActionListener(new ActionListener()
@@ -138,6 +160,24 @@ public class Experiment
             });
 
             JButton finalbtn = new JButton("Finish");
+            finalbtn.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e) 
+                {
+                    title = titleText.getText();
+                    procedure = procText.getText();
+                    materials = materialsText.getText();
+                    
+                    if (chk_pH.isSelected())
+                        dataTypes.add(TypeOfMeasurement.PH);
+                    if (chk_temp.isSelected())
+                        dataTypes.add(TypeOfMeasurement.TEMP);
+                    if (chk_volt.isSelected())
+                        dataTypes.add(TypeOfMeasurement.CONDUCT);
+                    //experimentDialog.setVisible(false);
+                }
+            });
 
             btm.add(clearbtn);
             btm.add(procbtn);
