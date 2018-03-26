@@ -14,4 +14,5 @@ public interface GUIInterface
     public void setScreenDimensions(int height, int width);
     public void appendDebugText(String s);
     public void setProcedure(String s);
+    public void setExperiment(Experiment e);
 }

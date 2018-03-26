@@ -60,6 +60,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
     private JTextArea procedureText;
 
+    private Experiment currentExperiment;
+
     public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry - Main");
@@ -349,13 +351,20 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
         procedureDialog.add(procScrl);
 
-        JButton procedureBtn = new JButton("Procedure");
+        JButton procedureBtn = new JButton("Experiment Details");
         procedureBtn.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                procedureDialog.setVisible(true);
+                if (currentExperiment != null)
+                {
+                    currentExperiment.studentDisplay();
+                }
+                else
+                {
+                    appendDebugText("No experiment has been forwarded by the instructor");
+                }
             }
         });
         topRow.add(procedureBtn);
@@ -928,5 +937,11 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     {
         procedureText.setText(s);
         appendDebugText("You just received a new experimental procedure");
+    }
+
+    @Override
+    public void setExperiment(Experiment e)
+    {
+        currentExperiment = e;
     }
 }

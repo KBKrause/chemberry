@@ -15,6 +15,7 @@ public class Experiment
     private HashSet<TypeOfMeasurement> dataTypes;
 
     private JDialog experimentDialog;
+    private JPanel btm;
     private JTextPane titleText;
     private JTextArea procText;
     private JTextArea materialsText;
@@ -77,6 +78,13 @@ public class Experiment
 
    public void showSetup() 
    {
+       //btm.setVisible(true);
+       experimentDialog.setVisible(true);
+   }
+
+   public void studentDisplay()
+   {
+       //btm.setVisible(false);
        experimentDialog.setVisible(true);
    }
 
@@ -122,7 +130,7 @@ public class Experiment
                dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
                dialog.setSize(400, 400);
                
-               JPanel btm = new JPanel();
+               btm = new JPanel();
                btm.setLayout(new GridLayout(1, 3));
 
                JButton nextStepBtn = new JButton("Add Next Step");
@@ -282,8 +290,22 @@ public class Experiment
        JPanel btmOfData = new JPanel(new GridLayout(1, 3));
 
        JCheckBox chk_pH = new JCheckBox("pH");
+       if (dataTypes.contains(TypeOfMeasurement.PH))
+       {
+           chk_pH.setSelected(true);
+       }
+
        JCheckBox chk_volt = new JCheckBox("Voltage");
+       if (dataTypes.contains(TypeOfMeasurement.CONDUCT))
+       {
+           chk_volt.setSelected(true);
+       }
+
        JCheckBox chk_temp = new JCheckBox("Temperature");
+       if (dataTypes.contains(TypeOfMeasurement.TEMP))
+       {
+           chk_temp.setSelected(true);
+       }
 
        btmOfData.add(chk_pH);
        btmOfData.add(chk_volt);
