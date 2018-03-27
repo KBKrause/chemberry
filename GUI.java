@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
-// TODO Add System.exit(1) to bad exceptions
-
 public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
     private ArrayList <Number> measurements;
@@ -57,8 +55,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
     
-    // TODO is arduino necessary?
+    // arduino is the interface to the Arduino Uno connected to the RPi.
     private SerialConnection arduino;
+
+    private JTextArea procedureText;
+
+    private Experiment currentExperiment;
 
     public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
@@ -81,27 +83,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         {
             e.printStackTrace();
         }
-
-        try
-		{
-            // TODO since the static method is being used to gather data, there's no need to keep this in the end.
-            /*
-            arduino = new SerialConnection();
-            if (System.getProperty("os.name").equals("Windows 10"))
-            {
-                arduino.start(false);
-            }
-            else
-            {
-                arduino.start(true);
-            }
-            */
-			
-		}
-		catch(Exception e)
-		{
-            e.printStackTrace();
-		}
     
         try 
         { 
@@ -143,39 +124,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser jfc = new JFileChooser();
-                int retVal = jfc.showSaveDialog(null);
-
-                if (retVal == JFileChooser.APPROVE_OPTION)
-                {
-                    try
-                    {
-                        PrintWriter writer = new PrintWriter(jfc.getSelectedFile());
-
-                        char[] arr = dataTextArea.getText().toCharArray();
-
-                        for (char ch : arr)
-                        {
-                            if (ch != '\n')
-                            {
-                                writer.print(ch);
-                            }
-                            else
-                            {
-                                writer.println();
-                            }
-                        }
-
-                        writer.close();
-
-                        appendDebugText("Your data has been saved at " + jfc.getSelectedFile().toString());
-                    }
-                    catch(IOException ex)
-                    {
-                        ex.printStackTrace();
-                        appendDebugText("ERROR: Unable to save data");
-                    }
-                }
+                FileManipulator.saveFile(dataTextArea.getText());
             }
         });
 
@@ -186,36 +135,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser jfc = new JFileChooser();
-                int retVal = jfc.showOpenDialog(null);
-
-                if (retVal == JFileChooser.APPROVE_OPTION)
-                {
-                    try
-                    {         
-                        BufferedReader bfr = new BufferedReader(new FileReader(jfc.getSelectedFile()));
-
-                        // TODO
-                        // Confirm opening. This will need to be changed.
-                        dataTextArea.setText("");
-
-                        String content;
-                        
-                        while ((content = bfr.readLine()) != null)
-                        {
-                            dataTextArea.append(content);
-                            dataTextArea.append("\n");
-                        }
-
-                        appendDebugText("Data file successfully opened");
-                        bfr.close();
-                    }
-                    catch(IOException ioe)
-                    {
-                        appendDebugText("Error opening the file");
-                        ioe.printStackTrace();
-                    }
-                }
+                String bytes_read = FileManipulator.loadFile();
+                dataTextArea.setText(bytes_read);
             }
         });
 
@@ -389,7 +310,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         bottomRow.add(clearData);
 
         JPanel topRow = new JPanel();
-        topRow.setLayout(new GridLayout(1, 2));
+        topRow.setLayout(new GridLayout(1, 3));
 
         JButton configBtn = new JButton();
         configBtn.setText("Configuration");
@@ -417,6 +338,36 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         //topRow.add(dataBtn);
         topRow.add(configBtn);
         topRow.add(settingsBtn);
+
+        JDialog procedureDialog = new JDialog(this);
+        procedureDialog.setLayout(new GridLayout(1, 1));
+        procedureDialog.setSize(400, 400);
+        procedureDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+
+        procedureText = new JTextArea();
+        JScrollPane procScrl = new JScrollPane(procedureText);
+    
+        procedureText.setEditable(false);
+
+        procedureDialog.add(procScrl);
+
+        JButton procedureBtn = new JButton("Experiment Details");
+        procedureBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (currentExperiment != null)
+                {
+                    currentExperiment.studentDisplay();
+                }
+                else
+                {
+                    appendDebugText("No experiment has been forwarded by the instructor");
+                }
+            }
+        });
+        topRow.add(procedureBtn);
 
         // Set the layout for GUI with 3 rows and 0 columns.
         // The GUI can append one component per row-column intersection.
@@ -698,6 +649,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                     }
     
                     appendDebugText("Configured sensor: " + currentSensor.toString());
+                    dataTextArea.setText("");
                     JLabel label = (JLabel)controlPanel.getComponent(1);
                     label.setText("Current Sensor: " + currentSensor.toString());
 
@@ -750,6 +702,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         // Set up layout manager for GUIsettings
         GUIsettings = new JDialog();
         GUIsettings.setTitle("Chemberry - Settings");
+        GUIsettings.setLayout(new GridLayout());
         GUIsettings.setSize(1000, 1000);
         GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         GUIsettings.setLocation(150, 150);
@@ -775,8 +728,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         }
         else
         {
-            IPaddr.setText("Networking disabled");
-            port.setText("Networking disabled");
+            IPaddr.setText("IPv4 address disabled");
+            port.setText("Port disabled");
         }
         
         IPaddr.setEditable(false);
@@ -978,5 +931,12 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void setExperiment(Experiment e)
+    {
+        currentExperiment = e;
+        appendDebugText("Your instructor has sent you a new experiment: " + e.getTitle());
     }
 }

@@ -9,10 +9,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import java.awt.BorderLayout;
 
-// Broadcast to students the procedure
-// Stopwatch for time left
-// Templates / experimental organization
-
 public class CBLineGraph extends ApplicationFrame 
 {
     private TypeOfMeasurement measurementType;

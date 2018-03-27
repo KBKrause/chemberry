@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * A ClientConnection is an abstract representation of a TCP client socket that sends and receives data from a server.
  * This class provides very basic functionality to communicate with a <code>ServerProxy</code>.
- * Changing the destination address of the server would require a new 
+ * Changing the destination address of the server would require a new instantation of this object.
  * 
  * @author      kevbkraus
  * @see         ServerProxy
@@ -40,8 +40,8 @@ public class ClientConnection
      */
     public boolean sendString(String data)
     {
-        // TODO
-        // Add boolean retval at start, set to false, only set to true when it reaches bototm, return retval
+        boolean retval = true;
+
         try
         {
             String request = data;
@@ -56,19 +56,18 @@ public class ClientConnection
             outToServer.writeBytes(request + "\n");
 
             // readLine() is a blocking call that is waiting for an ack from the server.
-            String responseFromServer = inFromServer.readLine();
+            inFromServer.readLine();
 
             //System.out.println("Received response: " + responseFromServer);
 
             clientSocket.close();
-
-            return true;
         }
         catch(IOException e)
         {
             // The sockets could not connect.
-            return false;
+            retval = false;
         }
+            return retval;
     }
 
     /**

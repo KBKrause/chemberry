@@ -14,9 +14,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.awt.event.*;
 import javax.swing.event.*;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
+    private Experiment thisExperiment;
+
     private JTabbedPane studentTabs;
 
     private JDialog instructorSettings;
@@ -60,12 +65,7 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        this.setLocation(100, 100);
-        this.setLayout(new GridLayout(1,2));
-
         studentTabs = new JTabbedPane();
-
-        this.add(studentTabs);
 
         JButton settingsBtn = new JButton("Settings");
         settingsBtn.addActionListener(new ActionListener()
@@ -77,7 +77,67 @@ public class InstructorGUI extends JFrame implements InstructorInterface
             }
         });
 
-        this.add(settingsBtn);
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new GridLayout(3, 1));
+
+        // TODO
+        // eventually conceal the IP logic
+        JButton sendDataButton = new JButton("Broadcast Experiment");
+        sendDataButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (thisExperiment != null)
+                {
+                    try
+                    {
+                        ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
+                        conn.sendString(Inet.encodeUpdate("exp:" + 
+                            thisExperiment.getTitle() + ":" + 
+                            thisExperiment.getProcedure() + ":" + 
+                            thisExperiment.getMaterials() + ":" + 
+                            thisExperiment.getDataTypes()));
+                    }
+                    catch(Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        JPanel menu = new JPanel();
+        menu.setLayout(new GridLayout(1, 1));
+
+        menu.add(sendDataButton);
+        //rightPanel.add(sendDataButton);
+
+        rightPanel.add(menu);
+        rightPanel.add(settingsBtn);
+
+        JButton expsetupbtn = new JButton("Experiment Setup");
+        expsetupbtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (thisExperiment == null)
+                {
+                    thisExperiment = new Experiment("Default title");
+                }
+                
+                thisExperiment.showSetup();
+            }
+        });
+
+        rightPanel.add(expsetupbtn);
+
+        this.setLocation(100, 100);
+        this.setLayout(new GridLayout(1,2));
+        
+        this.add(studentTabs);
+        this.add(rightPanel);
 
         //this.validate();
 

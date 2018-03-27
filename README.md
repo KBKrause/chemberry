@@ -24,7 +24,7 @@ To test this project for yourself, see below under "Usage."
 Mac documentation will be provided later, since it is inferior. Windows and Linux users, please download the following software. You will need to be comfortable using the terminal and command line if you want to follow these instructions.<br><br>
 <h4>Downloads</h4>
 <b>Java 8 and Java 8 Developer Kit</b><br>
-Chemberry is written in Java and requires the JRE; compiling it additionally requires the JDK, both of which can be found <a href = "http://www.oracle.com/technetwork/java/javase/downloads/index.html">on oracle's website.</a> Please download these and remember where it was installed. Linux users can also download it with
+Chemberry is written in Java and requires the JRE; compiling it additionally requires the JDK, both of which can be found <a href = "http://www.oracle.com/technetwork/java/javase/downloads/index.html">on oracle's website.</a> Please download these and remember where they were installed. Linux users can also download it with
 
 ```
 sudo apt-get install oracle-java8-jdk
@@ -71,14 +71,14 @@ java -cp "RXTXcomm.jar;" Main -of
 
 <i>Linux</i> users need to add the Java Native Interface (JNI) to their command
 ```
-java -cp /usr/share/java/RXTXcomm.jar:. Main -of
+java -Djava.library.path=/usr/lib/jni -cp /usr/share/java/RXTXcomm.jar:. Main -of
 ```
 
 <hr>
 
 <h3>About</h3>
 
-This program was written using Visual Studio Code, Red Hat's Java language extension, the Arduino IDE, and the RXTXcomm library.<br> It was authored by Kevin Krause. <a href = "https://www.linkedin.com/in/kevin-krause-131664105/"> Find him on LinkedIn.</a>
+This program was written using Visual Studio Code, Red Hat's Java language extension, the Arduino IDE, the RXTXcomm library, and JFreeChart.<br> It was authored by Kevin Krause. <a href = "https://www.linkedin.com/in/kevin-krause-131664105/"> Find him on LinkedIn.</a>
 
 <h3>Acknowledgements</h3>
 
