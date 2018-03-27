@@ -16,6 +16,7 @@ public class Experiment
 
     private JDialog experimentDialog;
     private JPanel btm;
+    private JPanel one;
     private JTextPane titleText;
     private JTextArea procText;
     private JTextArea materialsText;
@@ -87,6 +88,13 @@ public class Experiment
     public void addDataType(TypeOfMeasurement tom) 
     {
         dataTypes.add(tom);
+        
+        if (tom.equals(TypeOfMeasurement.PH))
+            chk_pH.setSelected(true);
+        else if (tom.equals(TypeOfMeasurement.CONDUCT))
+            chk_volt.setSelected(true);
+        else if (tom.equals(TypeOfMeasurement.TEMP))
+            chk_temp.setSelected(true);
     }
 
    public void showSetup() 
@@ -97,11 +105,25 @@ public class Experiment
 
    public void studentDisplay()
    {
+       JDialog studentDialog = new JDialog();
+       studentDialog.setLayout(new GridLayout(2, 1));
        //btm.setVisible(false);
        titleText.setEditable(false);
        procText.setEditable(false);
        materialsText.setEditable(false);
-       experimentDialog.setVisible(true);
+
+       chk_pH.setEnabled(false);
+       chk_temp.setEnabled(false);
+       chk_volt.setEnabled(false);
+
+      //experimentDialog.remove(btm);
+       //experimentDialog.validate();
+
+       studentDialog.setSize(600, 600);
+       studentDialog.add(titleText);
+       studentDialog.add(one);
+
+       studentDialog.setVisible(true);
    }
 
    private void initializeDialogs()
@@ -306,29 +328,17 @@ public class Experiment
        JPanel btmOfData = new JPanel(new GridLayout(1, 3));
 
        chk_pH = new JCheckBox("pH");
-       if (dataTypes.contains(TypeOfMeasurement.PH))
-       {
-           chk_pH.setSelected(true);
-       }
 
        chk_volt = new JCheckBox("Voltage");
-       if (dataTypes.contains(TypeOfMeasurement.CONDUCT))
-       {
-           chk_volt.setSelected(true);
-       }
 
        chk_temp = new JCheckBox("Temperature");
-       if (dataTypes.contains(TypeOfMeasurement.TEMP))
-       {
-           chk_temp.setSelected(true);
-       }
 
        btmOfData.add(chk_pH);
        btmOfData.add(chk_volt);
        btmOfData.add(chk_temp);
        dataTypesPanel.add(btmOfData);
 
-       JPanel one = new JPanel();
+       one = new JPanel();
        one.setLayout(new GridLayout(1, 2));
 
        JPanel two = new JPanel();

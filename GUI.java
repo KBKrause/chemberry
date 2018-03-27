@@ -943,5 +943,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     public void setExperiment(Experiment e)
     {
         currentExperiment = e;
+        appendDebugText("Your instructor has sent you a new experiment: " + e.getTitle());
     }
 }
