@@ -40,8 +40,8 @@ public class ClientConnection
      */
     public boolean sendString(String data)
     {
-        // TODO
-        // Add boolean retval at start, set to false, only set to true when it reaches bototm, return retval
+        boolean retval = true;
+
         try
         {
             String request = data;
@@ -56,19 +56,18 @@ public class ClientConnection
             outToServer.writeBytes(request + "\n");
 
             // readLine() is a blocking call that is waiting for an ack from the server.
-            String responseFromServer = inFromServer.readLine();
+            inFromServer.readLine();
 
             //System.out.println("Received response: " + responseFromServer);
 
             clientSocket.close();
-
-            return true;
         }
         catch(IOException e)
         {
             // The sockets could not connect.
-            return false;
+            retval = false;
         }
+            return retval;
     }
 
     /**

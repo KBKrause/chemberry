@@ -13,6 +13,5 @@ public interface GUIInterface
     // Set the dimensions of the screen. Everything will adjust.
     public void setScreenDimensions(int height, int width);
     public void appendDebugText(String s);
-    public void setProcedure(String s);
     public void setExperiment(Experiment e);
 }

@@ -55,7 +55,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     // This will be removed once the proxy is removed out of the scope of this class.
     private boolean networkingAllowed;
     
-    // TODO is arduino necessary?
+    // arduino is the interface to the Arduino Uno connected to the RPi.
     private SerialConnection arduino;
 
     private JTextArea procedureText;
@@ -702,6 +702,7 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         // Set up layout manager for GUIsettings
         GUIsettings = new JDialog();
         GUIsettings.setTitle("Chemberry - Settings");
+        GUIsettings.setLayout(new GridLayout());
         GUIsettings.setSize(1000, 1000);
         GUIsettings.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         GUIsettings.setLocation(150, 150);
@@ -727,8 +728,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         }
         else
         {
-            IPaddr.setText("Networking disabled");
-            port.setText("Networking disabled");
+            IPaddr.setText("IPv4 address disabled");
+            port.setText("Port disabled");
         }
         
         IPaddr.setEditable(false);
@@ -930,13 +931,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void setProcedure(String s)
-    {
-        procedureText.setText(s);
-        appendDebugText("You just received a new experimental procedure");
     }
 
     @Override

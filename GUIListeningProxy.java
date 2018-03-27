@@ -32,11 +32,6 @@ public class GUIListeningProxy extends ServerProxy
         {
             System.out.println("Instructor says: " + tokens[1]);
         }
-        else if (tokens[0].equals("bp"))
-        {
-            System.out.println("Received this broadcasted procedure: " + tokens[1]);
-            gui.setProcedure(tokens[1]);
-        }
         else if (tokens[0].equals("exp"))
         {
             // [1]title -- [2]proc -- [3]mats -- [4]types

@@ -106,6 +106,7 @@ public class Experiment
    public void studentDisplay()
    {
        JDialog studentDialog = new JDialog();
+       studentDialog.setTitle("Chemberry - Student Experiment");
        studentDialog.setLayout(new GridLayout(2, 1));
        //btm.setVisible(false);
        titleText.setEditable(false);
