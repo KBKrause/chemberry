@@ -20,9 +20,16 @@ public class Experiment
     private JTextArea procText;
     private JTextArea materialsText;
     private JTextArea dataTypesText;
+    private JCheckBox chk_pH;
+    private JCheckBox chk_volt;
+    private JCheckBox chk_temp;
 
     private JDialog dialog_procedure;
 
+    // TODO the private fields might not be needed.
+    // TODO When an experiment is instantiated and you know ahead of time that there is an identified procedure and materials,
+    //      you end up needing to call the set methods to update the UI. Add another constructor(s) to set these ahead of time.
+    //      Add an update method or updateUI() to reset GUI appearance.
     public Experiment(String title) 
     {
         this.title = title;
@@ -63,12 +70,18 @@ public class Experiment
 
     public void setProcedure(String s) 
     {
+        //System.out.println("Setting proc to " + s);
+        procText.setText(s);
         procedure = s;
+        //System.out.println("Procedure = " + procedure);
     }
 
     public void setMaterials(String s) 
     {
+        //System.out.println("Setting mats to " + s);
+        materialsText.setText(s);
         materials = s;
+        //System.out.println("materials = " + materials);
     }
 
     public void addDataType(TypeOfMeasurement tom) 
@@ -85,6 +98,9 @@ public class Experiment
    public void studentDisplay()
    {
        //btm.setVisible(false);
+       titleText.setEditable(false);
+       procText.setEditable(false);
+       materialsText.setEditable(false);
        experimentDialog.setVisible(true);
    }
 
@@ -289,19 +305,19 @@ public class Experiment
        dataTypesPanel.add(new JLabel("Select all measurements that are part of this experiment:"));
        JPanel btmOfData = new JPanel(new GridLayout(1, 3));
 
-       JCheckBox chk_pH = new JCheckBox("pH");
+       chk_pH = new JCheckBox("pH");
        if (dataTypes.contains(TypeOfMeasurement.PH))
        {
            chk_pH.setSelected(true);
        }
 
-       JCheckBox chk_volt = new JCheckBox("Voltage");
+       chk_volt = new JCheckBox("Voltage");
        if (dataTypes.contains(TypeOfMeasurement.CONDUCT))
        {
            chk_volt.setSelected(true);
        }
 
-       JCheckBox chk_temp = new JCheckBox("Temperature");
+       chk_temp = new JCheckBox("Temperature");
        if (dataTypes.contains(TypeOfMeasurement.TEMP))
        {
            chk_temp.setSelected(true);

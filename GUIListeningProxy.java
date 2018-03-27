@@ -11,10 +11,16 @@ public class GUIListeningProxy extends ServerProxy
     @Override
     public void handleRequest(String request, String clientIP)
     {
-        System.out.println("Received this request: " + request);
+        //System.out.println("Received this request: " + request);
         String decodedRequest = Inet.decodeUpdate(request);
 
         String tokens[] = decodedRequest.split(":");
+        //System.out.println("Decoded and tokenized request:");
+
+        for (int i = 0; i < tokens.length; i++)
+        {
+            System.out.println("tokens[" + i + "]:" + tokens[i]);
+        }
         //System.out.println(tokens);
 
         if (tokens[0].equals("d") && (tokens[1].equals("esync")))
@@ -47,6 +53,7 @@ public class GUIListeningProxy extends ServerProxy
 
             for (String s : tokenizedDataTypes)
             {
+                System.out.println("next tom: " + s);
                 if (s.equals("pH"))
                     e.addDataType(TypeOfMeasurement.PH);
                 else if (s.equals("celsius"))
