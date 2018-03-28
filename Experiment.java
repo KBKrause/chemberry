@@ -20,7 +20,6 @@ public class Experiment
     private JTextPane titleText;
     private JTextArea procText;
     private JTextArea materialsText;
-    private JTextArea dataTypesText;
     private JCheckBox chk_pH;
     private JCheckBox chk_volt;
     private JCheckBox chk_temp;
