@@ -47,13 +47,14 @@ void setup() {
 }
 
 void loop() {
-  float currentTemp = TempProcess(1);
-  Serial.print("Temp: ");
-  Serial.print(currentTemp,3);
-  Serial.println(" ");
-  delay(1000);
-  /*
-   Every once in a while,sample the analog value and calculate the average.
+  //float currentTemp = alternateTempProcess();
+  //float currentTemp = TempProcess(1);
+  //Serial.print("Temp: ");
+  //Serial.print(currentTemp,3);
+  //Serial.println(" ");
+  //delay(1000);
+  
+   //Every once in a while,sample the analog value and calculate the average.
   if(millis()-AnalogSampleTime>=AnalogSampleInterval)  
   {
     AnalogSampleTime=millis();
@@ -76,7 +77,7 @@ void loop() {
   /*
    Every once in a while,MCU read the temperature from the DS18B20 and then let the DS18B20 start the convert.
    Attention:The interval between start the convert and read the temperature should be greater than 750 millisecond,or the temperature is not accurate!
-  
+  */
    if(millis()-tempSampleTime>=tempSampleInterval) 
   {
     tempSampleTime=millis();
@@ -85,7 +86,7 @@ void loop() {
   }
    /*
    Every once in a while,print the information on the serial monitor.
-  
+  */
   if(millis()-printTime>=printInterval)
   {
     printTime=millis();
@@ -113,8 +114,8 @@ void loop() {
       Serial.println("ms/cm");
     }
   }
-*/
 }
+
 /*
 ch=0,let the DS18B20 start the convert;ch=1,MCU read the current temperature from the DS18B20.
 */

@@ -2,6 +2,12 @@ public class StudentGUIDriver
 {
     public static void main(String[] args)
     {
-        StudentGUI gui = new StudentGUI();
+        try
+        {
+            StudentGUI gui = new StudentGUI(true, Inet.getMyAddress());            
+        }
+        catch(Exception e)
+        {
+        }
     }
 }

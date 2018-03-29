@@ -6,15 +6,37 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.text.DefaultCaret;
+import javax.swing.JFrame;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
+import java.awt.event.WindowAdapter;
+import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
+import com.sun.glass.events.WindowEvent;
 /**
  *
  * @author Kevin
  */
-public class StudentGUI extends javax.swing.JFrame 
+public class StudentGUI extends JFrame implements DocumentListener, GUIInterface 
 {
-    public StudentGUI() 
+    public StudentGUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry Student GUI");
+
+        networkingAllowed = networking;
+
+        if (networkingAllowed)
+        {
+            try
+            {
+                initializeProxy(instructorIP);
+            }
+            catch(ChemberryException cbe)
+            {
+                throw cbe;
+            }
+        }
 
         String os = System.getProperty("os.name");
         measurements = new ArrayList <Number>();
@@ -78,6 +100,16 @@ public class StudentGUI extends javax.swing.JFrame
             }
         };
         displayReadingThread.start();
+
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() 
+        {
+            //@Override
+            public void windowClosing(WindowEvent event) 
+            {
+                closeFrame();
+            }
+        });
         
         this.setVisible(true);
     }
@@ -563,6 +595,39 @@ public class StudentGUI extends javax.swing.JFrame
         }
     }
 
+    private void initializeProxy(String instructorIP) throws ChemberryException
+    {
+        String name = JOptionPane.showInputDialog(null, "Enter your name: ");
+
+        try
+        {
+            String addr = Inet.getMyAddress();
+            appendDebugText("IPv4 address retrieved: " + addr);
+        }
+        catch(ChemberryException cbe)
+        {
+            throw cbe;
+        }
+        
+        // TODO
+        // Error checking here. Do not allow flow to continue if address cannot be resolved.
+        try
+        {
+            proxy = new GUIProxy(8314, instructorIP, 6023);
+            proxy.receiveUpdate("h:" + Inet.getMyAddress() + ":" + name);
+            appendDebugText("Set instructor IP");
+        }
+        catch(ConnectionFailedException e)
+        {
+            System.out.println("Unable to connect; exiting");
+            System.exit(1);
+        }
+        catch(ChemberryException cbe)
+        {
+            cbe.printStackTrace();
+        }
+    }
+
     private void performInstantMeasurement()
     {
         // TODO THIS MUST CHANGE for each sensor.
@@ -706,12 +771,120 @@ public class StudentGUI extends javax.swing.JFrame
         labelTextInterval.setVisible(false);
         sliderInterval.setVisible(false);
         sliderDuration.setVisible(false);
+
+        // Set carets
+        DefaultCaret caret = (DefaultCaret)textAreaDebug.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        caret = (DefaultCaret)textAreaDataPoints.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        if (networkingAllowed)
+        {
+            textAreaDataPoints.getDocument().addDocumentListener(this);
+        }
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e)
+    {
+        try
+        {
+            String updateText = textAreaDataPoints.getText(e.getOffset(), e.getLength());
+            update("u:" + updateText);
+        }
+        catch(BadLocationException ble)
+        {
+            ble.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e)
+    {
+        // TODO
+        // I am unsure what needs to go here.
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e)
+    {
+        // TODO
+        // I am unsure what needs to go here also!
+        try
+        {
+            String updateText = textAreaDataPoints.getText(e.getOffset(), e.getLength());
+            update("u:" + updateText);
+        }
+        catch(BadLocationException ble)
+        {
+            ble.printStackTrace();
+        }
+    }
+
+    private void update(String update)
+    {
+        //String updateWithHeader = "u:" + update;
+        try
+        {
+            proxy.receiveUpdate(update);
+        }
+        catch(ConnectionFailedException e)
+        {
+            // TODO Handle this exception
+            e.printMessage();
+        }
     }
 
     // TODO Override
     public void appendDebugText(String s)
     {
         textAreaDebug.append(">> " + s + '\n');
+    }
+
+    @Override
+    public void setNetworking(boolean b)
+    {
+        networkingAllowed = b;
+        appendDebugText("Networking change detected: " + networkingAllowed);
+    }
+
+    // Method primarily used for the raspberry pi's small screen.
+    @Override
+    public void setScreenDimensions(int height, int width)
+    {
+        Double newWidth = width * 0.9;
+
+        // The setSize function only accepts int parameters.
+        this.setSize(height, Math.round(newWidth.floatValue()));
+        
+        // Other JComponents to adjust:
+        // initDialog
+        // configuration
+    }
+
+    private void inetError()
+    {
+        System.out.println("This happened because Inet.getMyAddress() threw an exception");
+    }
+
+    @Override
+    public void setExperiment(Experiment e)
+    {
+        currentExperiment = e;
+        appendDebugText("Your instructor has sent you a new experiment: " + e.getTitle());
+    }
+
+    private void closeFrame()
+    {
+        appendDebugText("Shutting down ...");
+        if (networkingAllowed)
+        {
+            update("d:esync");
+        }
+        // Free this JFrame at the end of the function. Once this function call is popped off the stack, the JFrame is gone.
+        this.dispose();
+        System.exit(0);
     }
 
     // Variables declaration - do not modify                     
