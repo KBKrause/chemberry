@@ -1,1 +1,1 @@
-javac StudentGUIDriver.java StudentGUI.java
+javac -cp "lib\*;" StudentGUIDriver.java StudentGUI.java

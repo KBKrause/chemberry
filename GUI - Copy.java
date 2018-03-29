@@ -64,36 +64,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
     public GUI(boolean networking, String instructorIP) throws ChemberryException
     {
-        super("Chemberry - Main");
-
-        String os = System.getProperty("os.name");
-        measurements = new ArrayList <Number>();
-
-        try
-        {
-            arduino = new SerialConnection();
-            arduino.beginMeasuring(os);
-        }
-        catch(SerialConnectionException e)
-        {
-            e.printMessage();
-            System.exit(1);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    
-        try 
-        { 
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } 
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////// STOPPED HERE
 
         networkingAllowed = networking;
         //initialize();
@@ -119,95 +89,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         this.setSize(1000, 1000);
         this.setLocation(100, 100);
 
-        JButton saveData = new JButton();
-        saveData.setText("Save");
-        saveData.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                FileManipulator.saveFile(dataTextArea.getText());
-            }
-        });
-
-        JButton openData = new JButton();
-        openData.setText("Open");
-        openData.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                String bytes_read = FileManipulator.loadFile();
-                dataTextArea.setText(bytes_read);
-            }
-        });
-
-        JButton clearData = new JButton();
-        clearData.setText("Clear");
-        clearData.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                clearDataPopup.setVisible(true);
-                // TODO
-                // Add the "No input device has been selected" message, or if one has, display what is connected
-            }
-        });
-
-        JPanel mainRow = new JPanel();
-        mainRow.setLayout(new GridLayout(1, 3));
-        
-        JScrollPane datascrl = new JScrollPane(dataTextArea);
-        JScrollPane debugscrl = new JScrollPane(debugTextArea);
-
-        JPanel datapanel = new JPanel();
-        datapanel.setLayout(new GridLayout(2, 1));
-
-        datapanel.add(datascrl);
-
-        JButton visbtn = new JButton("Visualize");
-        visbtn.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                CBLineGraph graph = new CBLineGraph("Chemberry Line Graph", currenttom.toString(), currenttom, measurements);
-                graph.displayChart();
-            }
-        });
-
-        datapanel.add(visbtn);
-
-        mainRow.add(datapanel);
-        
-        controlPanel = new JPanel();
-        measurementBtn = new JButton("Measure");
-        controlPanel.setLayout(new GridLayout(3, 1));
-
-        JPanel topControlRow = new JPanel();
-        topControlRow.setLayout(new GridLayout(1, 2));
-        topControlRow.add(new JLabel("Current Reading: "));
-        currentReading = new JLabel("No sensor configured");
-
-        JButton cancelMeasureButton = new JButton("Stop");
-        cancelMeasureButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if ((multiMeasure == null) || (!(multiMeasure.isAlive())))
-                {
-                    appendDebugText("ERROR: Multimeasure not running!");
-                }       
-                else
-                {
-                    multiMeasure.stop();
-                    appendDebugText("Multimeasure stopped");
-                }
-            }
-        });
-
         JPanel btmCtrlPanel = new JPanel();
         btmCtrlPanel.setLayout(new GridLayout(1, 2));
         btmCtrlPanel.add(measurementBtn);
@@ -232,17 +113,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
 
         JPanel topRow = new JPanel();
         topRow.setLayout(new GridLayout(1, 3));
-
-        JButton configBtn = new JButton();
-        configBtn.setText("Configuration");
-        configBtn.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                GUIconfig.setVisible(true);
-            }
-        });
 
         JButton settingsBtn = new JButton();
         settingsBtn.setText("Settings");
@@ -307,83 +177,8 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
             }
         });
 
-        Thread displayReadingThread = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                while (true)
-                {
-                    try
-                    {
-                        Thread.sleep(1500);
-                        displayCurrentSensorReading();
-                    }
-                    catch(InterruptedException ie)
-                    {
-                        System.out.println("displayReadingThread interrupted!");
-                        //ie.printStackTrace();
-                    }
-                }
-            }
-        };
-        displayReadingThread.start();
-
         setVisible(true);
     }
-
-    // This method may eventually be removed
-    /* 
-    private void initialize()
-    {
-        String username = "";
-
-        JDialog initDialog = new JDialog();
-        initDialog.setTitle("Chemberry Initialization");
-        JTextField name = new JTextField("Username:");
-
-        JPanel btnsPanel = new JPanel();
-        btnsPanel.setLayout(new GridLayout(2, 1));
-
-        // Make a local actionlistener/function to set networkingAllowed.
-        JButton online = new JButton("Online");
-        online.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if (!name.getText().equals(""))
-                {
-                    networkingAllowed = true;
-                    initDialog.dispose();
-                }
-            }
-        });
-
-        JButton offline = new JButton("Offline");
-        online.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if (!name.getText().equals(""))
-                {
-                    networkingAllowed = false;
-                    initDialog.dispose();
-                }
-            }
-        });
-
-        btnsPanel.add(online);
-        btnsPanel.add(offline);
-
-        initDialog.setSize(500, 500);
-        initDialog.setLayout(new GridLayout(2, 1));
-        initDialog.add(btnsPanel);
-        initDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        initDialog.setVisible(true);
-    }
-    */
 
     private void initializeTextAreas()
     {
@@ -402,163 +197,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
         {
             dataTextArea.getDocument().addDocumentListener(this);
         }
-    }
-
-    private void initializeOther()
-    {
-        clearDataPopup = new JPopupMenu("Clear Data?");
-
-        clearDataPopup.setLayout(new GridLayout(2,2));
-        clearDataPopup.setPopupSize(500, 500);
-        clearDataPopup.setLocation(150, 150);
-
-        JButton yes = new JButton("Yes");
-        yes.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                dataTextArea.setText("");
-                appendDebugText("Data cleared");
-                clearDataPopup.setVisible(false);
-                measurements.clear();
-            }
-        });
-
-        JButton no = new JButton("No");
-        no.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                clearDataPopup.setVisible(false);
-            }
-        });
-
-        // TODO
-        // Clean up this popup.
-        clearDataPopup.add(new JLabel("Clear all data?"));
-        clearDataPopup.add("");
-        clearDataPopup.add(yes);
-        clearDataPopup.add(no);
-    }
-
-    private void initializeConfig()
-    {
-        GUIconfig = new JDialog();
-        GUIconfig.setTitle("Chemberry - Sensor Configuration");
-        GUIconfig.setSize(1000, 1000);
-        GUIconfig.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GUIconfig.setLocation(150, 150);
-
-        JPanel selectionPanel = new JPanel();
-        selectionPanel.setLayout(new GridLayout(3, 3));
-
-        JPanel confirmPanel = new JPanel();
-        confirmPanel.setLayout(new GridLayout(3, 1));
-
-        JLabel instrumentLabel = new JLabel("Chosen Instrument: Not selected");
-        logtypeLabel = new JLabel("Measurement type: Instantaneous");
-
-        JButton confirmButton = new JButton("Confirm");
-
-        confirmPanel.add(instrumentLabel);
-        confirmPanel.add(logtypeLabel);
-        confirmPanel.add(confirmButton);
-
-        String[] probeTypes = {"pH probe", "Temperature sensor", "Conductivity probe"};
-
-        for (String s : probeTypes)
-        {
-            JButton newSensorButton = new JButton(s);
-
-            newSensorButton.addActionListener(new ActionListener()
-            {   
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    instrumentLabel.setText("Chosen Instrument: " + s);
-                }
-            });
-
-            selectionPanel.add(newSensorButton);
-        }
-
-        JPanel intervalPanel = new JPanel();
-        intervalPanel.setLayout(new GridLayout(3, 2));
-
-        intervalPanel.add(new JLabel("Continuous Measurement Duration"));
-        intervalPanel.add(new JLabel("Continuous Measurement Interval"));
-
-        durationSlider = new JSlider();
-        intervalSlider = new JSlider();
-
-        durationSlider.setMinimum(0);
-        durationSlider.setMaximum(60);
-        durationSlider.addChangeListener(this);
-
-        intervalSlider.setMinimum(0);
-        intervalSlider.setMaximum(10);
-        intervalSlider.addChangeListener(this);
-
-        intervalPanel.add(durationSlider);
-        intervalPanel.add(intervalSlider);
-
-        durationLabel = new JLabel("Duration : " + durationSlider.getValue());
-        intervalLabel = new JLabel("Interval: " + intervalSlider.getValue());
-
-        intervalPanel.add(durationLabel);
-        intervalPanel.add(intervalLabel);
-
-        // Initially hide the interval panel unless the user wants to do an interval measurement.
-        intervalPanel.setVisible(false);
-
-        ButtonGroup buttonsList = new ButtonGroup();
-
-        // TODO
-        // Make the intervalPanel visibility change gradual/more pretty.
-        JRadioButton instantButton = new JRadioButton("Instantaneous Measurements");
-        instantButton.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                logtypeLabel.setText("Measurement type: Instantaneous");
-                intervalPanel.setVisible(false);
-            }
-        });
-
-        JRadioButton intervalButton = new JRadioButton("Interval Measurements");
-        intervalButton.addActionListener(new ActionListener()
-        {   
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                logtypeLabel.setText("Measurement type: Continuous for " + durationSlider.getValue() + "s at " + intervalSlider.getValue() + "s intervals");
-                intervalPanel.setVisible(true);
-            }
-        });
-
-        // TODO
-        // Add debug error message somewhere
-
-        instantButton.setSelected(true);
-
-        buttonsList.add(instantButton);
-        buttonsList.add(intervalButton);
-        
-        JPanel buttonsContainer = new JPanel(new GridLayout(1, 2));
-        buttonsContainer.add(intervalButton);
-        buttonsContainer.add(instantButton);
-
-        intervalPanel.add(buttonsContainer);
-
-        selectionPanel.add(buttonsContainer);
-        selectionPanel.add(intervalPanel);
-
-        selectionPanel.add(confirmPanel);
-
-        GUIconfig.add(selectionPanel);
     }
 
     private void initializeSettings()
@@ -775,21 +413,6 @@ public class GUI extends JFrame implements DocumentListener, ChangeListener, GUI
     private void inetError()
     {
         System.out.println("This happened because Inet.getMyAddress() threw an exception");
-    }
-
-    private void displayCurrentSensorReading()
-    {
-        if (currentSensor != null)
-        {
-            try
-            {
-                currentReading.setText(currentSensor.instantMeasure(arduino).toString());
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override

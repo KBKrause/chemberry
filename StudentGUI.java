@@ -10,14 +10,12 @@ import java.util.ArrayList;
  *
  * @author Kevin
  */
-public class StudentGUI extends javax.swing.JFrame {
-
-    
-    /**
-     * Creates new form NewJFrame1
-     */
+public class StudentGUI extends javax.swing.JFrame 
+{
     public StudentGUI() 
     {
+        super("Chemberry Student GUI");
+
         String os = System.getProperty("os.name");
         measurements = new ArrayList <Number>();
 
@@ -57,9 +55,120 @@ public class StudentGUI extends javax.swing.JFrame {
 
         initComponents();
         changeComponents();
+        addActionListeners();
+
+        Thread displayReadingThread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Thread.sleep(1500);
+                        displayCurrentSensorReading();
+                    }
+                    catch(InterruptedException ie)
+                    {
+                        System.out.println("displayReadingThread interrupted!");
+                        //ie.printStackTrace();
+                    }
+                }
+            }
+        };
+        displayReadingThread.start();
         
         this.setVisible(true);
+    }
 
+    private void addActionListeners()
+    {
+        buttonInstrumentFinish.addActionListener(new java.awt.event.ActionListener()
+        {
+            @Override 
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                buttonInstrumentFinishActionPerformed(evt);
+            }
+        });
+
+        buttonInstrumentCancel.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                buttonInstrumentCancelActionPerformed(evt);
+            }
+        });
+
+        toggleButtonIntervals.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                toggleButtonIntervalsActionPerformed(evt);
+            }
+        });
+
+        buttonConfigure.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                buttonConfigureActionPerformed(evt);
+            }
+        });
+
+        buttonMeasure.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                buttonMeasureActionPerformed(e);
+            }
+        });
+
+        buttonVisualize.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                buttonVisualizeActionPerformed(e);
+            }
+        });
+
+        buttonSaveData.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                buttonSaveDataActionPerformed(e);
+            }
+        });
+
+        buttonOpenData.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                buttonOpenDataActionPerformed(evt);
+            }
+        });
+
+        buttonStopMeasure.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                buttonStopMeasureActionPerformed(e);
+            }
+        });
+
+        buttonClearData.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                buttonClearDataActionPerformed(e);
+            }
+        });
     }
 
     /**
@@ -106,6 +215,9 @@ public class StudentGUI extends javax.swing.JFrame {
         textAreaDebug = new javax.swing.JTextArea();
         buttonClearData = new javax.swing.JButton();
         buttonExperimentDetails = new javax.swing.JButton();
+        labelTextDataCollection = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        labelTextChemberry = new javax.swing.JLabel();
 
         dialogConfiguration.setSize(new java.awt.Dimension(600, 350));
 
@@ -121,23 +233,8 @@ public class StudentGUI extends javax.swing.JFrame {
         labelTextInstrument.setText("Instrument Selection:");
 
         buttonInstrumentFinish.setText("Finish");
-        buttonInstrumentFinish.addActionListener(new java.awt.event.ActionListener()
-        {
-            @Override 
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                buttonInstrumentFinishActionPerformed(evt);
-            }
-        });
 
         buttonInstrumentCancel.setText("Cancel");
-        buttonInstrumentCancel.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                buttonInstrumentCancelActionPerformed(evt);
-            }
-        });
 
         sliderDuration.setMajorTickSpacing(10);
         sliderDuration.setMaximum(60);
@@ -155,13 +252,6 @@ public class StudentGUI extends javax.swing.JFrame {
         sliderInterval.setSnapToTicks(true);
 
         toggleButtonIntervals.setText("Enable Intervals");
-        toggleButtonIntervals.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                toggleButtonIntervalsActionPerformed(evt);
-            }
-        });
 
         labelTextToggle.setText("Toggle for interval measurements:");
 
@@ -245,38 +335,30 @@ public class StudentGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         buttonConfigure.setText("Configuration");
-        buttonConfigure.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                buttonConfigureActionPerformed(evt);
-            }
-        });
 
         buttonSettings.setText("Settings");
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 255));
 
         buttonMeasure.setText("Measure");
-        buttonMeasure.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                buttonMeasureActionPerformed(e);
-            }
-        });
 
         buttonStopMeasure.setText("Stop");
 
         buttonVisualize.setText("Visualize");
 
+        textAreaDataPoints.setEditable(false);
         textAreaDataPoints.setColumns(20);
+        textAreaDataPoints.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
         textAreaDataPoints.setRows(5);
         jScrollPane3.setViewportView(textAreaDataPoints);
 
         jSplitPane1.setLeftComponent(jScrollPane3);
 
+        textAreaCurrentReading.setEditable(false);
+        textAreaCurrentReading.setContentType("text/html"); // NOI18N
+        textAreaCurrentReading.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
+        textAreaCurrentReading.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n  <body>\r\n    No instrument selected\n  </body>\r\n</html>\r\n");
+        textAreaCurrentReading.setToolTipText("");
         jScrollPane4.setViewportView(textAreaCurrentReading);
 
         jSplitPane1.setRightComponent(jScrollPane4);
@@ -311,21 +393,26 @@ public class StudentGUI extends javax.swing.JFrame {
         buttonSaveData.setText("Save");
 
         buttonOpenData.setText("Open");
-        buttonOpenData.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                buttonOpenDataActionPerformed(evt);
-            }
-        });
 
+        textAreaDebug.setEditable(false);
         textAreaDebug.setColumns(20);
+        textAreaDebug.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
         textAreaDebug.setRows(5);
+        textAreaDebug.setText("Welcome to Chemberry.\n\nThis is the information box, where\nmessages will appear as you interact\nwith the program.\n\nError messages and other useful\ninformation will periodically appear\nhere.\n\nTo get started, configure your lab\ninstrument with \"Configuration.\"\nAfter your instructor has sent you an\nexperiment, it will appear under\n\"Experiment Details.\"");
         jScrollPane1.setViewportView(textAreaDebug);
 
         buttonClearData.setText("Clear");
 
         buttonExperimentDetails.setText("Experiment Details");
+
+        labelTextDataCollection.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        labelTextDataCollection.setText("Data Points Collected");
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel2.setText("Live Reading");
+
+        labelTextChemberry.setFont(new java.awt.Font("Tahoma", 3, 22)); // NOI18N
+        labelTextChemberry.setText("Chemberry v0.1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -338,25 +425,38 @@ public class StudentGUI extends javax.swing.JFrame {
                         .addComponent(buttonConfigure, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9)
                         .addComponent(buttonSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
                         .addComponent(buttonSaveData, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(buttonOpenData)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(60, 60, 60)
                                 .addComponent(buttonClearData, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(40, 40, 40)
-                        .addComponent(buttonExperimentDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(23, 23, 23)
+                        .addComponent(buttonExperimentDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 27, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(labelTextChemberry)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(labelTextDataCollection)
+                .addGap(68, 68, 68)
+                .addComponent(jLabel2)
+                .addGap(76, 76, 76))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelTextDataCollection)
+                    .addComponent(jLabel2)
+                    .addComponent(labelTextChemberry))
+                .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,12 +470,33 @@ public class StudentGUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(buttonSaveData, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(buttonOpenData, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonClearData, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonExperimentDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(buttonClearData, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(buttonExperimentDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))))
         );
 
         pack();
-    }// </editor-fold>                        
+    }// </editor-fold>                  
+    
+    private void buttonClearDataActionPerformed(ActionEvent e)
+    {
+        textAreaDataPoints.setText("");
+        appendDebugText("Data cleared");
+        measurements.clear();
+    }
+
+    private void buttonStopMeasureActionPerformed(ActionEvent e)
+    {
+        if ((multiMeasure == null) || (!(multiMeasure.isAlive())))
+        {
+            appendDebugText("ERROR: Multimeasure not running!");
+        }       
+        else
+        {
+            multiMeasure.stop();
+            appendDebugText("Multimeasure stopped");
+        }
+    }
 
     private void buttonMeasureActionPerformed(ActionEvent evt)
     {
@@ -388,20 +509,7 @@ public class StudentGUI extends javax.swing.JFrame {
             // If the current sensor is set to instantaneous measurements, just do a one time measurement.
             if (currentSensor.isMeasuringInstantly())
             {
-                // TODO THIS MUST CHANGE for each sensor.
-                //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
-                try
-                {
-                    Measurement measure = currentSensor.instantMeasure(arduino);
-                    textAreaDataPoints.append(measure.toString() + "\n");
-                    measurements.add(measure.getValue());
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-
-                    //System.exit(1);
-                }
+                performInstantMeasurement();
             }
             else
             {
@@ -455,6 +563,30 @@ public class StudentGUI extends javax.swing.JFrame {
         }
     }
 
+    private void performInstantMeasurement()
+    {
+        // TODO THIS MUST CHANGE for each sensor.
+        //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
+        try
+        {
+            Measurement measure = currentSensor.instantMeasure(arduino);
+            textAreaDataPoints.append(measure.toString() + "\n");
+            measurements.add(measure.getValue());
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+
+            //System.exit(1);
+        }
+    }
+
+    private void buttonVisualizeActionPerformed(ActionEvent e)
+    {
+        CBLineGraph graph = new CBLineGraph("Chemberry Line Graph", currenttom.toString(), currenttom, measurements);
+        graph.displayChart();
+    }
+
     private void buttonConfigureActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                    
         dialogConfiguration.setVisible(true);
@@ -475,7 +607,7 @@ public class StudentGUI extends javax.swing.JFrame {
 
     private void buttonInstrumentFinishActionPerformed(java.awt.event.ActionEvent evt)
     {
-        String typeOfInstrument = "";
+        String typeOfInstrument = "Not selected";
 
         if (rbuttonpH.isSelected())
         {
@@ -510,6 +642,8 @@ public class StudentGUI extends javax.swing.JFrame {
                 currentSensor = new ConductivitySensor();
                 currenttom = TypeOfMeasurement.CONDUCT;
             }
+
+            displayCurrentSensorReading();
             
             appendDebugText("Configured sensor: " + currentSensor.toString());
             //textAreaDataPoints.setText("");
@@ -539,10 +673,31 @@ public class StudentGUI extends javax.swing.JFrame {
         }
     }
 
+    private void buttonSaveDataActionPerformed(ActionEvent evt)
+    {
+        FileManipulator.saveFile(textAreaDataPoints.getText());
+    }
+
     private void buttonOpenDataActionPerformed(java.awt.event.ActionEvent evt)                                               
     {                                                   
-        // TODO add your handling code here:
+        String bytes_read = FileManipulator.loadFile();
+        textAreaDataPoints.setText(bytes_read);
     }                                              
+
+    private void displayCurrentSensorReading()
+    {
+        if (currentSensor != null)
+        {
+            try
+            {
+                textAreaCurrentReading.setText(currentSensor.instantMeasure(arduino).toString());
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void changeComponents()
     {
@@ -573,11 +728,14 @@ public class StudentGUI extends javax.swing.JFrame {
     private javax.swing.JButton buttonVisualize;
     private javax.swing.JDialog dialogConfiguration;
     private javax.swing.ButtonGroup instrumentButtons;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel labelTextChemberry;
+    private javax.swing.JLabel labelTextDataCollection;
     private javax.swing.JLabel labelTextDurationSlider;
     private javax.swing.JLabel labelTextInstrument;
     private javax.swing.JLabel labelTextInterval;
