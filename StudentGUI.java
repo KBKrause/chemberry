@@ -11,20 +11,46 @@ import javax.swing.JFrame;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.Window;
+import java.awt.event.WindowListener;
+import java.awt.event.*;
+import javax.swing.event.*;
+import java.net.*;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
-import com.sun.glass.events.WindowEvent;
+import java.awt.event.WindowEvent;
 /**
  *
  * @author Kevin
  */
-public class StudentGUI extends JFrame implements DocumentListener, GUIInterface 
+public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
 {
     public StudentGUI(boolean networking, String instructorIP) throws ChemberryException
     {
         super("Chemberry Student GUI");
 
         networkingAllowed = networking;
+
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        initComponents();
+        changeComponents();
+        addActionListeners();
 
         if (networkingAllowed)
         {
@@ -55,29 +81,8 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         {
             e.printStackTrace();
         }
-
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(StudentGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
         //</editor-fold>
         //</editor-fold>
-
-        initComponents();
-        changeComponents();
-        addActionListeners();
 
         Thread displayReadingThread = new Thread()
         {
@@ -104,9 +109,10 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() 
         {
-            //@Override
+            @Override
             public void windowClosing(WindowEvent event) 
             {
+                System.out.println("Attempting to close");
                 closeFrame();
             }
         });
@@ -606,6 +612,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         }
         catch(ChemberryException cbe)
         {
+            System.out.println(cbe.getMessage());
             throw cbe;
         }
         
