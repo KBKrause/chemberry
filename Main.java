@@ -18,7 +18,7 @@ public class Main
             {
                 // TODO
                 // Account for a command being entered twice (such as "-offline" and "-of" in the same instance)
-                System.out.println("Commands for Chemberry.Main:");
+                System.out.println("Commands for Chemberry Main:");
                 System.out.println("-help , -h     displays this menu");
                 System.out.println("-offline, -of  disables networking");
                 System.out.println("-rpi           enables rpi resolution");

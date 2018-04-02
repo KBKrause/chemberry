@@ -783,8 +783,8 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         DefaultCaret caret = (DefaultCaret)textAreaDebug.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        caret = (DefaultCaret)textAreaDataPoints.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        DefaultCaret caret2 = (DefaultCaret)textAreaDataPoints.getCaret();
+        caret2.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         if (networkingAllowed)
         {
