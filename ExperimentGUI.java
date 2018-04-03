@@ -19,9 +19,11 @@ public class ExperimentGUI extends javax.swing.JFrame
     private String title;
     private String procedure;
     private String materials;
+    private String objectives;
     private HashSet<TypeOfMeasurement> dataTypes;
 
     // TODO add save / load for experiments, don't forget file extension
+    // TODO don't show visible on load
     /**
      * Creates new form ExperimentGUI
      */
@@ -67,6 +69,11 @@ public class ExperimentGUI extends javax.swing.JFrame
         return title;
     }
 
+    public String getObjectives()
+    {
+        return objectives;
+    }
+
     public String getProcedure() 
     {
         return procedure;
@@ -75,6 +82,30 @@ public class ExperimentGUI extends javax.swing.JFrame
     public String getMaterials() 
     {
         return materials;
+    }
+
+    public String getDataTypes() 
+    {
+        String retval = "";
+
+        for (TypeOfMeasurement tom : dataTypes) 
+        {
+            retval += tom.toString() + "\n";
+        }
+
+        return retval;
+    }
+
+    public void setTitle(String s)
+    {
+        fieldTitle.setText(s);
+        title = s;
+    }
+
+    public void setObjectives(String s)
+    {
+        textAreaObjectives.setText(s);
+        objectives = s;
     }
 
     public void setProcedure(String s) 
@@ -112,17 +143,10 @@ public class ExperimentGUI extends javax.swing.JFrame
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                try
-                {
-                    title = fieldTitle.getText();
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-                }
- 
+                title = fieldTitle.getText();
                 procedure = textAreaProcedure.getText();
                 materials = textAreaMaterials.getText();
+                objectives = textAreaObjectives.getText();
                 
                 if (cboxpH.isSelected())
                     dataTypes.add(TypeOfMeasurement.PH);

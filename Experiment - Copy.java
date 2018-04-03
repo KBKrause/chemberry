@@ -36,19 +36,6 @@ public class Experiment
         initializeDialogs();
     }
 
-    // Returns each TypeOfMeasurement in dataTypes separated by newlines
-    public String getDataTypes() 
-    {
-        String retval = "";
-
-        for (TypeOfMeasurement tom : dataTypes) 
-        {
-            retval += tom.toString() + "\n";
-        }
-
-        return retval;
-    }
-
    public void showSetup() 
    {
        //btm.setVisible(true);

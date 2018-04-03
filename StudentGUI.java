@@ -890,7 +890,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
     }
 
     @Override
-    public void setExperiment(Experiment e)
+    public void setExperiment(ExperimentGUI e)
     {
         currentExperiment = e;
         appendDebugText("Your instructor has sent you a new experiment: " + e.getTitle());
@@ -963,6 +963,6 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
     
     // arduino is the interface to the Arduino Uno connected to the RPi.
     private SerialConnection arduino;
-    private Experiment currentExperiment;
+    private ExperimentGUI currentExperiment;
     // End of variables declaration                   
 }
