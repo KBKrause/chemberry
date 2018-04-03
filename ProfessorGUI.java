@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ProfessorGUI extends JFrame implements InstructorInterface
 {

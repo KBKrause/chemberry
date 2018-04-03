@@ -1,7 +1,8 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.time.LocalDateTime;
 import javax.swing.JFrame;
+import java.util.HashSet;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -51,6 +52,7 @@ public class ExperimentGUI extends javax.swing.JFrame
         }
 
         initComponents();
+        changeComponents();
         addActionListeners();
 
         // TODO I hope this doesn't kill the JVM when instantiated from ProfessorGUI
@@ -78,7 +80,7 @@ public class ExperimentGUI extends javax.swing.JFrame
     public void setProcedure(String s) 
     {
         //System.out.println("Setting proc to " + s);
-        procText.setText(s);
+        textAreaProcedure.setText(s);
         procedure = s;
         //System.out.println("Procedure = " + procedure);
     }
@@ -86,7 +88,7 @@ public class ExperimentGUI extends javax.swing.JFrame
     public void setMaterials(String s) 
     {
         //System.out.println("Setting mats to " + s);
-        materialsText.setText(s);
+        textAreaMaterials.setText(s);
         materials = s;
         //System.out.println("materials = " + materials);
     }
@@ -96,11 +98,11 @@ public class ExperimentGUI extends javax.swing.JFrame
         dataTypes.add(tom);
         
         if (tom.equals(TypeOfMeasurement.PH))
-            chk_pH.setSelected(true);
+            cboxpH.setSelected(true);
         else if (tom.equals(TypeOfMeasurement.CONDUCT))
-            chk_volt.setSelected(true);
+            cboxVoltage.setSelected(true);
         else if (tom.equals(TypeOfMeasurement.TEMP))
-            chk_temp.setSelected(true);
+            cboxTemperature.setSelected(true);
     }
 
     private void addActionListeners()
@@ -112,27 +114,34 @@ public class ExperimentGUI extends javax.swing.JFrame
             {
                 try
                 {
-                    title = titleText.getText().substring(titleText.getText().indexOf("<h1>") + 11, titleText.getText().indexOf("</h1>") - 5);
+                    title = fieldTitle.getText();
                 }
                 catch(Exception ex)
                 {
                     ex.printStackTrace();
                 }
  
-                procedure = procText.getText();
-                materials = materialsText.getText();
+                procedure = textAreaProcedure.getText();
+                materials = textAreaMaterials.getText();
                 
-                if (chk_pH.isSelected())
+                if (cboxpH.isSelected())
                     dataTypes.add(TypeOfMeasurement.PH);
-                if (chk_temp.isSelected())
+                if (cboxTemperature.isSelected())
                     dataTypes.add(TypeOfMeasurement.TEMP);
-                if (chk_volt.isSelected())
+                if (cboxVoltage.isSelected())
                     dataTypes.add(TypeOfMeasurement.CONDUCT);
 
                 // Hopefully this refers to the JFrame
                 setVisible(false);
             }
         });
+    }
+
+    private void changeComponents()
+    {
+        LocalDateTime date = LocalDateTime.now();
+        
+        labelTextDate.setText(date.getMonth().toString() + " " + date.getDayOfMonth() + ", " + date.getYear());
     }
 
     /**
@@ -161,7 +170,7 @@ public class ExperimentGUI extends javax.swing.JFrame
         labelTextMaterials1 = new javax.swing.JLabel();
         cboxpH = new javax.swing.JCheckBox();
         cboxVoltage = new javax.swing.JCheckBox();
-        cbocTemperature = new javax.swing.JCheckBox();
+        cboxTemperature = new javax.swing.JCheckBox();
         buttonLoad = new javax.swing.JButton();
         buttonSave = new javax.swing.JButton();
 
@@ -210,7 +219,7 @@ public class ExperimentGUI extends javax.swing.JFrame
 
         cboxVoltage.setText("Voltage");
 
-        cbocTemperature.setText("Temperature");
+        cboxTemperature.setText("Temperature");
 
         buttonLoad.setText("Load Experiment");
 
@@ -246,7 +255,7 @@ public class ExperimentGUI extends javax.swing.JFrame
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
                                                 .addGap(0, 0, Short.MAX_VALUE)
-                                                .addComponent(cbocTemperature))
+                                                .addComponent(cboxTemperature))
                                             .addComponent(cboxpH)
                                             .addComponent(labelTextDataTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(54, 54, 54))
@@ -288,7 +297,7 @@ public class ExperimentGUI extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cboxpH)
-                            .addComponent(cbocTemperature)
+                            .addComponent(cboxTemperature)
                             .addComponent(cboxVoltage))
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -305,7 +314,7 @@ public class ExperimentGUI extends javax.swing.JFrame
     private javax.swing.JButton buttonFinish;
     private javax.swing.JButton buttonLoad;
     private javax.swing.JButton buttonSave;
-    private javax.swing.JCheckBox cbocTemperature;
+    private javax.swing.JCheckBox cboxTemperature;
     private javax.swing.JCheckBox cboxVoltage;
     private javax.swing.JCheckBox cboxpH;
     private javax.swing.JTextField fieldTitle;
