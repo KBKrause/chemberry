@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.HashMap;
+import java.awt.event.ActionListener;
 
 public class ProfessorGUI extends JFrame implements InstructorInterface
 {
+    private ExperimentGUI thisExperiment;
     private HashMap <String, Boolean> settings;
 
     public ProfessorGUI() throws ChemberryException
@@ -43,6 +45,7 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
         settings.put("autosave", false);
 
         initComponents();
+        addActionListeners();
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() 
@@ -55,6 +58,21 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
         });
 
         this.setVisible(true);
+    }
+
+    private void addActionListeners()
+    {
+        buttonExperimentSetup.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (thisExperiment == null)
+                {
+                    thisExperiment = new ExperimentGUI();
+                }
+            }
+        });
     }
 
     /**

@@ -20,13 +20,7 @@ import java.io.FileReader;
 
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
-    private Experiment thisExperiment;
-
-    private JTabbedPane studentTabs;
-
     private JDialog instructorSettings;
-    
-    private HashMap <String, Boolean> settings;
 
     public InstructorGUI() throws ChemberryException
     {
@@ -92,21 +86,6 @@ public class InstructorGUI extends JFrame implements InstructorInterface
 
         rightPanel.add(menu);
         rightPanel.add(settingsBtn);
-
-        JButton expsetupbtn = new JButton("Experiment Setup");
-        expsetupbtn.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if (thisExperiment == null)
-                {
-                    thisExperiment = new Experiment("Default title");
-                }
-                
-                thisExperiment.showSetup();
-            }
-        });
     }
 
     private void initializeSettings()
