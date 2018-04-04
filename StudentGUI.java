@@ -218,7 +218,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
             {
                 if (currentExperiment != null)
                 {
-                    currentExperiment.setVisible(true);
+                    currentExperiment.studentDisplay();
                 }
                 else
                 {
@@ -250,7 +250,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         buttonSettingsCancel.addActionListener(al);
         buttonSettingsOK.addActionListener(al);
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents()
@@ -640,7 +640,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         );
 
         pack();
-    }// </editor-fold>    
+    }// </editor-fold>
 
     private void buttonClearDataActionPerformed(ActionEvent e)
     {
@@ -916,11 +916,11 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         {
             textAreaDataPoints.getDocument().addDocumentListener(this);
 
-            labelTextPort.setText("9648");
+            labelListeningPort.setText("9648");
             
             try
             {
-                labelTextIP.setText(Inet.getMyAddress());
+                labelInetAddress.setText(Inet.getMyAddress());
             }
             catch(ChemberryException cbe)
             {
@@ -933,6 +933,8 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
             labelTextIP.setText("IPv4 address disabled");
             labelTextPort.setText("Port disabled");
         }
+
+        dialogSettings.setSize(new java.awt.Dimension(400, 200));
     }
 
     @Override

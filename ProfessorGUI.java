@@ -85,10 +85,11 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
                 if (thisExperiment == null)
                 {
                     thisExperiment = new ExperimentGUI();
+                    thisExperiment.display();
                 }
                 else
                 {
-                    thisExperiment.setVisible(true);
+                    thisExperiment.display();
                 }
             }
         });
@@ -110,6 +111,8 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
                             thisExperiment.getProcedure() + ":" + 
                             thisExperiment.getMaterials() + ":" + 
                             thisExperiment.getDataTypes()));
+
+                        labelCurrentExperiment.setText(thisExperiment.getTitle());
                     }
                     catch(Exception ex)
                     {
@@ -183,7 +186,7 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
 
         dialogSettings.setTitle("Chemberry Instructor Settings");
         dialogSettings.setResizable(false);
-        dialogSettings.setSize(new java.awt.Dimension(400, 200));
+        dialogSettings.setSize(new java.awt.Dimension(400, 167));
 
         buttonSettingsOK.setText("Accept");
 
@@ -285,7 +288,7 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
         textAreaDebug.setColumns(20);
         textAreaDebug.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
         textAreaDebug.setRows(5);
-        textAreaDebug.setText("Welcome to Chemberry Instructor client.\n\nThis is the notifications box, where messages will appear as you interact\nwith the program. Additionally, when students connect or disconnect from\nyour program, you will be notified here.\n\nError messages and other useful\ninformation will periodically appear\nhere.\n\nTo get started, configure or load a pre-made experiment by clicking\n\"Experiment Setup.\" Follow the instructions there, and click \"Broadcast\nExperiment\" once you are finished to send it to all connected students.");
+        textAreaDebug.setText("Welcome to the Chemberry Instructor client.\n\nThis is the notifications box, where messages will appear as you interact\nwith the program. Additionally, when students connect or disconnect from\nyour program, you will be notified here.\n\nError messages and other useful\ninformation will periodically appear\nhere.\n\nTo get started, configure or load a pre-made experiment by clicking\n\"Experiment Setup.\" Follow the instructions there, and click \"Broadcast\nExperiment\" once you are finished to send it to all connected students.");
         scrollPaneDebug.setViewportView(textAreaDebug);
 
         labelCurrentExperiment.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -365,7 +368,7 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
         );
 
         pack();
-    }// </editor-fold>                        
+    }// </editor-fold>     
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton buttonExperimentBroadcast;
