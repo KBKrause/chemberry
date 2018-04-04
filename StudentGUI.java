@@ -23,6 +23,9 @@ import java.awt.event.WindowEvent;
  *
  * @author Kevin
  */
+
+// TODO Increase height of settings dialog.
+
 public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
 {
     public StudentGUI(boolean networking, String instructorIP) throws ChemberryException
@@ -207,13 +210,51 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
                 buttonClearDataActionPerformed(e);
             }
         });
+
+        buttonExperimentDetails.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if (currentExperiment != null)
+                {
+                    currentExperiment.setVisible(true);
+                }
+                else
+                {
+                    appendDebugText("ERROR: No experiment available");
+                }
+            }
+        });
+
+        buttonSettings.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                dialogSettings.setVisible(true);
+            }
+        });
+
+        // Currently, the two buttons in the settings dialog don't do anything, 
+        // so I have them perform the same action.
+        ActionListener al = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                dialogSettings.setVisible(false);
+            }
+        };
+
+        buttonSettingsCancel.addActionListener(al);
+        buttonSettingsOK.addActionListener(al);
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents()
     {
-
         dialogConfiguration = new javax.swing.JDialog();
         rbuttonpH = new javax.swing.JRadioButton();
         rbuttonCond = new javax.swing.JRadioButton();
@@ -231,6 +272,14 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         valueOfDuration = new javax.swing.JLabel();
         instrumentButtons = new javax.swing.ButtonGroup();
         measurementTypeButtons = new javax.swing.ButtonGroup();
+        dialogSettings = new javax.swing.JDialog();
+        buttonSettingsOK = new javax.swing.JButton();
+        buttonSettingsCancel = new javax.swing.JButton();
+        labelTextPort = new javax.swing.JLabel();
+        labelListeningPort = new javax.swing.JLabel();
+        labelInetAddress = new javax.swing.JLabel();
+        labelTextIP = new javax.swing.JLabel();
+        labelTextInetSettings = new javax.swing.JLabel();
         buttonConfigure = new javax.swing.JButton();
         buttonSettings = new javax.swing.JButton();
         panelDataDisplay = new javax.swing.JPanel();
@@ -362,6 +411,69 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
                         .addComponent(buttonInstrumentFinish)
                         .addComponent(buttonInstrumentCancel)))
                 .addGap(19, 19, 19))
+        );
+
+        dialogSettings.setTitle("Chemberry Instructor Settings");
+        dialogSettings.setResizable(false);
+        dialogSettings.setSize(new java.awt.Dimension(400, 167));
+
+        buttonSettingsOK.setText("Accept");
+
+        buttonSettingsCancel.setText("Cancel");
+
+        labelTextPort.setText("Listening port:");
+
+        labelListeningPort.setText("port");
+
+        labelInetAddress.setText("ipv4");
+
+        labelTextIP.setText("IPv4:");
+
+        labelTextInetSettings.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        labelTextInetSettings.setText("Internet Settings");
+
+        javax.swing.GroupLayout dialogSettingsLayout = new javax.swing.GroupLayout(dialogSettings.getContentPane());
+        dialogSettings.getContentPane().setLayout(dialogSettingsLayout);
+        dialogSettingsLayout.setHorizontalGroup(
+            dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(labelTextInetSettings)
+                    .addGroup(dialogSettingsLayout.createSequentialGroup()
+                        .addGroup(dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelTextIP)
+                            .addComponent(labelTextPort))
+                        .addGap(31, 31, 31)
+                        .addGroup(dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelListeningPort)
+                            .addComponent(labelInetAddress))))
+                .addGap(82, 252, Short.MAX_VALUE))
+            .addGroup(dialogSettingsLayout.createSequentialGroup()
+                .addGap(101, 101, 101)
+                .addComponent(buttonSettingsCancel)
+                .addGap(18, 18, 18)
+                .addComponent(buttonSettingsOK)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        dialogSettingsLayout.setVerticalGroup(
+            dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(labelTextInetSettings)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelTextIP)
+                    .addComponent(labelInetAddress))
+                .addGap(17, 17, 17)
+                .addGroup(dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelTextPort)
+                    .addComponent(labelListeningPort))
+                .addGap(38, 38, 38)
+                .addGroup(dialogSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buttonSettingsCancel)
+                    .addComponent(buttonSettingsOK))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -803,6 +915,23 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         if (networkingAllowed)
         {
             textAreaDataPoints.getDocument().addDocumentListener(this);
+
+            labelTextPort.setText("9648");
+            
+            try
+            {
+                labelTextIP.setText(Inet.getMyAddress());
+            }
+            catch(ChemberryException cbe)
+            {
+                inetError();
+                closeFrame();
+            }
+        }
+        else
+        {
+            labelTextIP.setText("IPv4 address disabled");
+            labelTextPort.setText("Port disabled");
         }
     }
 
@@ -918,16 +1047,24 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
     private javax.swing.JButton buttonOpenData;
     private javax.swing.JButton buttonSaveData;
     private javax.swing.JButton buttonSettings;
+    private javax.swing.JButton buttonSettingsCancel;
+    private javax.swing.JButton buttonSettingsOK;
     private javax.swing.JButton buttonStopMeasure;
     private javax.swing.JButton buttonVisualize;
     private javax.swing.JDialog dialogConfiguration;
+    private javax.swing.JDialog dialogSettings;
     private javax.swing.ButtonGroup instrumentButtons;
+    private javax.swing.JLabel labelInetAddress;
+    private javax.swing.JLabel labelListeningPort;
     private javax.swing.JLabel labelTextChemberry;
     private javax.swing.JLabel labelTextDataCollection;
     private javax.swing.JLabel labelTextDurationSlider;
+    private javax.swing.JLabel labelTextIP;
+    private javax.swing.JLabel labelTextInetSettings;
     private javax.swing.JLabel labelTextInstrument;
     private javax.swing.JLabel labelTextInterval;
     private javax.swing.JLabel labelTextLiveReading;
+    private javax.swing.JLabel labelTextPort;
     private javax.swing.JLabel labelTextToggle;
     private javax.swing.ButtonGroup measurementTypeButtons;
     private javax.swing.JPanel panelDataDisplay;

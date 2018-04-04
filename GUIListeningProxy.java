@@ -56,9 +56,9 @@ public class GUIListeningProxy extends ServerProxy
                 if (s.equals("pH"))
                     e.addDataType(TypeOfMeasurement.PH);
                 else if (s.equals("celsius"))
-                    e.addDataType(TypeOfMeasurement.CONDUCT);
-                else if (s.equals("volts"))
                     e.addDataType(TypeOfMeasurement.TEMP);
+                else if (s.equals("volts"))
+                    e.addDataType(TypeOfMeasurement.CONDUCT);
             }
 
             gui.setExperiment(e);

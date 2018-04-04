@@ -61,6 +61,8 @@ public class ExperimentGUI extends javax.swing.JFrame
         // TODO dispose or hide?
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
+        dataTypes = new HashSet<TypeOfMeasurement>();
+
         this.setVisible(true);
     }
 
