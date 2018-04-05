@@ -6,10 +6,7 @@ out
 Test.java
 
 # Ignore the batch and shell files
-m.bat
-m.sh
-i.bat
-i.sh
+*.bat
 
 # Ignore all text files (for now)
 *.txt
