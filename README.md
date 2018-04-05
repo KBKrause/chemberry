@@ -165,7 +165,7 @@ java -Djava.library.path=/usr/lib/jni -cp /usr/share/java/RXTXcomm.jar:. Main -o
 
   
 
-This program was written using Visual Studio Code, Red Hat's Java language extension, the Arduino IDE, the RXTXcomm library, JFreeChart, and the NetBeans IDE 8.2 for UX/UI. RXTX and JFreeChart are both licensed under the GNU LGPL.<br> 
+This program was written using Visual Studio Code, Red Hat's Java language extension, the Arduino IDE, OneWire.h and OneWire.cpp for the Arduino, the RXTXcomm library, JFreeChart, and the NetBeans IDE 8.2 for UX/UI. RXTX and JFreeChart are both licensed under the GNU LGPL.<br> 
 
 If you use or modify this code, please annotate that it originated here.
 

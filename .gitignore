@@ -1,6 +1,9 @@
 # Ignore all compiled source code
 *.class
 
+# Ignore the temp and volt src code
+condAndTemp
+
 # Ignore the testing output
 out
 Test.java
