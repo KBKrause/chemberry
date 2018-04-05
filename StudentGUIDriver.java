@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Main
+public class StudentGUIDriver
 {
     public static void main(String[] args)
     {
@@ -18,7 +18,7 @@ public class Main
             {
                 // TODO
                 // Account for a command being entered twice (such as "-offline" and "-of" in the same instance)
-                System.out.println("Commands for Chemberry.Main:");
+                System.out.println("Commands for Chemberry Main:");
                 System.out.println("-help , -h     displays this menu");
                 System.out.println("-offline, -of  disables networking");
                 System.out.println("-rpi           enables rpi resolution");
@@ -43,7 +43,7 @@ public class Main
             }
             else
             {
-                if ((argList.contains("-server")) || (argList.contains("-s")))
+                if ((argList.contains("-server")))
                 {
                     addr = argList.get(argList.indexOf("-server") + 1);
                 }
@@ -62,20 +62,18 @@ public class Main
                 
             try
             {
-                gui = new GUI(enableNetworking, addr);
+                gui = new StudentGUI(enableNetworking, addr);
             }
             catch(ChemberryException cbe)
             {
                 System.out.println("Could not resolve LAN address. Please check connection.");
                 System.exit(0);
             }
-            
 
             // TODO
             // Eventually, the instructor will multicast or broadcast themselves to the client.
             // This IP address will be used instead of localhost.
             // THEN, the try-catch might change.
-
 
             if (argList.contains("-rpi"))
             {
@@ -89,11 +87,5 @@ public class Main
                 t.start();
             }
         }
-
-    }
-
-    public static void processArgs(String[] args)
-    {
-
     }
 }

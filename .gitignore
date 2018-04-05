@@ -1,15 +1,15 @@
 # Ignore all compiled source code
 *.class
 
+# Ignore the temp and volt src code
+condAndTemp
+
 # Ignore the testing output
 out
 Test.java
 
 # Ignore the batch and shell files
-m.bat
-m.sh
-i.bat
-i.sh
+*.bat
 
 # Ignore all text files (for now)
 *.txt
