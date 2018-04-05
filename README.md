@@ -1,7 +1,7 @@
 <h1>Chemberry</h1>
-<li><i>a Java program that facilitates microscale chemistry experiments in undergraduate chemistry labs
-<li><i>powered by Raspberry Pi and Arduino Uno
-<li><i>API build and documentation provided for open source use
+<li><i>a Java program that facilitates microscale chemistry experiments in undergraduate chemistry labs</i>
+<li><i>powered by Raspberry Pi and Arduino Uno</i>
+  <li><i>API build and documentation provided for open source use</i>
 <h2>Contents</h2>
 <a href="#abstract"> 1. Abstract</a><br>
 <a href="#usage">2. Usage / Downloads</a><br>
