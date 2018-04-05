@@ -1,0 +1,1 @@
+javac -cp "lib\*;" StudentGUIDriver.java StudentGUI.java ProfessorGUI.java ProfessorMain.java ExperimentGUI.java
