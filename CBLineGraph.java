@@ -9,11 +9,29 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import java.awt.BorderLayout;
 
+/**
+ * A CBLineGraph is a visual representation of data collected by students. It is a 2D line graph that plots the indices (x-axis) of an array of measurements
+ * against their values (y-axis). The graphing functionality is provided by JFreeChart, so this acts as a kind of wrapper.
+ * This class extends ApplicationFrame and still needs an interface.
+ * 
+ * @author      KBKrause
+ * @since       1.8
+ */
 public class CBLineGraph extends ApplicationFrame 
 {
     private TypeOfMeasurement measurementType;
     private ChartPanel graphArea;
 
+    /** 
+     * Instantiate a single line graph from one set of data. To render the graph, you must call {@link #displayChart()}.
+     * 
+     * @param windowTitle the title of the dialog that will contain the graph
+     * @param chartTitle the title of the chart placed above the graph
+     * @param tom the type of measurement being graphed, eg. pH, conductivity, temperature
+     * @param measurements the values being plotted
+     * @see TypeOfMeasurement
+     * @since           1.8
+     */
     public CBLineGraph(String windowTitle, String chartTitle, TypeOfMeasurement tom, ArrayList <Number> measurements) 
     {
         super(windowTitle);
@@ -26,6 +44,12 @@ public class CBLineGraph extends ApplicationFrame
         setContentPane(chartPanel);
     }
 
+    /** 
+     * Create a JFrame containing the line graph. The data used comes from the parameter passed to the constructor.
+     * For each new graph, a new CBLineGraph must be created.
+     * @see JFrame
+     * @since           1.8
+     */
     public void displayChart()
     {
         JFrame jf = new JFrame("Chemberry Data Visualization");
@@ -48,17 +72,4 @@ public class CBLineGraph extends ApplicationFrame
        
         return dataset;
     }
-       /*
-       public static void main( String[ ] args ) {
-          CBLineGraph chart = new CBLineGraph(
-              // window title
-             "School Vs Years" ,
-             // chart title
-             "Numer of Schools vs years");
-    
-          chart.pack( );
-          RefineryUtilities.centerFrameOnScreen( chart );
-          chart.setVisible( true );
-       }
-       */
-    }
+}

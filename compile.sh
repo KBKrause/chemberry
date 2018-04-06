@@ -1,3 +1,7 @@
+# This is the script for compiling source code. To run:
+# ./compile.sh
+# It only works in Unix environments. On Windows, I use cygwin and git bash.
+
 ANS="Y"
 
 while [ $ANS != "N" ]; do

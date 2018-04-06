@@ -1,7 +1,7 @@
 /**
  * All exceptions specific to Chemberry inherit from <code>ChemberryException</code>.
  * 
- * @author      kevbkraus
+ * @author      KBKrause
  * @see         Exception
  * @since       1.8
  */

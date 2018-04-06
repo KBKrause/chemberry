@@ -7,7 +7,7 @@ import java.io.*;
  * This class provides very basic functionality to communicate with a <code>ServerProxy</code>.
  * Changing the destination address of the server would require a new instantation of this object.
  * 
- * @author      kevbkraus
+ * @author      KBKrause
  * @see         ServerProxy
  * @since       1.8
  */

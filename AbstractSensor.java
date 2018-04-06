@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * <li> temperature probe
  * </ul>
  * 
- * @author      kevbkraus
+ * @author      KBKrause
  * @since       1.8
  */
 public abstract class AbstractSensor

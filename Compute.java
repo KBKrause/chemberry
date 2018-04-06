@@ -4,8 +4,9 @@ import java.lang.Math;
 /**
  * The <code>Compute</code> class handles and manages various calculations and statistics. Most, if not all, methods
  * are public and static.
+ * This class may or may not be deprecated if I shift to a statistics library provided by Apache (http://commons.apache.org/proper/commons-math/).
  * 
- * @author      kevbkraus
+ * @author      KBKrause
  * @since       1.8
  */
 public abstract class Compute
