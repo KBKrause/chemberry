@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+/**
+ * @deprecated This class has been replaced by ProfessorGUI.
+ * @see ProfessorGUI
+ */
+@Deprecated
 public class InstructorGUI extends JFrame implements InstructorInterface
 {
     private Experiment thisExperiment;

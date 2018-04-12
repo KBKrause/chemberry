@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
+/**
+ * @deprecated This class has been replaced by StudentGUI.
+ * @see StudentGUI
+ */
+@Deprecated
 public class GUI extends JFrame implements DocumentListener, ChangeListener, GUIInterface
 {
     private ArrayList <Number> measurements;

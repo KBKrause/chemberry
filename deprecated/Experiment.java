@@ -7,6 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.*;
 import javax.swing.event.*;
 
+/**
+ * @deprecated This class has been replaced by ExperimentGUI.
+ * @see ExperimentGUI
+ */
+@Deprecated
 public class Experiment 
 {
     private String title;

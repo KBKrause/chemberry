@@ -1,3 +1,8 @@
+/**
+ * @deprecated This class has been replaced by ProfessorMain.
+ * @see ProfessorMain
+ */
+@Deprecated
 public class InstructorMain
 {
     public static void main(String[] args)
