@@ -104,6 +104,7 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
                     try
                     {
                         // TODO Hide IP logic
+                        // TODO this only sends it to yourself. Send it to all connected students.
                         ClientConnection conn = new ClientConnection(Inet.getMyAddress(), 9648);
                         conn.sendString(Inet.encodeUpdate("exp:" + 
                             thisExperiment.getTitle() + ":" + 
@@ -186,7 +187,7 @@ public class ProfessorGUI extends JFrame implements InstructorInterface
 
         dialogSettings.setTitle("Chemberry Instructor Settings");
         dialogSettings.setResizable(false);
-        dialogSettings.setSize(new java.awt.Dimension(400, 167));
+        dialogSettings.setSize(new java.awt.Dimension(400, 200));
 
         buttonSettingsOK.setText("Accept");
 

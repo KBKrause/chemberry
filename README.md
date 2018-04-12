@@ -16,7 +16,7 @@ Research and work in the chemical field relies heavily on computational devices.
 
   
 
-Chemberry is a Raspberry Pi 3 Model B interfaced with an Arduino Uno, connected to several lab instruments. They currently include but will not be limited to:
+Chemberry is a Raspberry Pi 3 Model B* interfaced with an Arduino Uno, connected to several lab instruments. They currently include but will not be limited to:
 
   
 
@@ -186,3 +186,6 @@ Thanks is given to
 * Perry Kivolowitz and Mark Mahoney for being awesome CS professors
 
 * My senior cohort for being supportive of me
+
+<hr>
+* Raspberry Pi is a trademark of the Raspberry Pi Foundation.

@@ -46,6 +46,7 @@ public class StudentGUIDriver
                 if ((argList.contains("-server")))
                 {
                     addr = argList.get(argList.indexOf("-server") + 1);
+                    System.out.println("Attempting to connect to addr: " + addr);
                 }
                 else
                 {
@@ -66,7 +67,7 @@ public class StudentGUIDriver
             }
             catch(ChemberryException cbe)
             {
-                System.out.println("Could not resolve LAN address. Please check connection.");
+                System.out.println("Could not resolve your LAN address. Please check connection.");
                 System.exit(0);
             }
 
