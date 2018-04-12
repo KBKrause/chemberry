@@ -22,7 +22,6 @@ public final class ConductivitySensor extends AbstractSensor
         super();
     }
 
-    // Unprovided
     @Override
     protected Measurement generateMeasurement(String output)
     {

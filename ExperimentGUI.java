@@ -4,15 +4,12 @@ import java.time.LocalDateTime;
 import javax.swing.JFrame;
 import java.util.HashSet;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author Kevin
+ * ExperimentGUI contains the logic and UI for an experiment, which defines a human-readable set of instructions for students to follow
+ * as they go through their experiment.
+ * 
+ * @author      KBKrause
+ * @since       1.8
  */
 public class ExperimentGUI extends javax.swing.JFrame
 {
@@ -30,9 +27,7 @@ public class ExperimentGUI extends javax.swing.JFrame
     
     // TODO add save / load for experiments, don't forget file extension
     // TODO don't show visible on load
-    /**
-     * Creates new form ExperimentGUI
-     */
+
     public ExperimentGUI()
     {
         try
@@ -72,11 +67,23 @@ public class ExperimentGUI extends javax.swing.JFrame
         //this.setVisible(true);
     }
 
+    /**
+     * Shows the experiment details screen.
+     * 
+     * @author      KBKrause
+     * @since       1.8
+     */
     public void display()
     {
         this.setVisible(true);
     }
 
+    /**
+     * Shows the experiment details screen but makes all fields uneditable. Additionally hides all buttons so that only text areas and labels are visible.
+     * 
+     * @author      KBKrause
+     * @since       1.8
+     */
     public void studentDisplay()
     {
         buttonFinish.setVisible(false);
@@ -92,26 +99,63 @@ public class ExperimentGUI extends javax.swing.JFrame
         this.setVisible(true);
     }
 
+    /**
+     * Returns the title of this experiment.
+     * 
+     * @author      KBKrause
+     * @return the title of this experiment
+     * @since       1.8
+     */
     public String getTitle() 
     {
         return title;
     }
 
+    /**
+     * Returns the objectives of this experiment, separated by newlines.
+     * 
+     * @author      KBKrause
+     * @return the objectives of this experiment
+     * @since       1.8
+     */
     public String getObjectives()
     {
         return objectives;
     }
 
+    /**
+     * Returns the procedure of this experiment.
+     * 
+     * @author      KBKrause
+     * @return the procedure of this experiment
+     * @since       1.8
+     */
     public String getProcedure() 
     {
         return procedure;
     }
 
+    /**
+     * Returns the materials that are part of this experiment.
+     * 
+     * @author      KBKrause
+     * @return the materials in the experiment
+     * @since       1.8
+     */
     public String getMaterials() 
     {
         return materials;
     }
 
+    /**
+     * Returns each of the data types that are part of this experiment, separated by newlines. These are string representations
+     * of the enumerations from TypeOfMeasurement.
+     * 
+     * @author      KBKrause
+     * @return the materials in the experiment
+     * @see TypeOfMeasurement
+     * @since       1.8
+     */
     public String getDataTypes() 
     {
         String retval = "";
@@ -124,34 +168,66 @@ public class ExperimentGUI extends javax.swing.JFrame
         return retval;
     }
 
+    /**
+     * Changes the title of the experiment and updates the corresponding field in the UI.
+     * 
+     * @author      KBKrause
+     * @param s the new title
+     * @since       1.8
+     */
     public void setTitle(String s)
     {
         fieldTitle.setText(s);
         title = s;
     }
 
+    /**
+     * Changes the objectives of the experiment and updates the corresponding field in the UI.
+     * 
+     * @author      KBKrause
+     * @param s the new objectives
+     * @since       1.8
+     */
     public void setObjectives(String s)
     {
         textAreaObjectives.setText(s);
         objectives = s;
     }
 
+    /**
+     * Changes the procedure of the experiment and updates the corresponding field in the UI.
+     * 
+     * @author      KBKrause
+     * @param s the new procedure
+     * @since       1.8
+     */
     public void setProcedure(String s) 
     {
-        //System.out.println("Setting proc to " + s);
         textAreaProcedure.setText(s);
         procedure = s;
-        //System.out.println("Procedure = " + procedure);
     }
 
+    /**
+     * Changes the materials in the experiment and updates the corresponding field in the UI.
+     * 
+     * @author      KBKrause
+     * @param s the new materials
+     * @since       1.8
+     */
     public void setMaterials(String s) 
     {
-        //System.out.println("Setting mats to " + s);
         textAreaMaterials.setText(s);
         materials = s;
-        //System.out.println("materials = " + materials);
     }
 
+    /**
+     * Adds the type of measurement to this experiment.
+     * 
+     * @author      KBKrause
+     * @param s the new data type
+     * @see TypeOfMeasurement
+     * @since       1.8
+     */
     public void addDataType(TypeOfMeasurement tom) 
     {
         dataTypes.add(tom);
