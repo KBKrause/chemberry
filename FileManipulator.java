@@ -6,8 +6,21 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import javax.swing.JFileChooser;
 
+/**
+ * FileManipulator contains methods that simplify saving, opening, moving and using files.
+ * Some of the methods use classes from the javax.swing library.
+ * 
+ * @author      KBKrause
+ * @since       1.8
+ */
 public class FileManipulator
 {
+    /** 
+     * Opens a UI to save a text file.
+     * 
+     * @param filecontents the text to be saved
+     * @since          1.8
+     */
     public static void saveFile(String filecontents)
     {
         JFileChooser jfc = new JFileChooser();
@@ -42,6 +55,12 @@ public class FileManipulator
         }
     }
 
+    /** 
+     * Opens a UI to load a text file.
+     * 
+     * @return the text within the file
+     * @since          1.8
+     */
     public static String loadFile()
     {
         StringBuilder strBuilder = new StringBuilder();
