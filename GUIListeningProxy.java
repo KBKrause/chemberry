@@ -1,13 +1,29 @@
+/**
+ * GUIListeningProxy is a type of ServerProxy. It is the class that listens for requests on behalf of the student's program.
+ * 
+ * @author      KBKrause
+ * @since       1.8
+ */
 public class GUIListeningProxy extends ServerProxy
 {
     private GUIInterface gui;
 
+    /**
+     * Creates, but does not start, a GUIListeningProxy that listens on the specified port number and interacts with the specified GUI.
+     * 
+     * @param p the port number to listen on
+     * @param g an interface, or reference, to the client GUI
+     * @author      KBKrause
+     * @since       1.8
+     */
     public GUIListeningProxy(int p, GUIInterface g)
     {
         super(p);
         gui = g;
     }
 
+    // TODO
+    // Javadoc here?
     @Override
     public void handleRequest(String request, String clientIP)
     {

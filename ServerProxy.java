@@ -5,20 +5,44 @@ import java.io.*;
  * <code>ServerProxy</code> is a base class used for opening and listening on server sockets. It provides the method {@link #handleRequest(String, String)}
  * so that concrete instantiations of the class can react to data differently.
  * 
- * @author      kevbkraus
+ * @author      KBKrause
  * @since       1.8
  */
 public abstract class ServerProxy implements Runnable
 {
     private int myPort;
 
+    /**
+     * Provides a means for child classes of ServerProxy to react differently to client requests while still maintaining basic server socket
+     * functionality.
+     * 
+     * @param request the request forwarded by the client, tokenized by colon :
+     * @param clientIP the IP of the client who sent this request
+     * @since       1.8
+     */
     public abstract void handleRequest(String request, String clientIP);
 
+    /**
+     * Creates a ServerProxy with the specified port. The user needs to be aware of which port they have assigned to this object, as it cannot be used
+     * by any other ServerProxy or application. The constructor does not begin listening and accepting requests; to do this, {@link #run()} must be called.
+     * TODO
+     * Provide a means of preventing the problem specified above.
+     * 
+     * @since       1.8
+     */
     public ServerProxy(int port)
     {
         myPort = port;
     }
 
+    /**
+     * Returns the port number of this server socket.
+     * TODO
+     * The port can be an unsigned short instead of an int.
+     * 
+     * @return the listening port of this server socket
+     * @since       1.8
+     */
     public int getPort()
     {
         return myPort;

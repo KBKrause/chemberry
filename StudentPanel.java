@@ -4,6 +4,15 @@ import javax.swing.text.DefaultCaret;
 import java.util.ArrayList;
 import java.lang.Number;
 
+/**
+ * A StudentPanel is a swing component that  encapsulates the data and information related to one student. It contains a text area with all of 
+ * the measurements taken by the student as well as a panel with some basic statistics calculated from the data.
+ * This class implements StudentPanelInterface to prevent other classes from seeing its inheritance from JPanel.
+ * 
+ * @author      KBKrause
+ * @see StudentPanelInterface
+ * @since       1.8
+ */
 public class StudentPanel extends JPanel implements StudentPanelInterface
 {
     private String IPaddr;
@@ -15,6 +24,14 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
     private JLabel averageLabel;
     private JLabel deviationLabel;
 
+    /**
+     * Creates a StudentPanel that receives data from the specified IP and can be referred to by the specified name.
+     * 
+     * @author      KBKrause
+     * @param ip the IPv4 address of the student sending data to this StudentPanel
+     * @param name a unique specifier for this StudentPanel
+     * @since       1.8
+     */
     public StudentPanel(String ip, String name)
     {
         super();
@@ -46,12 +63,26 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
         this.setVisible(true);
     }
 
+    /**
+     * Returns the name of this StudentPanel.
+     * 
+     * @author      KBKrause
+     * @return the name, or "title," of this StudentPanel
+     * @since       1.8
+     */
     @Override
     public String getName()
     {
         return name;
     }
 
+    /**
+     * Adds a single row of text to the bottom of the text area in this StudentPanel.
+     * 
+     * @author      KBKrause
+     * @param newLine the text to be added to the text area
+     * @since       1.8
+     */
     @Override
     public void append(String newLine)
     {
@@ -60,6 +91,13 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
         //System.out.println("The contents are now: " + dataArea.getText());
     }
 
+    /**
+     * Returns the string representation of the IPv4 address related to this StudentPanel.
+     * 
+     * @author      KBKrause
+     * @return the IP address of the connected client
+     * @since       1.8
+     */
     @Override
     public String getIP()
     {
@@ -67,13 +105,30 @@ public class StudentPanel extends JPanel implements StudentPanelInterface
     }
 
     // TODO
-    // Is this method used, anywhere?
+    // Rename this method
+
+    /**
+     * Returns a single string containing all the characters in the text area. If the text area is empty, returns null.
+     * 
+     * @author      KBKrause
+     * @return the text within the text area of this StudentPanel
+     * @since       1.8
+     */
     @Override
     public String getStringOfText()
     {
         return dataArea.getText();
     }
 
+    /**
+     * Calculates the average and standard deviation of the data contained in the text area. This method expects each line of the text area
+     * to contain any number of characters describing the data type, followed by ' >> ' and then the numeric value of the measurement.
+     * These values are parsed as Doubles. The resulting statistics are labeled on the right side of the StudentPanel.
+     * 
+     * @author      KBKrause
+     * @see Compute
+     * @since       1.8
+     */
     @Override
     public void updateCalculations()
     {
