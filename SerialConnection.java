@@ -131,6 +131,7 @@ public class SerialConnection implements SerialPortEventListener
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
 
+	// synchronized?
 	public String getData() throws SerialConnectionException
 	{
 		String retval = "";

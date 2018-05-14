@@ -263,6 +263,37 @@ public class ExperimentGUI extends javax.swing.JFrame
                 setVisible(false);
             }
         });
+
+        buttonSave.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                String exptTitle = fieldTitle.getText();
+                String exptObj = textAreaObjectives.getText();
+                String exptProc = textAreaProcedure.getText();
+                String exptMats = textAreaMaterials.getText();
+
+                String fileString = exptTitle + "~" + exptObj + "~" + exptProc + "~" + exptMats;
+
+                FileManipulator.saveFile(fileString);
+            }
+        });
+
+        buttonLoad.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                String loadedExpt = FileManipulator.loadFile();
+                String[] tokenizedExpt = loadedExpt.split("~");
+
+                fieldTitle.setText(tokenizedExpt[0]);
+                textAreaObjectives.setText(tokenizedExpt[1]);
+                textAreaProcedure.setText(tokenizedExpt[2]);
+                textAreaMaterials.setText(tokenizedExpt[3]);
+            }
+        });
     }
 
     private void changeComponents()
