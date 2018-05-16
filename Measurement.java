@@ -37,14 +37,14 @@ public class Measurement
      */
     public Number getValue()
     {
-        if (type.equals(TypeOfMeasurement.CONDUCT))
-        {
-            return value.intValue();
-        }
-        else
-        {
+        //if (type.equals(TypeOfMeasurement.CONDUCT))
+        //{
+            //return value.intValue();
+        //}
+        //else
+        //{
             return value.floatValue();
-        }
+        //}
     }
 
     /**

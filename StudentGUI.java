@@ -693,7 +693,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
                             {
                                 try
                                 {
-                                    Measurement measure = currentSensor.instantMeasure(arduino);
+                                    Measurement measure = currentSensor.instantMeasure(arduino, currentSensor.getType());
                                     measurements.add(measure.getValue());
                                     textAreaDataPoints.append(measure.toString() + "\n");
                                 }
@@ -765,9 +765,10 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
     {
         // TODO THIS MUST CHANGE for each sensor.
         //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
+        /*
         try
         {
-            Measurement measure = currentSensor.instantMeasure(arduino);
+            Measurement measure = currentSensor.instantMeasure(arduino, currentSensor.getType());
             textAreaDataPoints.append(measure.toString() + "\n");
             measurements.add(measure.getValue());
         }
@@ -776,6 +777,13 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
             ex.printStackTrace();
 
             //System.exit(1);
+        }
+        */
+
+        // TODO This is a serious issue. Fix this.
+        if (mostRecentMeasurement != null)
+        {
+            textAreaDataPoints.append(mostRecentMeasurement + "\n");
         }
     }
 
@@ -888,11 +896,13 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
         {
             try
             {
-                textAreaCurrentReading.setText(currentSensor.instantMeasure(arduino).toString());
+                String reading = currentSensor.instantMeasure(arduino, currentSensor.getType()).toString();
+                textAreaCurrentReading.setText(reading);
+                mostRecentMeasurement = reading;
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     }
@@ -1086,6 +1096,7 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
     private javax.swing.JToggleButton toggleButtonIntervals;
     private javax.swing.JLabel valueOfDuration;
     private javax.swing.JLabel valueOfInterval;
+    private String mostRecentMeasurement;
 
     private ArrayList <Number> measurements;
     private TypeOfMeasurement currenttom;

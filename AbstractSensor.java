@@ -77,35 +77,39 @@ public abstract class AbstractSensor
      * @see             Measurement
      * @since           1.8
      */
-    public Measurement instantMeasure(SerialConnection conn)
+    public Measurement instantMeasure(SerialConnection conn, TypeOfMeasurement tom)
     {
+        boolean gotCorrectValue = false;
         String output = "";
         
-        try
+        while (gotCorrectValue == false)
         {
-            output = conn.getData();
-            
-            while (output.charAt(0) != this.toString().charAt(0))
+            try
             {
                 output = conn.getData();
+                
+                while (tom.toString().charAt(0) != output.charAt(0))
+                {
+                    System.out.println(tom.toString().charAt(0) + " != " + output.charAt(0));
+                    output = conn.getData();
+                }
+    
+                System.out.println(tom.toString().charAt(0) + " == " + output.charAt(0));
+                
+                System.out.println("Output for this sensor is: " + output);
+                gotCorrectValue = true;
             }
-        }
-        catch(SerialConnectionException e)
-        {
-            e.printStackTrace();
-            //System.exit(1);
+            catch(SerialConnectionException e)
+            {
+                //e.printStackTrace();
+                //System.exit(1);
+            }
         }
 
         Measurement measure = null;
 
-        try
-        {
-            measure = generateMeasurement(output);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        System.out.println("Output for this sensor is: " + output);
+        measure = generateMeasurement(output);
 
         return measure;
     }

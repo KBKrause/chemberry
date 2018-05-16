@@ -13,11 +13,11 @@ public enum TypeOfMeasurement
         }
         else if (this.equals(CONDUCT))
         {
-            retval = "volts";
+            retval = "millivolts";
         }
         else
         {
-            retval = "celsius";
+            retval = "t_celsius";
         }
 
         return retval;

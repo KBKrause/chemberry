@@ -24,7 +24,8 @@ public final class ConductivitySensor extends AbstractSensor
     @Override
     protected Measurement generateMeasurement(String output)
     {
-        return new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(9, output.length() - 1)));
+        //return new Measurement(TypeOfMeasurement.PH, Float.parseFloat(output.substring(3)));
+        return new Measurement(TypeOfMeasurement.CONDUCT, Float.parseFloat(output.substring(3)));
     }
 
     /** 

@@ -4,9 +4,12 @@
 # Ignore the testing output
 out
 Test.java
+condAndTemp
+condandTemp_2
 
 # Ignore the batch and shell files
 *.bat
 
 # Ignore all text files (for now)
 *.txt
+condAndTemp/condAndTemp.ino
