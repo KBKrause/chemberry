@@ -763,23 +763,6 @@ public class StudentGUI extends JFrame implements DocumentListener, GUIInterface
 
     private void performInstantMeasurement()
     {
-        // TODO THIS MUST CHANGE for each sensor.
-        //dataTextArea.append(currentSensor.toString() + " >> " + arduino.getData() + "\n");
-        /*
-        try
-        {
-            Measurement measure = currentSensor.instantMeasure(arduino, currentSensor.getType());
-            textAreaDataPoints.append(measure.toString() + "\n");
-            measurements.add(measure.getValue());
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-
-            //System.exit(1);
-        }
-        */
-
         // TODO This is a serious issue. Fix this.
         if (mostRecentMeasurement != null)
         {

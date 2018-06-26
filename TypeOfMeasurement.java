@@ -17,6 +17,8 @@ public enum TypeOfMeasurement
         }
         else
         {
+            // TODO Change this literal to "temperature."
+            // It's currently "t_celsius" because the output string of the arduino is "temp: "
             retval = "t_celsius";
         }
 

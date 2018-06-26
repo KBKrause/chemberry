@@ -29,7 +29,7 @@ public class Measurement
     }
 
     /**
-     * Returns the value of this Measurement, which will be returned as either an int value or float value depending on the type of measurement.
+     * Returns the value of this Measurement, which is a floating point number. Previously, this used to return integers for voltage readings.
      * 
      * @author      KBKrause
      * @return the value of this measurement
@@ -37,14 +37,7 @@ public class Measurement
      */
     public Number getValue()
     {
-        //if (type.equals(TypeOfMeasurement.CONDUCT))
-        //{
-            //return value.intValue();
-        //}
-        //else
-        //{
-            return value.floatValue();
-        //}
+        return value.floatValue();
     }
 
     /**

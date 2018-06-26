@@ -11,7 +11,6 @@ public final class TemperatureSensor extends AbstractSensor
     @Override
     protected Measurement generateMeasurement(String output)
     {
-        // return new Measurement(TypeOfMeasurement.PH, Float.parseFloat(output.substring(3)));
         return new Measurement(TypeOfMeasurement.TEMP, Float.parseFloat(output.substring(5)));
     }
 
